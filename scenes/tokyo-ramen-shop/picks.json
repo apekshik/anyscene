@@ -1,0 +1,314 @@
+{
+  "stockpot": {
+    "model": "tripo-h31",
+    "reason": "Dents are real geometry (visible in clay); Meshy smooth cylinder."
+  },
+  "ticket_machine": {
+    "model": "tripo-h31",
+    "reason": "Recessed buttons and coin unit modelled, labels legible; Meshy has dark blotches on the header."
+  },
+  "condiment_caddy": {
+    "model": "meshy",
+    "reason": "Closest to reference: chili flakes and garlic jar read; H3.1 contents muddy."
+  },
+  "lantern": {
+    "model": "meshy",
+    "reason": "Ribs in geometry, faithful kanji, lettering repeated on the back like real chochin."
+  },
+  "ramen_bowl_unfinished": {
+    "model": "meshy",
+    "reason": "Footed shallow bowl shape matches the reference; H3.1 made a tall conical bowl."
+  },
+  "ramen_gas_range": {
+    "model": "meshy",
+    "reason": "Grimier, more faithful burner texture and wider body; both modelled the grates."
+  },
+  "ramen_ladle_rail": {
+    "model": "tripo-h31",
+    "reason": "Kept the long chopsticks and greasy wear; Meshy cleaner and plainer."
+  },
+  "ramen_noodle_boiler": {
+    "model": "tripo-h31",
+    "reason": "Cleaner proportions and readable control panel; Meshy texture blown out and blotchy."
+  },
+  "ramen_bowl_stack": {
+    "model": "meshy",
+    "reason": "Wider bowls and crisper raimon rims, closer to the reference; H3.1 bowls narrow."
+  },
+  "ramen_cash_register": {
+    "model": "meshy",
+    "reason": "Sharper keys, readable display and receipt; H3.1 softer and blurrier."
+  },
+  "ramen_chopstick_cup": {
+    "model": "tripo-h31",
+    "reason": "Near tie; H3.1 has more varied chopstick heights and lacquer wear."
+  },
+  "ramen_crt_tv_bracket": {
+    "model": "meshy",
+    "reason": "Clearer screen bezel and bracket arm matching the reference."
+  },
+  "ramen_cutting_board": {
+    "model": "meshy",
+    "reason": "Chopped onion pile and knife read better; board cleaner like the reference."
+  },
+  "ramen_drink_fridge": {
+    "model": "meshy",
+    "reason": "Kirin header and stocked bottles intact; H3.1 lost the header branding."
+  },
+  "ramen_rice_cooker": {
+    "model": "meshy",
+    "reason": "Colours and Zojirushi-style panel match; H3.1 lid too dark."
+  },
+  "ramen_stool": {
+    "model": "meshy",
+    "reason": "Chrome base and footrest ring like the reference; H3.1 base dull white."
+  },
+  "ramen_tare_containers": {
+    "model": "meshy",
+    "reason": "Bigger containers with readable chashu and eggs; H3.1 dark and small contents."
+  },
+  "ramen_water_glass": {
+    "model": "tripo-h31",
+    "reason": "Faceted lower half matches the reference; becomes real glass in prep either way."
+  },
+  "ramen_water_pitcher": {
+    "model": "meshy",
+    "reason": "Spout, hinged lid and handle match the reference; H3.1 a plain cylinder."
+  },
+  "ramen_apron_hook": {
+    "model": "tripo-h31",
+    "reason": "Stains and wear match the reference; Meshy cleaner and flatter."
+  },
+  "ramen_beer_crate": {
+    "model": "meshy",
+    "reason": "Larger crate with side logo and full bottles; H3.1 smaller and plainer."
+  },
+  "ramen_dish_rack": {
+    "model": "meshy",
+    "reason": "Drip tray, plates and bowls all present; H3.1 rack cramped."
+  },
+  "ramen_square_cans": {
+    "model": "meshy",
+    "reason": "Crisp 揚げ油 label and dented corner; H3.1 label softer."
+  },
+  "ramen_tissue_box": {
+    "model": "meshy",
+    "reason": "Wood grain and bevel closer to the reference."
+  },
+  "ramen_umbrella_stand": {
+    "model": "tripo-h31",
+    "reason": "Black umbrella and clear vinyl ones read distinctly; Meshy merged them."
+  },
+  "ramen_wall_fan": {
+    "model": "meshy",
+    "reason": "Cream plastic colour and bracket match; H3.1 too white."
+  },
+  "ramen_hand_towel": {
+    "model": "meshy",
+    "reason": "Flatter, looser fold with faint stains like the reference."
+  },
+  "ramen_kettle_pot": {
+    "model": "tripo-h31",
+    "reason": "Kettle grime and dark handle closer to the reference."
+  },
+  "ramen_maneki_neko": {
+    "model": "meshy",
+    "reason": "Sharper face, larger 招財 koban; H3.1 slightly softer."
+  },
+  "ramen_noodle_crates": {
+    "model": "meshy",
+    "reason": "Larger crates, labels on both faces, 麺 roundels crisp."
+  },
+  "ramen_soy_bottles": {
+    "model": "meshy",
+    "reason": "Kikkoman / mirin labels crisp and correctly ordered."
+  },
+  "ramen_trash_bin": {
+    "model": "meshy",
+    "reason": "Grey tone and swing lid match the reference."
+  },
+  "ramen_chashu_tray": {
+    "model": "tripo-h31",
+    "reason": "Dark glossy braised logs and twine read like the reference; Meshy pork too pale."
+  },
+  "ramen_cleaver_board": {
+    "model": "meshy",
+    "reason": "Cleaner cleaver blade and sliced chashu; both carved the scarred block well."
+  },
+  "ramen_colander": {
+    "model": "meshy",
+    "reason": "Brighter brushed steel and crisp perforations; near tie."
+  },
+  "ramen_egg_container": {
+    "model": "meshy",
+    "reason": "Eggs and marinade visible through the tub, lid beside it; H3.1 eggs barely read."
+  },
+  "ramen_flour_sacks": {
+    "model": "tripo-h31",
+    "reason": "Both printed labels crisp front and back; Meshy lost the back label."
+  },
+  "ramen_plate_stack": {
+    "model": "meshy",
+    "reason": "Oval gyoza plates with blue rim like the reference; H3.1 rounder."
+  },
+  "ramen_shelf_jars": {
+    "model": "tripo-h31",
+    "reason": "Every jar and label from the reference survives; Meshy merged items into tubs."
+  },
+  "ramen_stockpot_small": {
+    "model": "meshy",
+    "reason": "Lid sits ajar with dents and scorched base; H3.1 lid too dark."
+  },
+  "ramen_stockpot_tall": {
+    "model": "meshy",
+    "reason": "Tall proportions and scorched bottom match; H3.1 squat."
+  },
+  "ramen_ashtray": {
+    "model": "meshy",
+    "reason": "Wider with visible butts; both came out opaque, glass coat added in prep."
+  },
+  "ramen_bucket_strainer": {
+    "model": "meshy",
+    "reason": "Larger chinois with handle and stained bucket, matches the reference."
+  },
+  "ramen_condiment_tray2": {
+    "model": "tripo-h31",
+    "reason": "Readable 醤油/ラー油 labels and lacquer tray; Meshy labels smeared."
+  },
+  "ramen_fire_extinguisher": {
+    "model": "tripo-h31",
+    "reason": "Front label and hose intact; Meshy label washed out."
+  },
+  "ramen_menu_stand": {
+    "model": "tripo-h31",
+    "reason": "Menu photos and prices crisp; fictional shop name 山虎."
+  },
+  "ramen_mop_bucket": {
+    "model": "meshy",
+    "reason": "Mop head and wringer complete, caution print; H3.1 lost the mop."
+  },
+  "ramen_newspaper": {
+    "model": "tripo-h31",
+    "reason": "Headline and photo legible; Meshy lost the back texture."
+  },
+  "ramen_rice_sack": {
+    "model": "meshy",
+    "reason": "Label on both faces, folded top; H3.1 back label garbled."
+  },
+  "ramen_smartphone": {
+    "model": "tripo-h31",
+    "reason": "Cracked screen and worn case like the reference."
+  },
+  "ramen_tongs": {
+    "model": "tripo-h31",
+    "reason": "Two pairs crossed as in the reference; Meshy pair merged."
+  },
+  "ramen_wall_clock": {
+    "model": "meshy",
+    "reason": "Clean dial and yellowed frame; H3.1 back is a blank disc either way."
+  },
+  "ramen_gyoza_griddle": {
+    "model": "none",
+    "reason": "Not placed: both models carry the real Rinnai brand from the reference."
+  },
+  "ramen_beer_bottle_glass_nb": {
+    "model": "meshy",
+    "reason": "De-branded 富士ビール label reads crisp; glass coat added in prep."
+  },
+  "ramen_cat_dish": {
+    "model": "meshy",
+    "reason": "Kibble and water bowls on the mat, closest colours."
+  },
+  "ramen_coins": {
+    "model": "tripo-h31",
+    "reason": "Flat pile with 100/10/1 yen faces legible."
+  },
+  "ramen_garlic_press": {
+    "model": "tripo-h31",
+    "reason": "Press with loose cloves and skins like the reference."
+  },
+  "ramen_ladle_pair": {
+    "model": "tripo-h31",
+    "reason": "Two ladles with hooked handles and residue; Meshy bowls flattened."
+  },
+  "ramen_power_strip": {
+    "model": "tripo-h31",
+    "reason": "Plugs and coiled cables intact; Meshy cables fused."
+  },
+  "ramen_tea_cup": {
+    "model": "meshy",
+    "reason": "Richer speckled glaze and green tea inside."
+  },
+  "ramen_ticket_tray": {
+    "model": "tripo-h31",
+    "reason": "Meal tickets and coins readable in the blue tray."
+  },
+  "ramen_spice_tins_nb": {
+    "model": "tripo-h31",
+    "reason": "De-branded 七味/にんにく tins and jars all legible; Meshy collapsed the cluster."
+  },
+  "ramen_shelf_jars_nb": {
+    "model": "tripo-h31",
+    "reason": "All fictional 山田食品/丸山 labels survive; Meshy dropped jars."
+  },
+  "ramen_cardboard_boxes_nb": {
+    "model": "tripo-h31",
+    "reason": "山田食品/丸金醤油/大和製麺 crisp; Meshy lettering garbled."
+  },
+  "ramen_flour_sacks_nb": {
+    "model": "tripo-h31",
+    "reason": "大和製粉 labels crisp on both sacks; Meshy front only."
+  },
+  "ramen_lighter_cigs_nb": {
+    "model": "meshy",
+    "reason": "銀河 pack and lighter, label on the front face; near tie."
+  },
+  "ramen_vending_machine_nb": {
+    "model": "meshy",
+    "reason": "さくら飲料 branding on front and side, stocked display; H3.1 side blank."
+  },
+  "ramen_radio_nb": {
+    "model": "meshy",
+    "reason": "KOSEI cassette front crisp and full back; H3.1 back muddy."
+  },
+  "ramen_tape_roll_nb": {
+    "model": "meshy",
+    "reason": "Printed core and unbranded marker; near tie."
+  },
+  "ramen_hook_items_nb": {
+    "model": "tripo-h31",
+    "reason": "Keys, fly swatter and plain bag on the rail as in the reference."
+  },
+  "ramen_coat_hooks_nb": {
+    "model": "tripo-h31",
+    "reason": "Jackets, cap and plain bag in reference order."
+  },
+  "ramen_kamidana": {
+    "model": "meshy",
+    "reason": "Shrine, sakaki vases and ofuda modelled; H3.1 back is a flat board either way."
+  },
+  "ramen_daruma": {
+    "model": "meshy",
+    "reason": "Face and 福 crisp; both backs plain."
+  },
+  "ramen_rubber_boots": {
+    "model": "tripo-h31",
+    "reason": "Only model (Meshy timed out); matches the reference closely."
+  },
+  "ramen_beni_shoga_pot": {
+    "model": "tripo-h31",
+    "reason": "Only model (Meshy timed out); pickled ginger and tongs read."
+  },
+  "ramen_towel_crumpled": {
+    "model": "tripo-h31",
+    "reason": "Only model (Meshy timed out); checked stained towel matches."
+  },
+  "ramen_napkins_used": {
+    "model": "tripo-h31",
+    "reason": "Only model (Meshy timed out); stained crumpled napkins match."
+  },
+  "ramen_junction_box": {
+    "model": "none",
+    "reason": "Not placed: breaker carries the real CHNT brand on reference and model."
+  }
+}

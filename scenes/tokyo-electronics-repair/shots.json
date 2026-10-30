@@ -1,0 +1,521 @@
+{
+  "defaults": {
+    "fps": 24,
+    "frames": 96,
+    "res": [
+      1920,
+      1080
+    ],
+    "aspect": "2.39",
+    "samples": 96,
+    "shutter": 180,
+    "sensor": "s35",
+    "fstop": 2.8,
+    "ease": "inout",
+    "handheld": 0
+  },
+  "shots": [
+    {
+      "name": "s1_street_establish",
+      "move": "push_in",
+      "frames": 72,
+      "handheld": 0.2,
+      "fstop": 2.8,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            1.7,
+            -3.95,
+            1.55
+          ],
+          "aim": [
+            1.6,
+            1.8,
+            1.05
+          ],
+          "lens": 18
+        },
+        {
+          "t": 1,
+          "pos": [
+            1.75,
+            -3.1,
+            1.5
+          ],
+          "aim": [
+            1.3,
+            2.2,
+            1
+          ]
+        }
+      ],
+      "focus": {
+        "mode": "rack",
+        "keys": [
+          {
+            "t": 0,
+            "obj": "aframe_"
+          },
+          {
+            "t": 0.3,
+            "obj": "aframe_"
+          },
+          {
+            "t": 0.85,
+            "obj": "counter_lamp"
+          }
+        ]
+      },
+      "samples": 56
+    },
+    {
+      "name": "s2_shop_wide_drift",
+      "move": "truck",
+      "frames": 72,
+      "handheld": 0.25,
+      "fstop": 4,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            3.5,
+            6.1,
+            1.55
+          ],
+          "aim": [
+            1.1,
+            1.3,
+            0.95
+          ],
+          "lens": 20
+        },
+        {
+          "t": 1,
+          "pos": [
+            2.75,
+            6.05,
+            1.5
+          ],
+          "aim": [
+            0.75,
+            1.6,
+            0.95
+          ]
+        }
+      ],
+      "focus": {
+        "mode": "point",
+        "pos": [
+          1.2,
+          2.8,
+          1
+        ]
+      },
+      "samples": 56
+    },
+    {
+      "name": "s3_bench_rack_100",
+      "move": "static",
+      "frames": 96,
+      "handheld": 0.35,
+      "fstop": 2,
+      "blades": 7,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            1.25,
+            3.55,
+            1.08
+          ],
+          "aim": [
+            0.34,
+            2.2,
+            1
+          ],
+          "lens": 100
+        }
+      ],
+      "focus": {
+        "mode": "rack",
+        "keys": [
+          {
+            "t": 0,
+            "obj": "helping_hands"
+          },
+          {
+            "t": 0.3,
+            "obj": "helping_hands"
+          },
+          {
+            "t": 0.7,
+            "obj": "oscilloscope"
+          }
+        ]
+      },
+      "samples": 64
+    },
+    {
+      "name": "s4_scope_135_push",
+      "move": "push_in",
+      "frames": 72,
+      "handheld": 0.3,
+      "fstop": 2.8,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            1.55,
+            2.95,
+            1.12
+          ],
+          "aim_obj": "oscilloscope",
+          "aim_offset": [
+            -0.03,
+            -0.05,
+            0.03
+          ],
+          "lens": 135
+        },
+        {
+          "t": 1,
+          "pos": [
+            1.35,
+            2.83,
+            1.1
+          ],
+          "aim_obj": "oscilloscope",
+          "aim_offset": [
+            -0.03,
+            -0.05,
+            0.03
+          ]
+        }
+      ],
+      "focus": {
+        "mode": "point",
+        "pos": [
+          0.46,
+          2.25,
+          1
+        ]
+      },
+      "samples": 64
+    },
+    {
+      "name": "s5_counter_push",
+      "move": "push_in",
+      "frames": 72,
+      "handheld": 0.2,
+      "fstop": 2.4,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            2.75,
+            3.65,
+            1.4
+          ],
+          "aim_obj": "cash_register",
+          "aim_offset": [
+            -0.45,
+            0,
+            0.08
+          ],
+          "lens": 35
+        },
+        {
+          "t": 1,
+          "pos": [
+            2.8,
+            3.05,
+            1.3
+          ],
+          "aim_obj": "display_case",
+          "aim_offset": [
+            0.25,
+            0,
+            0.02
+          ]
+        }
+      ],
+      "focus": {
+        "mode": "rack",
+        "keys": [
+          {
+            "t": 0,
+            "obj": "counter_laptop"
+          },
+          {
+            "t": 0.45,
+            "obj": "counter_laptop"
+          },
+          {
+            "t": 0.85,
+            "obj": "display_case"
+          }
+        ]
+      },
+      "samples": 56
+    },
+    {
+      "name": "s6_bench_dolly_zoom",
+      "move": "dolly_zoom",
+      "frames": 72,
+      "fstop": 2.8,
+      "handheld": 0.1,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            2.3,
+            2.75,
+            1.25
+          ],
+          "aim_obj": "helping_hands",
+          "lens": 85
+        },
+        {
+          "t": 1,
+          "pos": [
+            1.05,
+            2.72,
+            1.12
+          ]
+        }
+      ],
+      "subject": "helping_hands",
+      "focus": {
+        "mode": "track",
+        "obj": "helping_hands"
+      },
+      "samples": 56
+    },
+    {
+      "name": "s7_rack_tv_85",
+      "move": "truck",
+      "frames": 72,
+      "handheld": 0.3,
+      "fstop": 2,
+      "blades": 0,
+      "samples": 64,
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            2.7,
+            1.85,
+            1.5
+          ],
+          "aim_obj": "fill_crt_2",
+          "aim_offset": [
+            0,
+            0.28,
+            -0.02
+          ],
+          "lens": 50
+        },
+        {
+          "t": 1,
+          "pos": [
+            2.7,
+            2.1,
+            1.48
+          ],
+          "aim_obj": "fill_crt_2",
+          "aim_offset": [
+            0,
+            0.22,
+            -0.02
+          ]
+        }
+      ],
+      "focus": {
+        "mode": "rack",
+        "keys": [
+          {
+            "t": 0,
+            "pos": [
+              3.73,
+              2.4,
+              1.42
+            ]
+          },
+          {
+            "t": 0.35,
+            "pos": [
+              3.73,
+              2.4,
+              1.42
+            ]
+          },
+          {
+            "t": 0.75,
+            "obj": "fill_crt_2"
+          }
+        ]
+      }
+    },
+    {
+      "name": "h1_back_to_bench",
+      "move": "path",
+      "frames": 216,
+      "fstop": 3.2,
+      "samples": 56,
+      "ease": "inout",
+      "handheld": {
+        "profile": "walk",
+        "amount": 1
+      },
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            2.05,
+            5.3,
+            1.6
+          ],
+          "aim": [
+            1.6,
+            1.6,
+            1.2
+          ],
+          "lens": 26
+        },
+        {
+          "t": 0.4,
+          "pos": [
+            1.95,
+            4.2,
+            1.56
+          ],
+          "aim": [
+            2.7,
+            2.9,
+            1.15
+          ]
+        },
+        {
+          "t": 0.72,
+          "pos": [
+            1.55,
+            3.35,
+            1.45
+          ],
+          "aim": [
+            0.7,
+            2.5,
+            1.02
+          ]
+        },
+        {
+          "t": 1,
+          "pos": [
+            1.18,
+            2.98,
+            1.3
+          ],
+          "aim": [
+            0.42,
+            2.45,
+            0.98
+          ]
+        }
+      ]
+    },
+    {
+      "name": "h2_shop_walkaround",
+      "move": "path",
+      "frames": 312,
+      "fstop": 3.2,
+      "samples": 56,
+      "ease": "inout",
+      "handheld": {
+        "profile": "walk",
+        "amount": 1
+      },
+      "keys": [
+        {
+          "t": 0,
+          "pos": [
+            2.05,
+            0.62,
+            1.6
+          ],
+          "aim": [
+            3.75,
+            2.6,
+            1.3
+          ],
+          "lens": 24
+        },
+        {
+          "t": 0.2,
+          "pos": [
+            1.82,
+            1.05,
+            1.6
+          ],
+          "aim": [
+            3.75,
+            3.6,
+            1.2
+          ]
+        },
+        {
+          "t": 0.42,
+          "pos": [
+            1.15,
+            1.3,
+            1.6
+          ],
+          "aim": [
+            3.1,
+            2,
+            1.3
+          ]
+        },
+        {
+          "t": 0.6,
+          "pos": [
+            1.2,
+            2.4,
+            1.56
+          ],
+          "aim": [
+            2.75,
+            1.95,
+            1.38
+          ]
+        },
+        {
+          "t": 0.8,
+          "pos": [
+            1.5,
+            3.35,
+            1.5
+          ],
+          "aim": [
+            0.55,
+            3.3,
+            1
+          ]
+        },
+        {
+          "t": 1,
+          "pos": [
+            1.42,
+            3.75,
+            1.42
+          ],
+          "aim": [
+            0.5,
+            2.95,
+            0.98
+          ]
+        }
+      ]
+    }
+  ]
+}

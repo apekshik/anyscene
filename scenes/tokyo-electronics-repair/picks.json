@@ -1,0 +1,442 @@
+{
+ "oscilloscope": {
+  "model": "tripo-h31",
+  "why": "real knobs, bezel and handle; Meshy speckles the case",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "solder_station": {
+  "model": "tripo-h31",
+  "why": "cable, coil holder and dial are geometry; Meshy washed out",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "helping_hands": {
+  "model": "tripo-h31",
+  "why": "cleanest arms and clips; lens rebuilt by script"
+ },
+ "boombox_open": {
+  "model": "tripo-h31",
+  "why": "cassette mechanism and cones modelled; back is flat but faces the wall"
+ },
+ "repair_work_lamp": {
+  "model": "meshy",
+  "why": "shade proportions match the ref, clean clamp"
+ },
+ "repair_bench_psu": {
+  "model": "meshy",
+  "why": "sharper meters, knobs and binding posts are geometry",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_multimeter_red": {
+  "model": "meshy",
+  "why": "crisper LCD and dial, real kickstand",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_multimeter_yellow": {
+  "model": "meshy",
+  "why": "cleaner holster and readable display",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_vcr_open": {
+  "model": "meshy",
+  "why": "silver case and exposed transport match the ref; H3.1 darker and muddier",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_crt_tv": {
+  "model": "meshy",
+  "why": "glossy curved screen and closer proportions"
+ },
+ "repair_vintage_radio": {
+  "model": "meshy",
+  "why": "grille cloth and dial read better; H3.1 back is blank",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_turntable": {
+  "model": "tripo-h31",
+  "why": "darker platter and tonearm read as real; Meshy lid blotchy",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_desk_fan": {
+  "model": "meshy",
+  "why": "blades and cage silhouette closest to the ref",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_kerosene_heater": {
+  "model": "meshy",
+  "why": "lit viewing window and cage both clean",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_rice_cooker": {
+  "model": "meshy",
+  "why": "cleaner floral print and tag",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_cable_coils": {
+  "model": "meshy",
+  "why": "keeps the wall hook and cable separation"
+ },
+ "repair_mug": {
+  "model": "tripo-h31",
+  "why": "outside coffee drips like the ref"
+ },
+ "repair_tool_block": {
+  "model": "meshy",
+  "why": "tool order and colours match the ref"
+ },
+ "repair_boxes_b": {
+  "model": "meshy",
+  "why": "open box, bubble wrap and taped ticket match the ref",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_trash_bin": {
+  "model": "meshy",
+  "why": "fuller, crisper crumpled paper and can"
+ },
+ "repair_spray_cans": {
+  "model": "meshy",
+  "why": "sharper labels and the duster straw",
+  "retired": "round 2: brand covers the whole label; replaced by a direct-modelled generic version in dress2.py"
+ },
+ "repair_wall_clock": {
+  "model": "meshy",
+  "why": "cleaner face and numerals (the mirrored face on the back is against the wall)"
+ },
+ "repair_tissue_box": {
+  "model": "meshy",
+  "why": "print and tissue shape closest to the ref",
+  "retired": "round 2: brand covers the whole label; replaced by a direct-modelled generic version in dress2.py"
+ },
+ "repair_laptop_broken": {
+  "model": "meshy",
+  "why": "cracked screen and keyboard read clearly; H3.1 smaller and muddier",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_crt_stack": {
+  "model": "meshy",
+  "why": "three distinct sets with tags; H3.1 bottom set lost its screen on the back",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_receiver": {
+  "model": "tripo-h31",
+  "why": "wood sides and lit dial; Meshy invented a grille on the back",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_stool": {
+  "model": "tripo-h31",
+  "why": "cracked vinyl and thin chrome legs closest to the ref"
+ },
+ "repair_tool_chest": {
+  "model": "tripo-h31",
+  "why": "crisp drawers and stickers; Meshy lid blotchy",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_solder_junk": {
+  "model": "meshy",
+  "why": "flux label and wick spool read better",
+  "debranded": "round 2: brand marks texture-painted over (scenes/tokyo-electronics-repair/scripts/debrand.py)"
+ },
+ "repair_cup_noodle": {
+  "model": "tripo-h31",
+  "why": "torn lid and chopsticks match the ref; both close",
+  "retired": "round 2: brand covers the whole label; replaced by a direct-modelled generic version in dress2.py"
+ },
+ "repair_boxes_a": {
+  "model": "meshy",
+  "why": "larger marker handwriting and tags; H3.1 boxes more uniform"
+ },
+ "repair_parts_tray": {
+  "model": "meshy",
+  "why": "fuller compartments with readable components; H3.1 tray sparse"
+ },
+ "repair_oscilloscope_nb": {
+  "model": "meshy",
+  "why": "larger screen and crisper panel print; kept as backup, the fixed original stays in the scene"
+ },
+ "repair_solder_station_nb": {
+  "model": "meshy",
+  "why": "cleaner dial and holder; kept as backup, the debranded original stays"
+ },
+ "repair_boombox_open_nb": {
+  "model": "meshy",
+  "why": "brighter exposed mechanism, readable fictional badge"
+ },
+ "repair_multimeter_yellow_nb": {
+  "model": "meshy",
+  "why": "sharper LCD and dial, VOLTEK badge clean"
+ },
+ "repair_multimeter_red_nb": {
+  "model": "meshy",
+  "why": "crisper keypad and kickstand"
+ },
+ "repair_bench_psu_nb": {
+  "model": "meshy",
+  "why": "meters and knobs read better"
+ },
+ "repair_tool_chest_nb": {
+  "model": "meshy",
+  "why": "drawers and stickers sharper, open lid"
+ },
+ "repair_spray_cans_nb": {
+  "model": "meshy",
+  "why": "three distinct generic labels and the duster straw"
+ },
+ "repair_cup_noodle_nb": {
+  "model": "meshy",
+  "why": "torn lid and chopsticks closest to the ref"
+ },
+ "repair_boxes_b_nb": {
+  "model": "meshy",
+  "why": "bubble wrap and repair ticket sharper"
+ },
+ "repair_vcr_open_nb": {
+  "model": "meshy",
+  "why": "silver case and transport closest to the ref"
+ },
+ "repair_tissue_box_nb": {
+  "model": "meshy",
+  "why": "print and tissue closest to the ref"
+ },
+ "repair_rice_cooker_nb": {
+  "model": "meshy",
+  "why": "clean floral print and tag"
+ },
+ "repair_vintage_radio_nb": {
+  "model": "meshy",
+  "why": "grille and dial window read better"
+ },
+ "repair_receiver_nb": {
+  "model": "tripo-h31",
+  "why": "clean top; Meshy smeared front-panel texture across the lid"
+ },
+ "repair_solder_junk_nb": {
+  "model": "meshy",
+  "why": "flux bottle and wick spool clearer"
+ },
+ "repair_laptop_broken_nb": {
+  "model": "tripo-h31",
+  "why": "cracked screen reads; Meshy screen washed out"
+ },
+ "repair_crt_stack_nb": {
+  "model": "meshy",
+  "why": "three distinct sets with tags"
+ },
+ "repair_crt_tv_nb": {
+  "model": "meshy",
+  "why": "glossy curved screen; backup, the fixed original stays"
+ },
+ "repair_turntable_nb": {
+  "model": "meshy",
+  "why": "see-through lid and platter detail"
+ },
+ "repair_desk_fan_nb": {
+  "model": "meshy",
+  "why": "cage and blades closest to the ref"
+ },
+ "repair_kerosene_heater_nb": {
+  "model": "meshy",
+  "why": "lit window and cage clean"
+ },
+ "repair_cassette_deck": {
+  "model": "meshy",
+  "why": "VU meters and transport keys crisp"
+ },
+ "repair_amp_black": {
+  "model": "meshy",
+  "why": "knobs and buttons crisp; odd patch on the back faces the wall"
+ },
+ "repair_crt_monitor_beige": {
+  "model": "meshy",
+  "why": "deep back and paper tag"
+ },
+ "repair_portable_tv": {
+  "model": "meshy",
+  "why": "handle, antenna and dials closest to the ref"
+ },
+ "repair_tv_wood": {
+  "model": "meshy",
+  "why": "curved screen and wood cabinet; H3.1 screen flatter"
+ },
+ "repair_speaker_pair": {
+  "model": "meshy",
+  "why": "woofer and tweeter detail"
+ },
+ "repair_camcorder": {
+  "model": "meshy",
+  "why": "lens and viewfinder detail"
+ },
+ "repair_microwave": {
+  "model": "meshy",
+  "why": "dirty door and ticket"
+ },
+ "repair_dotmatrix_printer": {
+  "model": "meshy",
+  "why": "tractor paper and lid"
+ },
+ "repair_fax_phone": {
+  "model": "meshy",
+  "why": "handset cord and keypad"
+ },
+ "repair_karaoke_machine": {
+  "model": "meshy",
+  "why": "screen and microphone"
+ },
+ "repair_electric_kettle": {
+  "model": "meshy",
+  "why": "buttons and window"
+ },
+ "repair_job_bin": {
+  "model": "meshy",
+  "why": "bin contents and ticket"
+ },
+ "repair_display_case": {
+  "model": "meshy",
+  "why": "real glass frame; H3.1 filled sides with white panels"
+ },
+ "repair_calculator": {
+  "model": "tripo-h31",
+  "why": "clean display; Meshy display garbled"
+ },
+ "repair_umbrella_stand": {
+  "model": "tripo-h31",
+  "why": "keeps the black umbrella of the ref"
+ },
+ "repair_shop_vac": {
+  "model": "meshy",
+  "why": "hose wrap and casters"
+ },
+ "repair_step_stool": {
+  "model": "meshy",
+  "why": "paint drips and proportions"
+ },
+ "repair_floor_fan": {
+  "model": "meshy",
+  "why": "cage and cord"
+ },
+ "repair_storage_boxes_flat": {
+  "model": "meshy",
+  "why": "string tie and marker labels"
+ },
+ "repair_bicycle": {
+  "model": "meshy",
+  "why": "basket and rack detail"
+ },
+ "repair_aframe_sign": {
+  "model": "meshy",
+  "why": "menu legible on both faces"
+ },
+ "repair_pc_tower": {
+  "model": "meshy",
+  "why": "open side, cabling and drive bays crisp"
+ },
+ "repair_radio_cassette": {
+  "model": "meshy",
+  "why": "dial and grille sharper"
+ },
+ "repair_cable_crate": {
+  "model": "tripo-h31",
+  "why": "only model: Meshy failed twice (timeout / 422)"
+ },
+ "repair_parts_bins": {
+  "model": "tripo-h31",
+  "why": "labels and contents; Meshy bins came out empty"
+ },
+ "repair_parts_cart": {
+  "model": "meshy",
+  "why": "load on every tier reads"
+ },
+ "repair_hot_air_station": {
+  "model": "meshy",
+  "why": "displays and hose"
+ },
+ "repair_magnifier_lamp": {
+  "model": "meshy",
+  "why": "lens glass and arm"
+ },
+ "repair_pcb_vise": {
+  "model": "meshy",
+  "why": "cleaner board and knobs"
+ },
+ "repair_fume_extractor": {
+  "model": "meshy",
+  "why": "filter grid and stand"
+ },
+ "repair_cash_register": {
+  "model": "tripo-h31",
+  "why": "clean display; Meshy display garbled"
+ },
+ "repair_desk_phone": {
+  "model": "meshy",
+  "why": "handset cord and keys"
+ },
+ "repair_counter_lamp": {
+  "model": "meshy",
+  "why": "shade wear and pull chains"
+ },
+ "repair_pcbs_loose": {
+  "model": "meshy",
+  "why": "more distinct boards"
+ },
+ "repair_screw_jar": {
+  "model": "tripo-h31",
+  "why": "contents visible through the glass; Meshy jar milky"
+ },
+ "repair_screwdriver_case": {
+  "model": "meshy",
+  "why": "bits and lid"
+ },
+ "repair_tweezers": {
+  "model": "meshy",
+  "why": "tip shapes"
+ },
+ "repair_ashtray": {
+  "model": "tripo-h31",
+  "why": "butts visible; neither is glass"
+ },
+ "repair_tape_rolls": {
+  "model": "meshy",
+  "why": "kapton and masking tape layering"
+ },
+ "repair_receipts": {
+  "model": "tripo-h31",
+  "why": "only model: Meshy failed"
+ },
+ "repair_cable_bundle": {
+  "model": "meshy",
+  "why": "twist tie and connector ends"
+ },
+ "repair_canned_coffee": {
+  "model": "meshy",
+  "why": "crushed can"
+ },
+ "repair_desolder_pump": {
+  "model": "meshy",
+  "why": "knurled barrel"
+ },
+ "repair_flux_bottles": {
+  "model": "meshy",
+  "why": "needle tips and labels"
+ },
+ "repair_component_bag": {
+  "model": "meshy",
+  "why": "contents and label"
+ },
+ "repair_ribbon_cables": {
+  "model": "meshy",
+  "why": "connectors and red stripe"
+ },
+ "repair_extension_block": {
+  "model": "meshy",
+  "why": "plugs and cord"
+ },
+ "repair_sticky_notes": {
+  "model": "meshy",
+  "why": "handwriting on the top note"
+ },
+ "repair_remote_controls": {
+  "model": "meshy",
+  "why": "buttons and open battery bay"
+ },
+ "repair_vending_machine": {
+  "model": "meshy",
+  "why": "lit bottle rows; generic labels"
+ }
+}

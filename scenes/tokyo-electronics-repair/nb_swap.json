@@ -1,0 +1,18 @@
+{
+ "boombox_open": "repair_boombox_open_nb",
+ "repair_multimeter_yellow": "repair_multimeter_yellow_nb",
+ "repair_multimeter_red": "repair_multimeter_red_nb",
+ "repair_bench_psu": "repair_bench_psu_nb",
+ "repair_tool_chest": "repair_tool_chest_nb",
+ "repair_boxes_b": "repair_boxes_b_nb",
+ "repair_vcr_open": "repair_vcr_open_nb",
+ "repair_rice_cooker": "repair_rice_cooker_nb",
+ "repair_vintage_radio": "repair_vintage_radio_nb",
+ "repair_receiver": "repair_receiver_nb",
+ "repair_solder_junk": "repair_solder_junk_nb",
+ "repair_laptop_broken": "repair_laptop_broken_nb",
+ "repair_crt_stack": "repair_crt_stack_nb",
+ "repair_turntable": "repair_turntable_nb",
+ "repair_desk_fan": "repair_desk_fan_nb",
+ "repair_kerosene_heater": "repair_kerosene_heater_nb"
+}

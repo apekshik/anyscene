@@ -1,0 +1,1071 @@
+{
+ "room": {
+  "w": 4.2,
+  "d": 6.5,
+  "h": 2.7,
+  "note": "x across, y from storefront (y=0) to back wall (y=6.5), z up. Bench along left wall x=0."
+ },
+ "generate": [
+  {
+   "id": "oscilloscope",
+   "ref": "refs/props/oscilloscope.json",
+   "fit": "h",
+   "size": 0.21,
+   "prompt": "existing",
+   "hero": true
+  },
+  {
+   "id": "solder_station",
+   "ref": "refs/props/solder_station.json",
+   "fit": "h",
+   "size": 0.22,
+   "prompt": "existing",
+   "hero": true
+  },
+  {
+   "id": "helping_hands",
+   "ref": "refs/props/helping_hands.json",
+   "fit": "h",
+   "size": 0.26,
+   "prompt": "existing",
+   "hero": true
+  },
+  {
+   "id": "boombox_open",
+   "ref": "refs/props/boombox_open.json",
+   "fit": "max",
+   "size": 0.62,
+   "prompt": "existing",
+   "hero": true
+  },
+  {
+   "id": "repair_multimeter_yellow",
+   "fit": "max",
+   "size": 0.19,
+   "prompt": "A yellow analog-digital handheld multimeter with a rotary dial, LCD display and rubber holster, red and black test leads coiled beside it, lying flat face up.",
+   "hero": true
+  },
+  {
+   "id": "repair_multimeter_red",
+   "fit": "max",
+   "size": 0.2,
+   "prompt": "A red and grey digital multimeter standing on its kickstand, large LCD, rotary selector, test probes plugged in and draped down.",
+   "hero": true
+  },
+  {
+   "id": "repair_bench_psu",
+   "fit": "max",
+   "size": 0.3,
+   "prompt": "A 1990s laboratory bench DC power supply, grey metal case, two analog needle meters, voltage and current knobs, red and black binding posts, worn front panel.",
+   "hero": true
+  },
+  {
+   "id": "repair_work_lamp",
+   "fit": "h",
+   "size": 0.62,
+   "prompt": "A black metal articulated architect desk lamp with a cone shade and spring arms, mounted on a C-clamp, arm raised and bent so the shade points down, scuffed paint.",
+   "hero": true
+  },
+  {
+   "id": "repair_vcr_open",
+   "fit": "max",
+   "size": 0.43,
+   "prompt": "A silver 1990s VHS video cassette recorder with its top cover removed, exposing the video head drum, tape transport, circuit boards and ribbon cables.",
+   "hero": true
+  },
+  {
+   "id": "repair_crt_tv",
+   "fit": "h",
+   "size": 0.36,
+   "prompt": "A small 14-inch beige CRT television from the late 1980s with a curved dark screen, buttons and a rotary channel knob below the screen, dusty."
+  },
+  {
+   "id": "repair_vintage_radio",
+   "fit": "max",
+   "size": 0.32,
+   "prompt": "A 1960s Japanese tabletop transistor radio in a wood-grain cabinet with a fabric speaker grille, a tuning dial window and two cream knobs."
+  },
+  {
+   "id": "repair_receiver",
+   "fit": "max",
+   "size": 0.43,
+   "prompt": "A 1970s silver hifi stereo receiver with a long blue-lit tuning dial, two signal meters, a row of silver knobs and toggle switches, wooden side panels."
+  },
+  {
+   "id": "repair_turntable",
+   "fit": "max",
+   "size": 0.45,
+   "prompt": "A vintage direct-drive record turntable with a dark wood plinth, silver platter with strobe dots, tonearm, and a dusty smoked plastic lid propped open."
+  },
+  {
+   "id": "repair_rice_cooker",
+   "fit": "h",
+   "size": 0.25,
+   "prompt": "A white Japanese household electric rice cooker with a flower pattern, a domed lid and a carry handle, a handwritten repair tag tied to the handle with string."
+  },
+  {
+   "id": "repair_desk_fan",
+   "fit": "h",
+   "size": 0.42,
+   "prompt": "A small vintage Japanese electric desk fan with a light blue plastic body, metal wire guard, three translucent blades and push buttons on the base."
+  },
+  {
+   "id": "repair_kerosene_heater",
+   "fit": "h",
+   "size": 0.45,
+   "prompt": "A Japanese convection kerosene heater (stove), round white metal body with a perforated chimney top, a small viewing window and a fuel gauge, slightly yellowed."
+  },
+  {
+   "id": "repair_tool_chest",
+   "fit": "h",
+   "size": 1,
+   "prompt": "A red steel rolling mechanic's tool chest with a top lid and stacked drawers with aluminium handles, on caster wheels, scratched and stickered."
+  },
+  {
+   "id": "repair_stool",
+   "fit": "h",
+   "size": 0.62,
+   "prompt": "A round shop stool with a cracked black vinyl seat and four chrome steel tube legs with a foot ring, worn."
+  },
+  {
+   "id": "repair_mug",
+   "fit": "h",
+   "size": 0.1,
+   "prompt": "A white ceramic coffee mug with coffee stains on the outside and a dark ring of old coffee inside, chipped rim.",
+   "hero": true
+  },
+  {
+   "id": "repair_cup_noodle",
+   "fit": "h",
+   "size": 0.12,
+   "prompt": "An empty instant cup noodle cup with its paper lid torn half open and a pair of disposable wooden chopsticks resting across the top.",
+   "hero": true
+  },
+  {
+   "id": "repair_solder_junk",
+   "fit": "max",
+   "size": 0.2,
+   "prompt": "A small cluster of soldering consumables: a spool of solder wire, a bottle of liquid flux, a roll of desoldering wick, a few loose snipped component leads.",
+   "hero": true
+  },
+  {
+   "id": "repair_parts_tray",
+   "fit": "max",
+   "size": 0.3,
+   "prompt": "A black antistatic compartment tray full of salvaged electronic components: electrolytic capacitors, resistors, screws, a few chips and small springs.",
+   "hero": true
+  },
+  {
+   "id": "repair_tool_block",
+   "fit": "h",
+   "size": 0.2,
+   "prompt": "A wooden block tool holder with a set of precision screwdrivers, tweezers, a pair of side cutters and pliers standing upright in its holes.",
+   "hero": true
+  },
+  {
+   "id": "repair_cable_coils",
+   "fit": "h",
+   "size": 0.6,
+   "prompt": "A bundle of assorted coiled cables, power cords, RCA leads and an extension cord hanging together from a single metal wall hook."
+  },
+  {
+   "id": "repair_boxes_a",
+   "fit": "h",
+   "size": 0.7,
+   "prompt": "A stack of three cardboard boxes of different sizes containing old electronics waiting for pickup, Japanese marker writing on the sides, each with a paper repair tag taped on."
+  },
+  {
+   "id": "repair_boxes_b",
+   "fit": "h",
+   "size": 0.55,
+   "prompt": "Two worn cardboard boxes stacked, the top one open with a cassette deck sticking out, wrapped in bubble wrap, taped paper repair ticket."
+  },
+  {
+   "id": "repair_trash_bin",
+   "fit": "h",
+   "size": 0.35,
+   "prompt": "A small grey plastic office waste bin overflowing with crumpled paper, an empty drink can and plastic wrappers."
+  },
+  {
+   "id": "repair_spray_cans",
+   "fit": "h",
+   "size": 0.21,
+   "prompt": "Three aerosol spray cans standing together: contact cleaner, compressed air duster with a red straw, and a lubricant can, worn labels."
+  },
+  {
+   "id": "repair_wall_clock",
+   "fit": "max",
+   "size": 0.3,
+   "prompt": "A round cheap white plastic office wall clock with black numerals and hands, a slightly yellowed face, viewed from the front."
+  },
+  {
+   "id": "repair_tissue_box",
+   "fit": "max",
+   "size": 0.24,
+   "prompt": "A Japanese paper tissue box with a soft pastel pattern and a tissue pulled up from the slot."
+  },
+  {
+   "id": "repair_laptop_broken",
+   "fit": "max",
+   "size": 0.36,
+   "prompt": "An old grey business laptop opened at 110 degrees, cracked dark screen, a couple of missing keys, screws and the bottom panel lying beside it.",
+   "hero": true
+  },
+  {
+   "id": "repair_crt_stack",
+   "fit": "h",
+   "size": 1.1,
+   "prompt": "A stack of three old CRT televisions and monitors of different sizes and colours piled on top of each other, dusty, with repair tags."
+  },
+  {
+   "id": "repair_oscilloscope_nb",
+   "replaces": "oscilloscope",
+   "fit": "h",
+   "size": 0.21,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1980s analog CRT oscilloscope with a beige and grey metal case, round-cornered green-tinted screen with graticule, rows of knobs, toggle switches and BNC connectors on the front panel, small printed labels, scuffed paint. The only brand name visible is the fictional brand \"KOSEI\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_solder_station_nb",
+   "replaces": "solder_station",
+   "fit": "h",
+   "size": 0.22,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A worn analog soldering station: a grey control unit with a temperature dial, a soldering iron resting in its coiled-wire holder stand with a yellow brass-wool tip cleaner, the iron's cable connecting to the unit. The only brand name visible is the fictional brand \"HANDA-YA\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_boombox_open_nb",
+   "replaces": "boombox_open",
+   "fit": "max",
+   "size": 0.62,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1980s silver cassette boombox radio lying open for repair with its back cover removed, exposing circuit boards, wires and the tape mechanism; the removed back panel and a few screws lying next to it. The only brand name visible is the fictional brand \"SONICA\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_multimeter_yellow_nb",
+   "replaces": "repair_multimeter_yellow",
+   "fit": "max",
+   "size": 0.19,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A yellow analog-digital handheld multimeter with a rotary dial, LCD display and rubber holster, red and black test leads coiled beside it, lying flat face up. The only brand name visible is the fictional brand \"VOLTEK\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_multimeter_red_nb",
+   "replaces": "repair_multimeter_red",
+   "fit": "max",
+   "size": 0.2,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A red and grey digital multimeter standing on its kickstand, large LCD, rotary selector, test probes plugged in and draped down. The only brand name visible is the fictional brand \"VOLTEK\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_bench_psu_nb",
+   "replaces": "repair_bench_psu",
+   "fit": "max",
+   "size": 0.3,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1990s laboratory bench DC power supply, grey metal case, two analog needle meters, voltage and current knobs, red and black binding posts, worn front panel. The only brand name visible is the fictional brand \"DENKO\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_tool_chest_nb",
+   "replaces": "repair_tool_chest",
+   "fit": "h",
+   "size": 1,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A red steel rolling mechanic's tool chest with a top lid and stacked drawers with aluminium handles, on caster wheels, scratched and stickered. The only brand name visible is the fictional brand \"IRONSIDE\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_spray_cans_nb",
+   "replaces": "repair_spray_cans",
+   "fit": "h",
+   "size": 0.21,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Three aerosol spray cans standing together: contact cleaner, compressed air duster with a red straw, and a lubricant can, worn labels. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_cup_noodle_nb",
+   "replaces": "repair_cup_noodle",
+   "fit": "h",
+   "size": 0.12,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "An empty instant cup noodle cup with its paper lid torn half open and a pair of disposable wooden chopsticks resting across the top. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_boxes_b_nb",
+   "replaces": "repair_boxes_b",
+   "fit": "h",
+   "size": 0.55,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Two worn cardboard boxes stacked, the top one open with a cassette deck sticking out, wrapped in bubble wrap, taped paper repair ticket. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_vcr_open_nb",
+   "replaces": "repair_vcr_open",
+   "fit": "max",
+   "size": 0.43,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A silver 1990s VHS video cassette recorder with its top cover removed, exposing the video head drum, tape transport, circuit boards and ribbon cables. The only brand name visible is the fictional brand \"MIRAVISION\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_tissue_box_nb",
+   "replaces": "repair_tissue_box",
+   "fit": "max",
+   "size": 0.24,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A Japanese paper tissue box with a soft pastel pattern and a tissue pulled up from the slot. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_rice_cooker_nb",
+   "replaces": "repair_rice_cooker",
+   "fit": "h",
+   "size": 0.25,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A white Japanese household electric rice cooker with a flower pattern, a domed lid and a carry handle, a handwritten repair tag tied to the handle with string. The only brand name visible is the fictional brand \"HARUKA\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_vintage_radio_nb",
+   "replaces": "repair_vintage_radio",
+   "fit": "max",
+   "size": 0.32,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1960s Japanese tabletop transistor radio in a wood-grain cabinet with a fabric speaker grille, a tuning dial window and two cream knobs. The only brand name visible is the fictional brand \"AOZORA\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_receiver_nb",
+   "replaces": "repair_receiver",
+   "fit": "max",
+   "size": 0.43,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1970s silver hifi stereo receiver with a long blue-lit tuning dial, two signal meters, a row of silver knobs and toggle switches, wooden side panels. The only brand name visible is the fictional brand \"SOUNDHILL\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_solder_junk_nb",
+   "replaces": "repair_solder_junk",
+   "fit": "max",
+   "size": 0.2,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small cluster of soldering consumables: a spool of solder wire, a bottle of liquid flux, a roll of desoldering wick, a few loose snipped component leads. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_laptop_broken_nb",
+   "replaces": "repair_laptop_broken",
+   "fit": "max",
+   "size": 0.36,
+   "hero": true,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "An old grey business laptop opened at 110 degrees, cracked dark screen, a couple of missing keys, screws and the bottom panel lying beside it. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_crt_stack_nb",
+   "replaces": "repair_crt_stack",
+   "fit": "h",
+   "size": 1.1,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A stack of three old CRT televisions and monitors of different sizes and colours piled on top of each other, dusty, with repair tags. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_crt_tv_nb",
+   "replaces": "repair_crt_tv",
+   "fit": "h",
+   "size": 0.36,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small 14-inch beige CRT television from the late 1980s with a curved dark screen, buttons and a rotary channel knob below the screen, dusty. The only brand name visible is the fictional brand \"MIRAVISION\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_turntable_nb",
+   "replaces": "repair_turntable",
+   "fit": "max",
+   "size": 0.45,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A vintage direct-drive record turntable with a dark wood plinth, silver platter with strobe dots, tonearm, and a dusty smoked plastic lid propped open. The only brand name visible is the fictional brand \"SOUNDHILL\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_desk_fan_nb",
+   "replaces": "repair_desk_fan",
+   "fit": "h",
+   "size": 0.42,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small vintage Japanese electric desk fan with a light blue plastic body, metal wire guard, three translucent blades and push buttons on the base. The only brand name visible is the fictional brand \"KAZEMARU\"; no real-world brand names, model names or logos anywhere."
+  },
+  {
+   "id": "repair_kerosene_heater_nb",
+   "replaces": "repair_kerosene_heater",
+   "fit": "h",
+   "size": 0.45,
+   "pass": "nb",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A Japanese convection kerosene heater (stove), round white metal body with a perforated chimney top, a small viewing window and a fuel gauge, slightly yellowed. All printing and labels are generic or plain, with no real-world brand names, product names or logos."
+  },
+  {
+   "id": "repair_cassette_deck",
+   "fit": "max",
+   "size": 0.43,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1980s black stereo cassette tape deck with a single tape door, VU meters and piano-key transport buttons, dusty. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_amp_black",
+   "fit": "max",
+   "size": 0.43,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A black 1990s integrated stereo amplifier with a large volume knob, small input selector knobs and a row of push buttons, scratched top. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_crt_monitor_beige",
+   "fit": "h",
+   "size": 0.38,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A beige 1990s computer CRT monitor with a deep back, curved dark screen, small tilt-swivel base, yellowed plastic, a paper repair tag taped to the side. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_portable_tv",
+   "fit": "h",
+   "size": 0.24,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small 1980s portable black-and-white TV with a carry handle, telescopic antenna folded down and a small round speaker grille, red plastic case. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_tv_wood",
+   "fit": "h",
+   "size": 0.45,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1970s CRT television in a wood-grain cabinet with a rounded screen, two rotary channel dials on the right and four short legs. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_speaker_pair",
+   "fit": "h",
+   "size": 0.4,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A pair of small vintage bookshelf speakers in walnut veneer cabinets, one with its grille cloth removed showing the woofer and tweeter. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_camcorder",
+   "fit": "max",
+   "size": 0.3,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A 1990s VHS-C camcorder with a shoulder pad, side viewfinder and a cracked lens hood, black and grey plastic. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_microwave",
+   "fit": "max",
+   "size": 0.5,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small white household microwave oven with a dial timer and a dirty glass door, a paper repair ticket taped to the door. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_pc_tower",
+   "fit": "h",
+   "size": 0.42,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A yellowed beige 1990s PC tower computer with a floppy drive and CD drive bay, side panel removed showing the motherboard and cables. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_dotmatrix_printer",
+   "fit": "max",
+   "size": 0.45,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A beige dot-matrix printer with tractor-feed perforated paper coming out the top, dusty, lid slightly open. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_fax_phone",
+   "fit": "max",
+   "size": 0.32,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A beige 1990s home fax telephone with a corded handset, a keypad and thermal paper roll slot. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_radio_cassette",
+   "fit": "max",
+   "size": 0.35,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small silver radio cassette player with a carry handle, one round speaker, a tuning dial and a cassette door, worn. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_karaoke_machine",
+   "fit": "h",
+   "size": 0.4,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A home karaoke machine: a black box with two microphone inputs, a small built-in screen, colourful buttons, with a wired microphone resting on top. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_electric_kettle",
+   "fit": "h",
+   "size": 0.25,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A white electric hot-water pot dispenser with a push-button top and a cord, Japanese style, slightly stained. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_job_bin",
+   "fit": "max",
+   "size": 0.45,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A blue plastic storage bin holding a disassembled DVD player, loose screws in a sandwich bag and a paper repair ticket clipped to the rim. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_cable_crate",
+   "fit": "max",
+   "size": 0.45,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A black plastic milk crate overflowing with tangled power cords, AV cables, AC adapters and remote controls. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_parts_bins",
+   "fit": "h",
+   "size": 0.45,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A stack of small blue and red plastic stackable parts bins with open fronts, filled with screws, knobs and small components, handwritten labels. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_parts_cart",
+   "fit": "h",
+   "size": 0.85,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A grey steel three-tier rolling utility cart loaded with a disassembled stereo, a box of parts, cables and a coffee cup, on casters, worn. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_hot_air_station",
+   "fit": "max",
+   "size": 0.3,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A hot-air rework station: a grey control box with two digital displays and knobs, the hot-air gun resting in its holder with a coiled hose. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_magnifier_lamp",
+   "fit": "h",
+   "size": 0.55,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A white ring-light magnifier lamp on a heavy desk base with a spring arm, the round lens head tilted down, scuffed. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_pcb_vise",
+   "fit": "max",
+   "size": 0.22,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small PCB holder vise on a weighted base clamping a green circuit board with components partly desoldered. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_fume_extractor",
+   "fit": "h",
+   "size": 0.25,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small black desktop solder fume extractor fan with a square carbon filter on the front, on a tilting stand. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_cash_register",
+   "fit": "max",
+   "size": 0.4,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small old electronic cash register with a cash drawer, a receipt printer, rows of keys and a small green display, plain, no brand. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_desk_phone",
+   "fit": "max",
+   "size": 0.22,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A beige office desk telephone with a coiled cord handset and a large-key keypad, yellowed. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_counter_lamp",
+   "fit": "h",
+   "size": 0.42,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small green-shaded metal desk lamp with a weighted round base and a pull chain, worn paint. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_display_case",
+   "fit": "max",
+   "size": 0.7,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small countertop glass display showcase with a wooden frame and sliding back doors, holding used portable cassette players, old mobile phones and calculators with price tags. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_calculator",
+   "fit": "max",
+   "size": 0.17,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A grey desktop printing calculator with a paper roll and large keys, tape curling out. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_umbrella_stand",
+   "fit": "h",
+   "size": 0.7,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A metal umbrella stand by a shop door holding three wet transparent plastic umbrellas and one black umbrella, water pooled at the base. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_shop_vac",
+   "fit": "h",
+   "size": 0.55,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small grey wet-dry shop vacuum with a coiled hose wrapped around it, dusty. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_step_stool",
+   "fit": "h",
+   "size": 0.5,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small aluminium two-step folding step ladder, open, paint drips on the steps. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_floor_fan",
+   "fit": "h",
+   "size": 0.9,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A tall cream-coloured pedestal electric fan with a round metal cage, standing, the cord coiled at the base. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_storage_boxes_flat",
+   "fit": "max",
+   "size": 0.6,
+   "pass": "A",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A stack of four flat cardboard boxes of different sizes tied with plastic string, labelled in marker, slightly crushed corners. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_pcbs_loose",
+   "fit": "max",
+   "size": 0.25,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small pile of four loose salvaged green and brown circuit boards with components, one with burnt marks. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_screw_jar",
+   "fit": "h",
+   "size": 0.11,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A glass jar with a dented metal lid full of assorted screws, nuts and washers. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_screwdriver_case",
+   "fit": "max",
+   "size": 0.24,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "An open plastic case with a precision screwdriver set and interchangeable bits, a few bits missing. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_tweezers",
+   "fit": "max",
+   "size": 0.14,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Three stainless steel precision tweezers of different tip shapes lying side by side. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_ashtray",
+   "fit": "max",
+   "size": 0.14,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A round glass ashtray with several crushed cigarette butts and ash. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_tape_rolls",
+   "fit": "max",
+   "size": 0.14,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A roll of black electrical tape, a roll of yellow kapton tape and a half-used roll of masking tape stacked loosely. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_receipts",
+   "fit": "max",
+   "size": 0.22,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A messy pile of small paper receipts and handwritten repair slips held with a black binder clip. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_cable_bundle",
+   "fit": "max",
+   "size": 0.35,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A loosely coiled bundle of black power cords tied with a red twist tie, lying on a table. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_canned_coffee",
+   "fit": "h",
+   "size": 0.12,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Two empty steel canned-coffee drink cans, one crushed, plain dark brown labels with no logos. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_desolder_pump",
+   "fit": "max",
+   "size": 0.2,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A blue and silver spring-loaded desoldering pump with a white tip. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_flux_bottles",
+   "fit": "h",
+   "size": 0.11,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Two small plastic flux dispenser bottles with needle tips and a jar of rosin flux paste, generic labels. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_component_bag",
+   "fit": "max",
+   "size": 0.15,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small zip-lock plastic bag of electrolytic capacitors and resistors with a handwritten paper label. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_ribbon_cables",
+   "fit": "max",
+   "size": 0.3,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A few grey flat ribbon cables with black connectors, loosely folded. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_extension_block",
+   "fit": "max",
+   "size": 0.32,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A white power strip extension block with six sockets, several plugs inserted, cord coiled, dirty. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_sticky_notes",
+   "fit": "max",
+   "size": 0.09,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A pad of yellow sticky notes with handwriting on the top note and a ballpoint pen. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_remote_controls",
+   "fit": "max",
+   "size": 0.22,
+   "pass": "B",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "Three old TV and VCR remote controls of different sizes lying together, one with its battery cover missing. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_vending_machine",
+   "fit": "h",
+   "size": 1.83,
+   "pass": "street",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A Japanese street drink vending machine with a lit display of plastic drink bottle samples in rows, price buttons, coin slot, rain-wet, generic labels. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_bicycle",
+   "fit": "max",
+   "size": 1.75,
+   "pass": "street",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A black Japanese city bicycle (mamachari) with a front wire basket and a rear rack, standing on its kickstand, side view, wet. No real-world brand names or logos."
+  },
+  {
+   "id": "repair_aframe_sign",
+   "fit": "h",
+   "size": 0.9,
+   "pass": "street",
+   "models": [
+    "tripo-h31",
+    "meshy"
+   ],
+   "prompt": "A small A-frame sidewalk sign board for an izakaya with handwritten Japanese menu chalk text and a small lamp on top. No real-world brand names or logos."
+  }
+ ],
+ "direct": [
+  "shell (walls, ceiling, floor tiles)",
+  "storefront glass + aluminium frames + sliding door",
+  "workbench (wood top, steel frame, under-shelf)",
+  "small-parts drawer cabinets x3 with labels",
+  "wall shelves above bench",
+  "steel angle shelving x2",
+  "pegboard with hooks",
+  "fluorescent ceiling fixtures (off)",
+  "repair tags / posters / calendar planes",
+  "night street backdrop emissive plane",
+  "back door",
+  "power strips + floor cables",
+  "neon sign outside"
+ ]
+}

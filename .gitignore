@@ -1,0 +1,34 @@
+# Build outputs and generated assets: large, downloaded separately
+*.blend
+*.blend1
+*.glb
+*.vdb
+*.exr
+*.mp4
+*.png
+*.jpg
+assets/
+refs/
+out/
+cache/
+scenes/*/props/
+scenes/*/props_prebrand/
+scenes/*/compare/
+scenes/*/debrand/
+scenes/*/out/
+scenes/*/cache/
+breakdown/*/
+!breakdown/*.py
+!breakdown/*.md
+
+# Local state
+generate/spend.jsonl
+logs/
+.gpu.queue/
+.gpu.*_done
+__pycache__/
+node_modules/
+.env*
+
+# Blender writes this into the working directory
+waveletNoiseTile.bin
