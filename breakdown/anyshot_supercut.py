@@ -171,7 +171,7 @@ def end_card(out, secs=4.5):
     canvas = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(canvas)
     lines = [(font("segoeuib.ttf", 96), INK, "AnyShot", 128),
-             (font("bahnschrift.ttf", 36), BRASS, "OPEN SOURCE  ·  github.com/apekshik/anyscene", 92),
+             (font("bahnschrift.ttf", 36), BRASS, "OPEN SOURCE  ·  github.com/apekshik/anyshot", 92),
              (font("segoeuisl.ttf", 30), DIM, "AnyScene builds the set. AnyShot shoots it.", 0)]
     y = (H - sum(g for *_, g in lines) - 30) // 2
     for fnt, col, txt, g in lines:

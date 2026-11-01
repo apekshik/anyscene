@@ -1,6 +1,6 @@
 """The shared builds gallery: every build anyone ran, read from the app's persistent storage (not the fal queue, which
-only the submitter's key can read). Used by builder/app.py (/builds, /build_events) and kit/app.py (/kits,
-/kit_events). Stdlib only.
+only the submitter's key can read). Used by builder/app.py (/builds, /build_events) and by AnyKit's app.py (/kits,
+/kit_events; github.com/apekshik/anykit keeps a synced copy). Stdlib only.
 
 A build lives at <root>/<id>/ (b_... scenes, k_... kits). out/events.jsonl is its stage stream (scene_builder.emit),
 out/.alive is touched every 20 s while an attempt runs, and <root>/_index/<fingerprint>.json (builds since the retry

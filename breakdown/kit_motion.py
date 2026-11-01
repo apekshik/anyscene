@@ -1,5 +1,6 @@
 """Motion renders of an AnyKit kit for the kit supercut: a lineup dolly and per-item turntables, in the same studio as
-kit/tools/present.py (neutral grey ground, soft key/fill/rim, AgX, scale bar, ground labels).
+AnyKit's kit/tools/present.py (github.com/apekshik/anykit): neutral grey ground, soft key/fill/rim, AgX, scale bar,
+ground labels. Standalone: it imports nothing from AnyKit.
 
     blender -b --factory-startup --python builder/blender_gpu.py --python breakdown/kit_motion.py -- \
         --pkg <unzipped package>/out --out <dir> [--only dolly|turn] [--secs 9] [--turn-secs 4]

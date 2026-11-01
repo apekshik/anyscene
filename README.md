@@ -111,6 +111,17 @@ The code both repos use (`camera/`, `builder/blender_gpu.py`, `farm/app.py`, `pi
 lives in AnyShot; the copies here carry a "synced from" header. Edit them there, then run
 `python scripts/sync_from_anyshot.py` with AnyShot checked out next to this repo.
 
+## Kits: AnyKit
+
+For props rather than whole sets, use [AnyKit](https://github.com/apekshik/anykit): give it one to four style
+reference images and a Claude agent builds a cohesive kit of production-ready props in that style, at real-world
+scale (per-item GLB + LOD1, a `kit.blend` asset library, a lineup render), in about 25-40 minutes for about $25. It
+uses the same generators, agent harness and container as the scene builder, lives in its own repo and runs as its own
+fal app; deployed on the same account it shares this repo's `/data/anyscene/` storage and OptiX cache. AnyKit keeps
+synced copies of the code it shares with this repo (`builder/gallery.py`, `builder/blender_gpu.py`,
+`generate/fal.mjs`, `pipeline/env.sh`, `pipeline/gpu_run.sh`), so edit those here first. The web UI's kit gallery
+calls it over the fal API (`NEXT_PUBLIC_ANYKIT_APP`).
+
 ## Render farm add-on
 
 [`blender_addon/`](blender_addon) is a Blender add-on that renders the open scene on fal GPUs instead of your own:
