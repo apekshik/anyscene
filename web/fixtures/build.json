@@ -1,0 +1,255 @@
+{
+ "scene_id": "s_0e36d5fbec",
+ "package_url": "https://v3b.fal.media/files/b/0ab08e00/m4GTss3UapWdQmO9PaFiw_scene_package.zip",
+ "scene_blend_url": "https://v3b.fal.media/files/b/0ab08e03/9dTPt9JkZPUcpvIhhvq04_scene.blend",
+ "stills": [
+  "https://v3b.fal.media/files/b/0ab08dfe/nr0jS7nyXO8vBaTgSbGf3_0001.png",
+  "https://v3b.fal.media/files/b/0ab08dfe/AZ-FM3r8isnUvUr9oI83Z_0001.png",
+  "https://v3b.fal.media/files/b/0ab08dff/0B6ziyyAYbMjAMS7KCOq2_0001.png"
+ ],
+ "props": [
+  {
+   "id": "big_wall_display",
+   "label": "Giant orbit tracking wall display with world map and telemetry readouts",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/31vjhG9AK00OrMV-5GLix_RpsYE5df.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db6/Qf9DLRoeVAt2NMOXnCndy_model.glb"
+   },
+   "placements": [
+    "big_wall_display"
+   ]
+  },
+  {
+   "id": "wall_clock",
+   "label": "Round analogue wall clock",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/_w9HD3HRlKsXmerwMJx4Y_kMhIJ8GC.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08dbb/rc_p2lvty5IGPDjXAPy_j_model.glb"
+   },
+   "placements": [
+    "wall_clock"
+   ]
+  },
+  {
+   "id": "console_orbital_hero",
+   "label": "Hero orbital analysis console with CRT scopes and switch panels",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/_qulAvYn4R_vYNyLjdeDk_bvN3g9dh.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db9/Wkyw9krivg2gYuP7PxYwe_model.glb"
+   },
+   "placements": [
+    "console_orbital_analysis"
+   ]
+  },
+  {
+   "id": "index_cabinet",
+   "label": "Tall indexed reference cabinet labelled flight data, trajectory, systems, anomalies",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/5AW4-anXrXZRyAnlbtduh_p0Fo2o8P.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08ddc/JgTo3h2uNhmFe1YXViq7J_model.glb"
+   },
+   "placements": [
+    "console_flight_data_stack"
+   ]
+  },
+  {
+   "id": "teleprinter",
+   "label": "Chrome teleprinter spooling paper",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/6y06wKMHDZwc6zGoqYn3O_qBp4FbPT.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08dbf/wvCkHArGNGiBv2mvxH3sW_model.glb"
+   },
+   "placements": [
+    "teleprinter"
+   ]
+  },
+  {
+   "id": "console_bank",
+   "label": "Second-row console with CRT monitors",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/c8f1tOnsIyvFn3AswWi6J_l1XLxiPT.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08dbc/O0do4w3w_kTq9q5O-rGhw_model.glb"
+   },
+   "placements": [
+    "console_mission_control",
+    "console_telemetry",
+    "console_guidance",
+    "console_back_row",
+    "console_left_back"
+   ]
+  },
+  {
+   "id": "swivel_chair",
+   "label": "Black swivel chair",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/L5eyJU1KNrpAE-Y1knsCx_MngHigV5.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08dbb/OypRNzm5EteHD9eJpU41Z_model.glb"
+   },
+   "placements": [
+    "chair_fg_left",
+    "chair_fg_right",
+    "chair_row2_a",
+    "chair_row2_b",
+    "chair_telemetry_a",
+    "chair_telemetry_b",
+    "chair_guidance",
+    "chair_back_a",
+    "chair_back_b"
+   ]
+  },
+  {
+   "id": "binder_open",
+   "label": "Open ring binder of flight procedures",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/Ojx7X-ST4DqvwJBMAhk3g_t36nkBOi.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db9/fcwdszH3Goze2F8n2RnMV_model.glb"
+   },
+   "placements": [
+    "binder_fg_1",
+    "binder_fg_2",
+    "binder_mission"
+   ]
+  },
+  {
+   "id": "mug_white",
+   "label": "White coffee mug",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/HljuXiw1Oa3ryNL02KPgw_C3MuGMST.png",
+   "mesh_urls": {
+    "meshy": "https://v3b.fal.media/files/b/0ab08dc9/L72eOrBb-8bRjuqHHt6rE_model.glb"
+   },
+   "placements": [
+    "mug_white_fg",
+    "mug_white_fg_2",
+    "mug_guidance",
+    "mug_telemetry",
+    "mug_back"
+   ]
+  },
+  {
+   "id": "mug_black",
+   "label": "Black coffee mug",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/g3Xjkv8D0hhVjSU5LwvMY_OKIbtfhA.png",
+   "mesh_urls": {
+    "meshy": "https://v3b.fal.media/files/b/0ab08dc6/2nhr62QF94Su-l2zJY_2U_model.glb"
+   },
+   "placements": [
+    "mug_black_fg",
+    "mug_mission"
+   ]
+  },
+  {
+   "id": "ashtray_full",
+   "label": "Glass ashtray with cigarette butts",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/J9b6fXQB1kN7s62dWlp5P_zSi18VN2.png",
+   "mesh_urls": {
+    "meshy": "https://v3b.fal.media/files/b/0ab08dce/OcFAljrdjTGYgrMrW1GwA_model.glb"
+   },
+   "placements": [
+    "ashtray_fg_1",
+    "ashtray_fg_2",
+    "ashtray_guidance",
+    "ashtray_mission"
+   ]
+  },
+  {
+   "id": "cigarette_pack",
+   "label": "Red and white cigarette pack",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/plMTmiC7ebEMxlq-MIL5I_KjvNflol.png",
+   "mesh_urls": {
+    "meshy": "https://v3b.fal.media/files/b/0ab08dc7/ell8qpZK7Rq84aReULhVy_model.glb"
+   },
+   "placements": [
+    "cigarette_pack_fg"
+   ]
+  },
+  {
+   "id": "desk_intercom",
+   "label": "Desk intercom unit with push buttons and microphone",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/DmGzQxgiE1BVtEP8vdIbb_WpURLbUh.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db9/1J_7g3n5MKLX6NOOqihQn_model.glb"
+   },
+   "placements": [
+    "comm_box_fg"
+   ]
+  },
+  {
+   "id": "desk_lamp",
+   "label": "Brass desk lamp on console top",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da3/tOWraIMiw1qfD7FDf4Brz_GCTShC1R.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db8/PH1cmkhj6nu9ke9oCehoW_model.glb"
+   },
+   "placements": [
+    "desk_lamp_guidance",
+    "desk_lamp_window",
+    "desk_lamp_right"
+   ]
+  },
+  {
+   "id": "filing_cabinet",
+   "label": "Grey four-drawer filing cabinet",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/2cCylhD6Iovmj6nBBxHSn_1CqFOvFh.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db8/e-syzKvbc7pwy7EQvHXEV_model.glb"
+   },
+   "placements": [
+    "filing_cabinet_1",
+    "filing_cabinet_2"
+   ]
+  },
+  {
+   "id": "wastebasket",
+   "label": "Metal wastebasket with crumpled paper",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/BOUdvCxKQsqq4viOMVHEq_tliJiqKp.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08dc4/6ofddR2gi7rsE-fxcSler_model.glb"
+   },
+   "placements": [
+    "wastebasket_1",
+    "wastebasket_2"
+   ]
+  },
+  {
+   "id": "coat_rack",
+   "label": "Coat stand with jacket",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/VxfAul4Ml4cD7XhitSwLU_cLGuvmwi.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db2/VInLnUPqVwX8HiT7w74HO_model.glb"
+   },
+   "placements": [
+    "coat_rack"
+   ]
+  },
+  {
+   "id": "water_cooler",
+   "label": "Office water cooler",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/eIx9Y9z-uor3zqn87R7F9_9aWSSyyo.png",
+   "mesh_urls": {
+    "tripo-h31": "https://v3b.fal.media/files/b/0ab08db5/240g5RCEZusrYrnebtcmc_model.glb"
+   },
+   "placements": [
+    "water_cooler"
+   ]
+  },
+  {
+   "id": "rotary_phone",
+   "label": "Black rotary phone",
+   "ref_url": "https://v3b.fal.media/files/b/0ab08da2/kCAE737iDxdjqeaPe_7nz_RSri3jFJ.png",
+   "mesh_urls": {
+    "meshy": "https://v3b.fal.media/files/b/0ab08dc2/cRxfLp_tN0K5RNHP1Yt9Y_model.glb"
+   },
+   "placements": [
+    "rotary_phone"
+   ]
+  }
+ ],
+ "standins_left": [],
+ "timings": {
+  "meshes_s": 481.3,
+  "assemble_s": 249.6,
+  "render_s": 71.5,
+  "package_s": 54.1,
+  "total_s": 984.8
+ }
+}

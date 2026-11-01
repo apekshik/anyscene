@@ -1,0 +1,4 @@
+{
+  "blend": "hk.blend",
+  "scripts": ["scripts/gpu_prefs.py"]
+}

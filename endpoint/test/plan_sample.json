@@ -1,0 +1,35 @@
+{
+  "name": "test-street-stall",
+  "summary": "Hand-written sample plan for testing the floor plan and blockout renderers",
+  "setting": "semi_outdoor",
+  "time_of_day": "night",
+  "mood": ["humid", "neon"],
+  "palette": ["#2b3a2f", "#c0392b", "#f5b041"],
+  "room": {"width": 6.0, "depth": 7.0, "height": 3.0},
+  "openings": [{"wall": "front", "kind": "shopfront", "center": 3.0, "width": 5.2, "height": 2.7, "sill": 0.0},
+               {"wall": "back", "kind": "door", "center": 4.8, "width": 0.9, "height": 2.1, "sill": 0.0}],
+  "objects": [
+    {"id": "kitchen_cart", "label": "green steel cart", "category": "furniture", "x": 0.6, "y": 4.6, "z": 0.0, "w": 2.4, "d": 0.8, "h": 1.0, "rot": 90, "source": "reference", "generate": true, "prompt": "", "crop": [0.0, 0.2, 0.4, 0.7]},
+    {"id": "wok_range", "label": "two-burner wok range", "category": "fixture", "x": 0.6, "y": 2.6, "z": 0.0, "w": 1.2, "d": 0.75, "h": 0.85, "rot": 90, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "shelf_back", "label": "steel shelving", "category": "furniture", "x": 2.4, "y": 6.75, "z": 0.0, "w": 2.0, "d": 0.4, "h": 1.9, "rot": 180, "source": "invented", "generate": false, "prompt": "", "crop": null},
+    {"id": "fridge", "label": "drinks fridge", "category": "fixture", "x": 5.55, "y": 5.9, "z": 0.0, "w": 0.7, "d": 0.7, "h": 1.85, "rot": 270, "source": "invented", "generate": true, "prompt": "", "crop": null},
+    {"id": "table_1", "label": "round folding table", "category": "furniture", "x": 2.6, "y": 2.0, "z": 0.0, "w": 0.9, "d": 0.9, "h": 0.74, "rot": 0, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "table_2", "label": "round folding table", "category": "furniture", "x": 4.4, "y": 2.4, "z": 0.0, "w": 0.9, "d": 0.9, "h": 0.74, "rot": 0, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "table_3", "label": "round folding table", "category": "furniture", "x": 3.6, "y": 4.3, "z": 0.0, "w": 0.9, "d": 0.9, "h": 0.74, "rot": 0, "source": "invented", "generate": true, "prompt": "", "crop": null},
+    {"id": "stool_1", "label": "red plastic stool", "category": "furniture", "x": 2.0, "y": 1.6, "z": 0.0, "w": 0.32, "d": 0.32, "h": 0.45, "rot": 10, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "stool_2", "label": "red plastic stool", "category": "furniture", "x": 3.2, "y": 2.5, "z": 0.0, "w": 0.32, "d": 0.32, "h": 0.45, "rot": 30, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "stool_3", "label": "red plastic stool", "category": "furniture", "x": 4.9, "y": 1.8, "z": 0.0, "w": 0.32, "d": 0.32, "h": 0.45, "rot": 0, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "stool_4", "label": "red plastic stool", "category": "furniture", "x": 3.0, "y": 4.8, "z": 0.0, "w": 0.32, "d": 0.32, "h": 0.45, "rot": 0, "source": "invented", "generate": true, "prompt": "", "crop": null},
+    {"id": "teapot", "label": "enamel teapot", "category": "prop", "x": 2.6, "y": 2.0, "z": 0.74, "w": 0.2, "d": 0.15, "h": 0.18, "rot": 0, "source": "reference", "generate": true, "prompt": "", "crop": null},
+    {"id": "gas_cylinder", "label": "LPG cylinder", "category": "prop", "x": 0.35, "y": 6.3, "z": 0.0, "w": 0.32, "d": 0.32, "h": 0.6, "rot": 0, "source": "invented", "generate": true, "prompt": "", "crop": null},
+    {"id": "sign_board", "label": "menu sign board", "category": "signage", "x": 1.4, "y": 3.6, "z": 2.1, "w": 1.8, "d": 0.05, "h": 0.6, "rot": 90, "source": "reference", "generate": false, "prompt": "", "crop": null}
+  ],
+  "lights": [
+    {"id": "bulb_1", "kind": "practical", "x": 1.2, "y": 3.0, "z": 2.5, "color": "#ffb46b", "power": "medium", "attached_to": "", "source": "reference"},
+    {"id": "bulb_2", "kind": "practical", "x": 1.2, "y": 5.0, "z": 2.5, "color": "#ffb46b", "power": "medium", "attached_to": "", "source": "reference"},
+    {"id": "neon_1", "kind": "neon", "x": 5.8, "y": 3.5, "z": 2.6, "color": "#ff3b6b", "power": "high", "attached_to": "", "source": "invented"},
+    {"id": "fridge_glow", "kind": "screen", "x": 5.2, "y": 5.9, "z": 1.0, "color": "#d8ecff", "power": "low", "attached_to": "fridge", "source": "invented"}
+  ],
+  "reference_camera": {"position": [4.6, -1.6, 1.55], "look_at": [1.6, 4.5, 1.0], "lens_mm": 28},
+  "notes": ["Back half of the stall (shelving, fridge, gas cylinder, third table) is invented."]
+}

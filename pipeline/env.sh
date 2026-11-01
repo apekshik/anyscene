@@ -5,6 +5,8 @@ ANYSCENE_ROOT_POSIX="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Blender and ffmpeg on Windows want C:/... paths, not Git Bash's /c/...
 ROOT_ABS="$(cd "$ANYSCENE_ROOT_POSIX" && (pwd -W 2>/dev/null || pwd))"
 export ANYSCENE_ROOT="$ROOT_ABS"
+# Machine-specific overrides (BLENDER=..., FFMPEG=...) go in pipeline/env.local.sh, which is gitignored.
+[ -f "$ANYSCENE_ROOT_POSIX/pipeline/env.local.sh" ] && . "$ANYSCENE_ROOT_POSIX/pipeline/env.local.sh"
 
 if [ -z "$BLENDER" ]; then
   for c in blender \

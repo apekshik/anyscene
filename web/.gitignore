@@ -1,0 +1,12 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+.env
+# generated from fixtures/ by scripts/sync-fixtures.mjs
+public/replay/
+# the repo root ignores *.png; the replay fixtures and screenshots are small and belong with the UI
+!fixtures/**/*.png
+!screenshots/*.png
+!fixtures/**/*.glb

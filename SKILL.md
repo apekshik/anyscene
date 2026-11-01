@@ -119,7 +119,7 @@ What the reference scenes found across ~150 props:
 ### 6. Prep
 
 Turn every pick into `props/<id>.blend`:
-- **Front faces −Y.** Tripo's front faces +X, so rotate it −90°; Meshy's already faces −Y. Rotate the mesh data, not the object.
+- **Front faces −Y.** Tripo's front faces +X, so rotate it −90°; Meshy's already faces −Y. Rotate the mesh data, not the object. Tripo H3.1 with `orientation: align_image` also bakes a ±20–30° Z rotation into the glTF node (to match the reference photo's three-quarter view): clear that node rotation before the −90° turn, and frame by vertex bounds, not `bound_box`.
 - **Real scale** from `h`/`dims`.
 - **Bottom-centre origin.**
 - **Decimate** heroes to about 150k tris.
@@ -151,14 +151,43 @@ Place furniture props, then heroes, then mid props, then clutter. Each pass drop
   - floating more than 1 cm. Start the float ray *above* the support's top face, or a thin bench top reports its own thickness.
 
   Clashing small props get spiral-searched to a clear spot. Validator reports are noisy, so read them: a plinth or pots on a burner can be legitimate.
+- **Re-drop after every move.** Anything a clash resolver or a later pass moves sideways must be dropped onto the
+  surface under its new position. Skipping this left two stools hovering at table height in the dai pai dong.
+- **Run the grounding check** after the last dressing pass and again before final renders:
+  `blender -b scene.blend --python pipeline/grounding.py -- --prefix <scene prefix> --max-gap 2`, then with `--all`.
+  It casts rays down from each object's lowest vertices (feet, legs, base rings) and skips volumes. Checking from the
+  bounding box misses floaters whenever the box bottom isn't where the object touches down. Fix floaters in the
+  dressing scripts, not only in the saved file, so a rebuild stays grounded. Hanging items (signs, AC units, lamps,
+  posters) are skipped unless you pass `--all`; check that each one it lists really is meant to hang.
 
-**Gate:** the validator shows 0 unexplained issues, plus a dressed clay sheet and a textured flat-lit sheet.
+**Gate:**
+- The validator and the grounding check show 0 unexplained issues: no prop more than 1 cm off its support.
+- A dressed clay sheet and a textured flat-lit sheet.
+- **A contact sheet of low-angle stills** (camera ~30 cm off the floor) along the main furniture: chairs, stools,
+  tables, bins. A floating chair is obvious from there and nearly invisible in a wide shot.
 
 ### 9. Script fixes, grime and de-branding
 
 - **Screens:** CRT screens become emissive with a scanline glow, and scopes get a graticule and trace. Fix lamp lenses, display glass and bottles to real glass.
 - **Grime:** a shared node group with AO-driven dirt, edge wear and per-instance tint. Add decals (stains, flyers, stickers) generated on flat backgrounds, alpha-keyed and stuck on with raycasts.
 - **De-branding without regenerating:** render ortho views and mark the brand rectangles. Raycast the rectangles to texels, fill each with the label's ground colour plus grain, and flatten the same texels in the normal map, or embossed text survives.
+
+### 9b. Build the scene as a rig of dials
+
+The scene must expose the ten dials in `docs/ENDPOINT.md` (density, tidiness, wear, wetness, time_of_day, weather,
+atmosphere, power, warmth, look) as real controls, so they can be changed after the build without rebuilding:
+- **wear:** one strength input on the shared grime group, plus decal counts and label fading, all driven by one value;
+- **wetness:** a wetness mask feeding roughness, puddle masks and drips;
+- **atmosphere:** the density of every haze, dust, smoke and steam volume, scaled together;
+- **power:** lights and emitters in named groups (practicals, screens, fires and flames, machines), each switched or
+  dimmed by one value;
+- **time_of_day, weather:** sky/world and sun setups plus weather objects (rain, mist) selected by name;
+- **warmth, look:** light colour temperatures and the grade preset;
+- **density, tidiness:** recorded as the values the dressing passes used; changing them reruns those passes.
+
+Write `dials.json` (each dial's value plus what it means in this scene) and `scripts/apply_dials.py`, which reads
+`dials.json` and sets every control. Apply the dials once at the end of the build, so the rig is what produced the
+finals.
 
 ### 10. Lighting (night)
 
@@ -188,7 +217,7 @@ Write `shots.json` for `camera/shoot.py`. Its README is the contract: moves, rac
 
 1. **Block:** start with `--framing` (3 stamped stills per shot), then `--preview` (Eevee, stamped).
 2. **Design:** mix 2–3 cinematic moves (push-ins, a dolly zoom, a 100–135 mm rack) with 1–2 long **handheld walkthroughs**: `"handheld": {"profile": "walk"}`, a 4–6 key `path` at walking pace. People respond most to the walkthroughs. Keep them as long, uncut takes.
-3. **Path check:** check the camera against the scene before rendering, keeping more than 0.45 m from every mesh on every frame.
+3. **Path check:** check the camera against the scene before rendering, keeping more than 0.45 m from every solid surface on every frame (walls, furniture, props: not dust motes, particles, haze volumes or decals, which a real camera moves through). Load the scene once and test every frame in one Blender session.
 4. **Focus:**
    - A focus target must never be one the camera passes through, or the distance collapses to 0 and the frame goes soft. Rack to something past it first.
    - Focus `obj` uses the bounding-box centre. For deep objects, put a `pos` on the face you want sharp.
@@ -256,6 +285,7 @@ Time on one 16 GB GPU: a scene is roughly a day of agent work, and the final sho
 
 - [ ] Every placed prop is in `picks.json` with a reason, and no real brands are visible in any shot.
 - [ ] The validator is clean, or every remaining report is explained.
+- [ ] `pipeline/grounding.py` reports 0 unintended floaters on the file the finals are rendered from.
 - [ ] Each hero spot has a final still, and every shot is rendered, graded and has the right duration.
 - [ ] There's a reel and a compressed copy; an optional BTS video.
 - [ ] `NOTES.md` is updated, and the spend is totalled.

@@ -1,0 +1,323 @@
+{
+  "hk_kitchen_cart": {
+    "model": "meshy",
+    "reason": "Paint chipping, padlock hasps and casters match the ref; clay shows the doors as real geometry."
+  },
+  "hk_rice_cooker": {
+    "model": "meshy",
+    "reason": "Crisper dents and side clamps; Tripo slightly soft."
+  },
+  "hk_spider_strainer": {
+    "model": "tripo-h31",
+    "reason": "Bamboo handle split and binding modelled; wire basket reads better."
+  },
+  "hk_steamer_stack": {
+    "model": "tripo-h31",
+    "reason": "Darker stains closer to the well-used ref; weave equal on both."
+  },
+  "hk_stockpot": {
+    "model": "tripo-h31",
+    "reason": "Dents are real geometry in clay; soot band matches the ref."
+  },
+  "hk_stockpot_small": {
+    "model": "tripo-h31",
+    "reason": "Dented side and soot; Meshy body too clean."
+  },
+  "hk_tea_urn": {
+    "model": "meshy",
+    "reason": "Brushed steel and tap closest to the ref; Tripo lid too black."
+  },
+  "hk_wok_a": {
+    "model": "meshy",
+    "reason": "Black seasoned bowl like the ref; Tripo hammered bronze look is off."
+  },
+  "hk_wok_range": {
+    "model": "meshy",
+    "reason": "Burner wells, gutter and scorch marks all present; front reads like the ref."
+  },
+  "hk_wok_rice": {
+    "model": "meshy",
+    "reason": "Black wok with legible rice; Tripo wok came out tan and the rice pinkish."
+  },
+  "hk_wok_tools": {
+    "model": "meshy",
+    "reason": "Ladle, spatula and brush faithful to the ref; Tripo mixed up the spatula."
+  },
+  "hk_aromatics_bowls": {
+    "model": "meshy",
+    "reason": "Garlic, ginger and chilli read clearly; spoon kept; Tripo contents muddy."
+  },
+  "hk_claypot": {
+    "model": "tripo-h31",
+    "reason": "Glaze drips and charred base closest to the ref; both modelled the wire handle."
+  },
+  "hk_cleaver_block": {
+    "model": "meshy",
+    "reason": "Cleaver lies flat on a concave scarred top like the ref; Tripo cleaver stands upright."
+  },
+  "hk_hanging_utensils": {
+    "model": "meshy",
+    "reason": "All six tools on the rail incl. chopsticks and brush; clay shows separated hooks."
+  },
+  "hk_lpg_cylinder": {
+    "model": "meshy",
+    "reason": "Regulator and orange hose modelled; rust ring at the base matches."
+  },
+  "hk_oil_tin": {
+    "model": "meshy",
+    "reason": "Fictional label legible and dents present; Tripo label smeared."
+  },
+  "hk_prawn_tray": {
+    "model": "tripo-h31",
+    "reason": "Prawns more defined and separate in clay; Meshy squid rings blobby."
+  },
+  "hk_sauce_shelf": {
+    "model": "meshy",
+    "reason": "Two tiers with hand-lettered bottles and jars; Tripo made a thin side-view rack."
+  },
+  "hk_bowl_stack": {
+    "model": "meshy",
+    "reason": "Blue rim band crisp on every bowl; clay shows separate bowls."
+  },
+  "hk_dish_rack": {
+    "model": "meshy",
+    "reason": "Fuller rack with plates, bowls and chopstick caddy like the ref."
+  },
+  "hk_fire_extinguisher": {
+    "model": "meshy",
+    "reason": "Chinese instruction label legible; Tripo lost the label."
+  },
+  "hk_plate_stack": {
+    "model": "meshy",
+    "reason": "Oval plates with red border; both fine, Meshy rims sharper."
+  },
+  "hk_rice_sack": {
+    "model": "meshy",
+    "reason": "Fictional print sharp and slumped shape; back mirrors the print but faces the wall."
+  },
+  "hk_styrofoam_box": {
+    "model": "meshy",
+    "reason": "Proportions and the hand-written 海鮮 match; Tripo box too cubic."
+  },
+  "hk_thermos": {
+    "model": "meshy",
+    "reason": "Peony pattern on the body; Tripo lost the flowers."
+  },
+  "hk_tub_blue": {
+    "model": "meshy",
+    "reason": "Lid and scuffs closest; both similar, Meshy shape wider like the ref."
+  },
+  "hk_wash_basin": {
+    "model": "meshy",
+    "reason": "Saturated red tub with bowls; Tripo washed out pink."
+  },
+  "hk_enamel_shade": {
+    "model": "meshy",
+    "reason": "Deep enamel green with chips like the ref; Tripo too pale and clean."
+  },
+  "hk_enamel_teapot": {
+    "model": "meshy",
+    "reason": "Peony and chipped black edges; handle and spout shapes closer."
+  },
+  "hk_fan": {
+    "model": "meshy",
+    "reason": "Blades visible behind the cage, front reads like the ref; Tripo fan faces sideways."
+  },
+  "hk_fluoro_fitting": {
+    "model": "meshy",
+    "reason": "Tube and end caps visible; Tripo batten closed."
+  },
+  "hk_jars_preserved": {
+    "model": "meshy",
+    "reason": "Three jars with distinct pickles and chillies like the ref; Tripo jars all the same."
+  },
+  "hk_menu_board_a": {
+    "model": "meshy",
+    "reason": "Legible fictional menu on a weathered A-frame; back face mirrors the text, so it stands with its back to the wall."
+  },
+  "hk_menu_board_b": {
+    "model": "meshy",
+    "reason": "Hand-lettered red text crisp; both models added an easel, so it stands on the top shelf instead of hanging."
+  },
+  "hk_radio": {
+    "model": "meshy",
+    "reason": "Front panel, dial and fictional NovaTone badge; Tripo front blank."
+  },
+  "hk_stool_blue": {
+    "model": "meshy",
+    "reason": "Perforated seat in geometry, scuffed legs."
+  },
+  "hk_stool_red": {
+    "model": "meshy",
+    "reason": "Hand hole and splayed legs, saturated red with wet sheen; hero stool."
+  },
+  "hk_stool_stack": {
+    "model": "meshy",
+    "reason": "Six stacked stools with readable gaps; Tripo similar but softer."
+  },
+  "hk_table_round": {
+    "model": "meshy",
+    "reason": "Rolled rim and wet stainless top; Tripo top too bright, legs thinner than ref."
+  },
+  "hk_table_square": {
+    "model": "meshy",
+    "reason": "Green laminate with chipped edges; proportions match."
+  },
+  "hk_takeaway_boxes": {
+    "model": "meshy",
+    "reason": "Clamshells and striped bag roll; Tripo stack too small."
+  },
+  "hk_tea_cups": {
+    "model": "tripo-h31",
+    "reason": "Tea in the cups and the clear rinse bowl reads as clear plastic; Meshy bowl opaque."
+  },
+  "hk_ashtray": {
+    "model": "meshy",
+    "reason": "Crushed tin with butts and ash; Tripo similar, Meshy rim deformation closer."
+  },
+  "hk_beer_bottles": {
+    "model": "meshy",
+    "reason": "Fictional 金龍 label legible, foam on the glass; Tripo lost the labels."
+  },
+  "hk_bowl_congee": {
+    "model": "meshy",
+    "reason": "Century egg and green onion read; spoon angle matches."
+  },
+  "hk_chopstick_cup": {
+    "model": "tripo-h31",
+    "reason": "Dents in the cup are geometry and spoons are separate; Meshy cup too clean."
+  },
+  "hk_condiment_caddy": {
+    "model": "meshy",
+    "reason": "Soy, chilli oil, pepper and toothpicks all present with plain labels; Tripo bottles merged."
+  },
+  "hk_dish_beef_hofun": {
+    "model": "meshy",
+    "reason": "Wider plate, glossy noodles, bean sprouts visible."
+  },
+  "hk_dish_clams": {
+    "model": "meshy",
+    "reason": "Open shells and chilli read; Tripo clams muddy."
+  },
+  "hk_dish_fried_rice": {
+    "model": "meshy",
+    "reason": "Shrimp, egg and spoon like the ref, half-eaten edge."
+  },
+  "hk_dish_greens": {
+    "model": "meshy",
+    "reason": "Choy sum stalks and oyster sauce sheen; Tripo leaves only."
+  },
+  "hk_dish_salt_squid": {
+    "model": "meshy",
+    "reason": "Rings and chilli legible; similar, Meshy plate rim better."
+  },
+  "hk_guard_railing": {
+    "model": "meshy",
+    "reason": "Straight posts and feet like the ref; Tripo mesh thin and bent."
+  },
+  "hk_lemon_tea": {
+    "model": "meshy",
+    "reason": "Lemon slices and ice visible through the glass; straw intact."
+  },
+  "hk_milk_tea": {
+    "model": "meshy",
+    "reason": "Thick mug and saucer proportions closer."
+  },
+  "hk_parked_car": {
+    "model": "meshy",
+    "reason": "Boxy saloon with wet paint and no badges; Tripo body softer and wheels small."
+  },
+  "hk_soy_bottles": {
+    "model": "meshy",
+    "reason": "Both bottles present (Tripo merged them into one)."
+  },
+  "hk_street_lamp": {
+    "model": "meshy",
+    "reason": "Curved outreach arm and head cleaner; Tripo pole kinked."
+  },
+  "hk_toilet_roll": {
+    "model": "meshy",
+    "reason": "Pink roll with the hanging sheet and holder like the ref."
+  },
+  "hk_traffic_cone": {
+    "model": "meshy",
+    "reason": "Reflective bands and dirty base; Tripo smaller base."
+  },
+  "hk_water_barrier": {
+    "model": "meshy",
+    "reason": "Red/white pattern and fill caps; Tripo washed out."
+  },
+  "hk_newspaper": {
+    "model": "retired",
+    "reason": "Both models extruded the racing photos into 3D horse figurines; replaced by a direct-modelled folded paper textured with the reference image."
+  },
+  "hk_aircon_unit": {
+    "model": "meshy",
+    "reason": "Front grille and knobs like the ref (back has a stray print, but it faces the facade)."
+  },
+  "hk_bin_bags": {
+    "model": "meshy",
+    "reason": "Three tied glossy bags; Tripo shows two."
+  },
+  "hk_bird_cage": {
+    "model": "meshy",
+    "reason": "Bamboo bars visible under the lifted cloth like the ref; Tripo fully covered."
+  },
+  "hk_electric_box": {
+    "model": "meshy",
+    "reason": "Meter window, warning stickers and conduits; Tripo front blank."
+  },
+  "hk_hand_trolley": {
+    "model": "meshy",
+    "reason": "Strapped cardboard and crate, wheels round."
+  },
+  "hk_mop_bucket": {
+    "model": "meshy",
+    "reason": "Mop head and wringer basket read; similar, Meshy bucket redder."
+  },
+  "hk_plastic_bag_hang": {
+    "model": "meshy",
+    "reason": "Stripe pattern crisp, hook modelled."
+  },
+  "hk_scooter": {
+    "model": "meshy",
+    "reason": "Delivery box and full bodywork; no logos."
+  },
+  "hk_shrine": {
+    "model": "meshy",
+    "reason": "土地公 plaque, incense pot and oranges; Tripo lost the inscription."
+  },
+  "hk_trash_bin": {
+    "model": "meshy",
+    "reason": "Lid ajar with bag poking out like the ref."
+  },
+  "hk_umbrella": {
+    "model": "meshy",
+    "reason": "Crumpled canopy and strap; similar, Meshy cleaner silhouette."
+  },
+  "hk_water_bucket": {
+    "model": "meshy",
+    "reason": "Water surface and dents; bail handle correct."
+  },
+  "hk_beer_crate_nb": {
+    "model": "meshy",
+    "reason": "Fictional 金龍啤酒 moulding legible and bottles separate; Tripo lost the lettering."
+  },
+  "hk_cardboard_boxes": {
+    "model": "meshy",
+    "reason": "All three printed fictional supplier labels legible; Tripo boxes blank."
+  },
+  "hk_veg_basket": {
+    "model": "meshy",
+    "reason": "Choy sum and spring onions read separately in a mesh basket; similar, Meshy greens fuller."
+  },
+  "hk_crate_stack": {
+    "model": "tripo-h31",
+    "reason": "Tripo only: Meshy failed three times with a fal downstream 500."
+  },
+  "hk_beer_crate": {
+    "model": "retired",
+    "debranded_by": "hk_beer_crate_nb",
+    "reason": "Reference printed a brand-like English name (RIVERTON Brewing Co.); never generated in 3D, replaced by hk_beer_crate_nb."
+  }
+}

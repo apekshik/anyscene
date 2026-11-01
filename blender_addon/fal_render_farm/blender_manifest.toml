@@ -1,0 +1,20 @@
+schema_version = "1.0.0"
+
+id = "fal_render_farm"
+version = "1.0.0"
+name = "fal Render Farm"
+tagline = "Render the open scene on a fal Serverless GPU render farm"
+maintainer = "AnyScene contributors"
+type = "add-on"
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:GPL-3.0-or-later"]
+tags = ["Render"]
+
+[permissions]
+network = "Upload the scene to fal storage and render it on fal Serverless"
+files = "Save a packed temp copy and write frames to the output path"
+
+[build]
+paths_exclude_pattern = ["__pycache__/", "*.pyc", "/.git/"]

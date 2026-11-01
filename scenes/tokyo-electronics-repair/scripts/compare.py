@@ -14,7 +14,13 @@ from mathutils import Vector
 ARGS = sys.argv[sys.argv.index("--") + 1:]
 ROOT, OUT = map(os.path.abspath, ARGS[:2])
 IDS = set(ARGS[2].split(",")) if len(ARGS) > 2 else None
-HDRI = bpy.utils.system_resource("DATAFILES", path="studiolights/world/studio.exr")
+# Blender's bundled studio HDRI. bpy.utils.system_resource() returns "" for this in 5.0.1, so build the path from the
+# version folder that sits next to the binary (Contents/Resources on macOS).
+_VER = "%d.%d" % bpy.app.version[:2]
+_BIN = os.path.dirname(bpy.app.binary_path)
+HDRI = next((p for p in (os.path.join(_BIN, _VER), os.path.join(_BIN, "..", "Resources", _VER))
+             if os.path.isdir(p)), os.path.join(_BIN, _VER))
+HDRI = os.path.join(HDRI, "datafiles", "studiolights", "world", "studio.exr")
 RES = 640
 PROBE = bool(os.environ.get("PROBE"))
 # Camera azimuth offset per generator so the "front" view faces the side the reference image shows.

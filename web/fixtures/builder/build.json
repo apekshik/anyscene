@@ -1,0 +1,82 @@
+{
+ "build_id": "b_synthetic01",
+ "stills": [
+  "/replay/demo/still_0.png",
+  "/replay/demo/still_1.png",
+  "/replay/demo/still_2.png"
+ ],
+ "scene_blend_url": null,
+ "scene_glb_url": "/replay/demo/scene.glb",
+ "panorama_urls": [
+  "/replay/demo/panorama_ref.png",
+  "/replay/demo/panorama_mid.png"
+ ],
+ "package_url": "https://v3b.fal.media/files/b/0ab08e00/m4GTss3UapWdQmO9PaFiw_scene_package.zip",
+ "critiques": [
+  {
+   "round": 1,
+   "scores": {
+    "layout": 7,
+    "props": 6,
+    "screens_signage": 5,
+    "materials": 6,
+    "lighting": 7,
+    "atmosphere": 6,
+    "plausibility": 8,
+    "composition": 7
+   },
+   "fixes": [
+    "Console CRTs: all 14 scopes show the same sine trace; the reference has varied content (polar plots, columns of telemetry, a radar sweep). Give each scope its own texture.",
+    "Wall display: the world map is too bright and flat; it should glow from behind with darker ocean areas and thin orbit ground tracks.",
+    "Desk clutter: binders and teleprinter paper read as clean grey boxes; add page edges, curl and print.",
+    "Haze is too uniform; the reference has denser smoke near the ceiling lit by the screens.",
+    "Chairs: three swivel chairs intersect the console fronts in the second row."
+   ],
+   "summary": "Right room, right layout and camera. It falls down on the screens, which carry this reference, and on generic clutter.",
+   "passed": false
+  },
+  {
+   "round": 2,
+   "scores": {
+    "layout": 7,
+    "props": 7,
+    "screens_signage": 6,
+    "materials": 7,
+    "lighting": 8,
+    "atmosphere": 7,
+    "plausibility": 8,
+    "composition": 7
+   },
+   "fixes": [
+    "Wall display: ground tracks are there but the telemetry panels either side are blank; the reference has columns of stencilled data.",
+    "Two scopes on the hero console are out of focus compared with the rest; sharpen or raise their emission.",
+    "Window reflections: the glass shows no reflection of the room; add a faint reflection so it reads as glass at night."
+   ],
+   "summary": "Big improvement on the screens and the haze. The side panels of the wall display are the last thing that reads as unfinished.",
+   "passed": false
+  },
+  {
+   "round": 3,
+   "scores": {
+    "layout": 8,
+    "props": 7,
+    "screens_signage": 7,
+    "materials": 7,
+    "lighting": 8,
+    "atmosphere": 8,
+    "plausibility": 8,
+    "composition": 8
+   },
+   "fixes": [
+    "Optional: a little more variation in console paint wear between rows.",
+    "Optional: one or two lit cigarettes in the ashtrays would add life to the haze."
+   ],
+   "summary": "Passes. A faithful, photoreal version of the reference; the screens and the wall display now carry it.",
+   "passed": true
+  }
+ ],
+ "missing": [],
+ "agent_cost_usd": 27.4,
+ "minutes": 28.2,
+ "_synthetic": "made by scripts/make-builder-fixture.mjs; images and package are from the earlier pipeline run"
+}

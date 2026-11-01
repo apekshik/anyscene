@@ -1,0 +1,9 @@
+{"t": 35.9, "stage": "received", "status": "running", "message": "plan request", "elapsed_s": 0.0}
+{"t": 35.9, "stage": "reading_reference", "status": "running", "message": "1 reference image(s)", "elapsed_s": 0.0}
+{"t": 35.9, "stage": "planning", "status": "running", "message": "laying out the whole space (effort medium)", "elapsed_s": 0.0}
+{"t": 96.7, "stage": "planning", "status": "done", "message": "70 objects (18 invented), 16 lights, 16 x 14 m interior", "elapsed_s": 50.6}
+{"t": 96.7, "stage": "drawing_floor_plan", "status": "running", "message": "", "elapsed_s": 50.8}
+{"t": 96.7, "stage": "drawing_floor_plan", "status": "done", "message": "", "elapsed_s": 51.5, "preview_url": "https://v3b.fal.media/files/b/0ab08d9a/ITwcWiHrIg3HudA4h-1Wb_floor_plan.png"}
+{"t": 96.7, "stage": "blockout", "status": "running", "message": "grey-box renders from the reference camera and an overview", "elapsed_s": 51.5}
+{"t": 131.4, "stage": "blockout", "status": "done", "message": "", "elapsed_s": 86.2, "preview_url": "comparison.png", "synthetic": true}
+{"t": 131.4, "stage": "done", "status": "done", "message": "plan p_4f46c795ea", "elapsed_s": 86.2, "synthetic": true}

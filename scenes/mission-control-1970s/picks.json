@@ -1,0 +1,308 @@
+{
+ "_note": "Per prop: chosen model + one-line why. Provisional entries are marked and get revisited on the full compare sheets.",
+ "mc_console_crt": {
+  "model": "tripo-h31",
+  "why": "keeps the beige/charcoal paint and the meter/bezel geometry; Meshy washes the paint near-white"
+ },
+ "mc_console_twin": {
+  "model": "tripo-h31",
+  "why": "twin CRT bezels and keyboard are real geometry, colour matches the other bays"
+ },
+ "mc_console_scope": {
+  "model": "tripo-h31",
+  "why": "round scope bezel is modelled; Meshy has better proportions but its white paint breaks the row"
+ },
+ "mc_console_end": {
+  "model": "tripo-h31",
+  "why": "clean slim cabinet, same paint as the bays; Meshy adds a dark side that reads as a different unit"
+ },
+ "mc_console_lamps": {
+  "model": "tripo-h31",
+  "why": "lamp grid and meters crisp, matching beige; Meshy back panel is a grille mess"
+ },
+ "mc_console_comms": {
+  "model": "tripo-h31",
+  "why": "loop keys and speaker grille as geometry, colour consistent with the row"
+ },
+ "mc_equipment_rack": {
+  "model": "meshy",
+  "why": "sharper meters, patch cords and the little scope; Tripo flattens the rack units"
+ },
+ "mc_mainframe_rack": {
+  "model": "meshy",
+  "why": "lamp rows and switches are crisp; Tripo puts the panel on the wrong face and blurs it"
+ },
+ "mc_tape_drive": {
+  "model": "meshy",
+  "why": "reels, vacuum columns and lit buttons are detailed geometry; Tripo is softer"
+ },
+ "mc_line_printer": {
+  "model": "tripo-h31",
+  "why": "Meshy mangles the cabinet and basket into a heap; Tripo keeps a clean printer with paper"
+ },
+ "mc_teleprinter": {
+  "model": "meshy",
+  "why": "keyboard and paper roll sharper, pedestal proportions right"
+ },
+ "mc_filing_cabinet": {
+  "model": "meshy",
+  "why": "drawers are real recesses in the clay with the open top drawer; Tripo is a box"
+ },
+ "mc_chair_a": {
+  "model": "meshy",
+  "why": "crisp tufting and chrome base; Tripo is smaller and softer"
+ },
+ "mc_met_clock": {
+  "model": "meshy",
+  "why": "nixie digits read clearly (14:27:36 swapped in the scene) and the case is cleaner"
+ },
+ "mc_tv_ceiling": {
+  "model": "meshy",
+  "why": "curved screen and mount are geometry; Tripo screen is flat"
+ },
+ "mc_wall_clock": {
+  "model": "meshy",
+  "why": "clean dial and hands; back is a mirrored face but it hangs on the wall"
+ },
+ "mc_chair_b": {
+  "model": "meshy",
+  "why": "tweed weave and seat stains read; Tripo is a flat tan"
+ },
+ "mc_chair_c": {
+  "model": "meshy",
+  "why": "vinyl channels and chrome frame crisper, colour matches the ref"
+ },
+ "mc_coat_rack": {
+  "model": "tripo-h31",
+  "why": "coat folds and hat are cleaner geometry; both close"
+ },
+ "mc_coffee_maker": {
+  "model": "meshy",
+  "why": "carafe with dark coffee and the stained top; Tripo carafe reads empty"
+ },
+ "mc_coffee_urn": {
+  "model": "meshy",
+  "why": "dents, rust and the sight tube; Tripo is cleaner than the ref"
+ },
+ "mc_fire_extinguisher": {
+  "model": "meshy",
+  "why": "label and hose crisper; label is a generic instruction card, no logos"
+ },
+ "mc_floor_ashtray": {
+  "model": "tripo-h31",
+  "why": "bowl actually holds butts and ash; Meshy bowl is empty"
+ },
+ "mc_strip_recorder": {
+  "model": "meshy",
+  "why": "coloured pens and traced chart visible; Tripo chart is mush"
+ },
+ "mc_water_cooler": {
+  "model": "tripo-h31",
+  "why": "tray, tap and cream enamel closer to the ref; Meshy darker cabinet"
+ },
+ "mc_briefcase": {
+  "model": "meshy",
+  "why": "scuffed leather and latches crisper"
+ },
+ "mc_desk_fan": {
+  "model": "tripo-h31",
+  "why": "base and blade shape match the ref; Meshy turned the base into a chrome bulb"
+ },
+ "mc_desk_mic": {
+  "model": "meshy",
+  "why": "gooseneck smooth, PTT bar on the base reads"
+ },
+ "mc_headset": {
+  "model": "tripo-h31",
+  "why": "coiled cord and boom mic readable; Meshy close but the headband is thinner"
+ },
+ "mc_lamp_arm": {
+  "model": "meshy",
+  "why": "larger shade and springs as geometry, matches the ref"
+ },
+ "mc_lamp_goose": {
+  "model": "meshy",
+  "why": "open shade with a white interior (spot sits under the rim); Tripo shade smaller"
+ },
+ "mc_overhead_projector": {
+  "model": "meshy",
+  "why": "glass stage and folding head crisper"
+ },
+ "mc_paper_box": {
+  "model": "meshy",
+  "why": "fanfold paper with tractor holes over the edge; Tripo paper is a flat card"
+ },
+ "mc_rolling_cart": {
+  "model": "meshy",
+  "why": "scope screen and knobs sharper, manuals stacked"
+ },
+ "mc_rotary_phone": {
+  "model": "meshy",
+  "why": "coiled cord and dial are geometry; Tripo smaller"
+ },
+ "mc_speaker_wall": {
+  "model": "tripo-h31",
+  "why": "proportions and bracket match; Meshy too deep"
+ },
+ "mc_typewriter": {
+  "model": "meshy",
+  "why": "keys and type element crisp"
+ },
+ "mc_wastebasket": {
+  "model": "tripo-h31",
+  "why": "mesh basket shows the paper inside; Meshy reads as a solid can"
+ },
+ "mc_calculator": {
+  "model": "tripo-h31",
+  "why": "green VFD digits and paper roll read; Meshy display is white"
+ },
+ "mc_card_tray": {
+  "model": "meshy",
+  "why": "card deck edges and drawer pull sharper"
+ },
+ "mc_crt_terminal": {
+  "model": "meshy",
+  "why": "curved green screen as geometry (screen fix finds it) and crisp keys"
+ },
+ "mc_desk_phone": {
+  "model": "meshy",
+  "why": "line buttons and dial crisp; Tripo softer"
+ },
+ "mc_intercom": {
+  "model": "tripo-h31",
+  "why": "woodgrain panel like the ref; Meshy turned it grey"
+ },
+ "mc_reel_recorder": {
+  "model": "meshy",
+  "why": "reels, VU meters and piano keys sharper"
+ },
+ "mc_tape_reel": {
+  "model": "meshy",
+  "why": "clean reel spokes and seal ring"
+ },
+ "mc_ashtray_glass": {
+  "model": "meshy",
+  "why": "butts and ash crisper; both made the glass opaque grey, fixed by script (texture-masked transmission)"
+ },
+ "mc_ashtray_square": {
+  "model": "meshy",
+  "why": "glaze speckle and heaped butts sharper"
+ },
+ "mc_mug_brown": {
+  "model": "meshy",
+  "why": "speckled glaze and the chip read"
+ },
+ "mc_mug_green": {
+  "model": "meshy",
+  "why": "scratches and spoon crisper"
+ },
+ "mc_mug_white": {
+  "model": "tripo-h31",
+  "why": "clean drips; Meshy has a black notch artifact in the rim"
+ },
+ "mc_ashtray_tin": {
+  "model": "meshy",
+  "why": "rust, dent and the resting butt sharper"
+ },
+ "mc_clipboard": {
+  "model": "meshy",
+  "why": "checklist ticks and clip crisper (clipboard text is an invented checklist)"
+ },
+ "mc_paper_cup": {
+  "model": "tripo-h31",
+  "why": "crushed rim and drip; both lost the coffee inside"
+ },
+ "mc_thermos": {
+  "model": "meshy",
+  "why": "tartan and chipped red cup crisper"
+ },
+ "mc_binder_open": {
+  "model": "meshy",
+  "why": "coloured tabs and typed pages read; Tripo pages blur"
+ },
+ "mc_binders_row": {
+  "model": "tripo-h31",
+  "why": "mixed blue/black/grey spines like the ref; Meshy made them all blue"
+ },
+ "mc_lighter": {
+  "model": "tripo-h31",
+  "why": "worn brushed steel and wheel; near tie"
+ },
+ "mc_logbook": {
+  "model": "meshy",
+  "why": "lies open and flat with the pen; Tripo stands the book upright on its edge"
+ },
+ "mc_printout_spill": {
+  "model": "meshy",
+  "why": "tractor holes and the cascade fold are geometry; Tripo spill is a crumpled rag"
+ },
+ "mc_slide_rule": {
+  "model": "meshy",
+  "why": "cursor and scales crisp; both stand it on edge, so prep lays it face up",
+  "lay": true
+ },
+ "mc_cigarette_pack": {
+  "model": "meshy",
+  "why": "fictional CORSAIR label legible, foil crisp (regenerated ref: the first had real-brand-like trade dress)"
+ },
+ "mc_donut_box": {
+  "model": "meshy",
+  "why": "grease spots and glaze crisp"
+ },
+ "mc_manuals_stack": {
+  "model": "meshy",
+  "why": "page edges and bookmarks real geometry"
+ },
+ "mc_sandwich": {
+  "model": "tripo-h31",
+  "why": "bite mark and wax paper crumple read; Meshy is a lump"
+ },
+ "mc_soda_can": {
+  "model": "meshy",
+  "why": "fictional ZEPHYR reads cleanly; Tripo mangled it to ZLPHYR"
+ },
+ "mc_stapler": {
+  "model": "meshy",
+  "why": "chrome and base crisper"
+ },
+ "mc_pencil_cup": {
+  "model": "meshy",
+  "why": "mesh cup and pencils sharper, colours match"
+ },
+ "mc_reading_glasses": {
+  "model": "meshy",
+  "why": "thick black frames like the ref; Tripo greyed them"
+ },
+ "mc_paper_crumpled": {
+  "model": "tripo-h31",
+  "why": "typed lines visible on the paper; Meshy is blank"
+ },
+ "mc_rolodex": {
+  "model": "tripo-h31",
+  "why": "handwritten cards read on the front; Meshy cards are blank"
+ },
+ "mc_flashlight": {
+  "model": "meshy",
+  "why": "ribbed body and lens crisper"
+ },
+ "mc_hard_hat": {
+  "model": "meshy",
+  "why": "scuffs and reflective band crisper; plain, no logos"
+ },
+ "mc_binder_closed": {
+  "model": "meshy",
+  "why": "papers poking out and worn corners; Tripo is a clean slab"
+ },
+ "mc_binder_stack": {
+  "model": "tripo-h31",
+  "why": "Meshy failed three times (fal 500 downstream_service_error); Tripo stack is good: colours, tabs, rings"
+ },
+ "mc_printout_stack": {
+  "model": "tripo-h31",
+  "why": "Meshy failed three times (fal 500 downstream_service_error); Tripo has tractor holes and green bars"
+ },
+ "mc_desk_tray": {
+  "model": "tripo-h31",
+  "why": "Meshy failed three times (fal 500 downstream_service_error); Tripo tray and memos read fine"
+ }
+}

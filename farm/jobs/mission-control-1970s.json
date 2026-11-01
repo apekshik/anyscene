@@ -1,0 +1,5 @@
+{
+  "blend": "mc.blend",
+  "scripts": ["scripts/gpu_prefs.py"],
+  "per_shot_scripts": { "scripts/nocurl.py": { "except": ["orbital_push"] } }
+}

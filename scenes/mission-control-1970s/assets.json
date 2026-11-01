@@ -1,0 +1,591 @@
+{
+ "room": {
+  "w": 11,
+  "d": 13,
+  "h": 3.6,
+  "tiers": [
+   [
+    0,
+    7.5,
+    13
+   ],
+   [
+    0.35,
+    4.5,
+    7.5
+   ],
+   [
+    0.7,
+    0,
+    4.5
+   ]
+  ],
+  "note": "x across (window wall x=0), y from back door (y=0) to wall display (y=13), z up. tiers = [floor z, y0, y1]. Size keys per prop: h = real height; dims = [x width, y depth, z height] for boxy things (fit per axis); max = largest dimension for things lying flat."
+ },
+ "style": {
+  "console": "Warm beige and light grey painted steel with dark charcoal trim and brushed aluminium edge strips, 1970s aerospace ground-control equipment, worn paint where hands rest, small fictional engraved labels only."
+ },
+ "generate": [
+  {
+   "id": "mc_console_crt",
+   "tier": "hero",
+   "dims": [
+    1.25,
+    1,
+    1.35
+   ],
+   "prompt": "A single 1970s space mission control console bay seen from the operator side: a steel desk-height console with a flat writing shelf at the front, a sloped panel of toggle switches and square illuminated push-buttons, and an upright upper panel holding one large rectangular green-phosphor CRT monitor with a thick dark bezel, small round meters beside it. {console}"
+  },
+  {
+   "id": "mc_console_twin",
+   "tier": "hero",
+   "dims": [
+    1.25,
+    1,
+    1.35
+   ],
+   "prompt": "A single 1970s space mission control console bay seen from the operator side: a steel desk-height console with a flat writing shelf, a sloped keyboard and switch panel, and an upright upper panel with two medium green-phosphor CRT monitors side by side, rows of small amber indicator lamps between them. {console}"
+  },
+  {
+   "id": "mc_console_scope",
+   "tier": "hero",
+   "dims": [
+    1.25,
+    1,
+    1.35
+   ],
+   "prompt": "A single 1970s space mission control console bay seen from the operator side: a steel desk-height console with a flat writing shelf, a sloped panel of rotary knobs and toggle switches, and an upright upper panel holding a large round green radar-style CRT scope with a graticule bezel, two analog needle meters and a row of lit push-buttons. {console}"
+  },
+  {
+   "id": "mc_console_lamps",
+   "tier": "hero",
+   "dims": [
+    1.25,
+    1,
+    1.35
+   ],
+   "prompt": "A single 1970s space mission control status console bay seen from the operator side: a steel desk-height console with a flat writing shelf, a sloped panel of guarded toggle switches, and an upright upper panel covered in a grid of square illuminated indicator buttons in amber, white, green and red, three analog meters and a small red numeric digital readout. {console}"
+  },
+  {
+   "id": "mc_console_comms",
+   "tier": "hero",
+   "dims": [
+    1.25,
+    1,
+    1.35
+   ],
+   "prompt": "A single 1970s space mission control communications console bay seen from the operator side: a steel desk-height console with a flat writing shelf, a sloped panel with long rows of square push-to-talk loop keys with tiny lit labels, an upright upper panel with a small green CRT, a perforated speaker grille, volume knobs and headset jacks. {console}"
+  },
+  {
+   "id": "mc_console_end",
+   "tier": "hero",
+   "dims": [
+    0.45,
+    1,
+    1.35
+   ],
+   "prompt": "A narrow end cabinet that caps a row of 1970s mission control consoles: a slim steel desk-height module with a sloped panel of four small analog meters and a few toggle switches, an upright upper panel with a vertical strip of lit indicator lamps, a small drawer at the front. {console}"
+  },
+  {
+   "id": "mc_tape_drive",
+   "tier": "hero",
+   "dims": [
+    0.75,
+    0.7,
+    1.8
+   ],
+   "prompt": "A 1970s mainframe computer magnetic tape drive cabinet: a tall free-standing steel cabinet painted light grey and pale blue, a smoked glass door showing two large tape reels at the top, vacuum column windows below, a strip of lit operator buttons, scuffed paint."
+  },
+  {
+   "id": "mc_mainframe_rack",
+   "tier": "hero",
+   "dims": [
+    0.8,
+    0.7,
+    1.9
+   ],
+   "prompt": "A tall 1970s mainframe computer processor cabinet: a free-standing steel cabinet in beige and charcoal with an operator panel of many small lit lamps in rows, toggle switches, a key lock and a ventilation grille at the bottom, worn paint and fingerprints."
+  },
+  {
+   "id": "mc_equipment_rack",
+   "tier": "hero",
+   "dims": [
+    0.6,
+    0.6,
+    1.9
+   ],
+   "prompt": "A tall 1970s 19-inch electronics equipment rack in grey steel: stacked rack units with analog needle meters, a patch panel with dangling patch cords, a small oscilloscope unit with a round green screen, rows of knobs and toggle switches, a perforated vent panel, worn and dusty."
+  },
+  {
+   "id": "mc_line_printer",
+   "tier": "hero",
+   "dims": [
+    1.2,
+    0.75,
+    1.15
+   ],
+   "prompt": "A 1970s mainframe line printer: a large boxy beige and grey steel cabinet with a sloped acoustic lid, a small operator panel of lit buttons, continuous green-bar fanfold computer paper feeding out of the top and folding into a pile in a wire basket at the back."
+  },
+  {
+   "id": "mc_teleprinter",
+   "tier": "hero",
+   "dims": [
+    0.95,
+    0.6,
+    1
+   ],
+   "prompt": "A 1970s teleprinter terminal on its own steel pedestal stand: a beige teletype machine with a mechanical keyboard and a round-cornered hood, a roll of yellowish paper printed with typed lines curling out of the top, a punched paper tape unit on the side, worn and dusty."
+  },
+  {
+   "id": "mc_strip_recorder",
+   "tier": "hero",
+   "dims": [
+    0.5,
+    0.4,
+    0.35
+   ],
+   "prompt": "A 1970s multi-channel strip chart recorder: a grey metal desktop instrument with a glass front window showing eight pens drawing wavy ink traces on a moving paper chart, paper spilling out of the front slot, knobs along the bottom."
+  },
+  {
+   "id": "mc_tv_ceiling",
+   "tier": "hero",
+   "h": 0.7,
+   "prompt": "A 1970s black-and-white CRT television monitor in a dark grey steel cabinet hanging from a ceiling-mount bracket and pole, slightly tilted down, curved grey screen, a row of small knobs under the screen."
+  },
+  {
+   "id": "mc_wall_clock",
+   "tier": "mid",
+   "dims": [
+    0.36,
+    0.07,
+    0.36
+   ],
+   "prompt": "A 1970s institutional round wall clock, white face with plain black numerals and hands, a red sweep second hand, thin aluminium rim, slightly yellowed face, no text on the dial."
+  },
+  {
+   "id": "mc_met_clock",
+   "tier": "hero",
+   "dims": [
+    0.9,
+    0.16,
+    0.26
+   ],
+   "prompt": "A 1970s wall-mounted digital timer box: a long black steel enclosure with a row of glowing red-orange nixie-tube digits behind a smoked glass window showing a time with colons, a small screwed name plate, mounting brackets."
+  },
+  {
+   "id": "mc_chair_a",
+   "tier": "hero",
+   "h": 1.05,
+   "prompt": "A 1970s high-back office swivel chair with tufted black vinyl upholstery, padded armrests on chrome supports, a five-star chrome base with casters, the vinyl cracked and worn on the seat edge."
+  },
+  {
+   "id": "mc_chair_b",
+   "tier": "hero",
+   "h": 0.95,
+   "prompt": "A 1970s mid-back office swivel chair upholstered in brown tweed fabric with dark brown vinyl armrest pads, black five-star base on casters, seat cushion compressed and stained."
+  },
+  {
+   "id": "mc_chair_c",
+   "tier": "hero",
+   "h": 0.93,
+   "prompt": "A 1970s mid-back office swivel chair in burnt orange vinyl with a chrome tubular frame and black plastic armrests, five-star base on casters, faded and scuffed."
+  },
+  {
+   "id": "mc_filing_cabinet",
+   "tier": "mid",
+   "dims": [
+    0.47,
+    0.65,
+    1.35
+   ],
+   "prompt": "A 1970s four-drawer steel office filing cabinet painted grey-green, chrome drawer pulls with paper label holders, dented and scratched, a few papers sticking out of the top drawer."
+  },
+  {
+   "id": "mc_water_cooler",
+   "tier": "mid",
+   "h": 1.15,
+   "prompt": "A 1970s office water cooler: a beige enamel cabinet with an upturned large glass water bottle on top, a chrome push tap and drip tray, a paper cone cup dispenser on the side."
+  },
+  {
+   "id": "mc_coffee_urn",
+   "tier": "mid",
+   "h": 0.48,
+   "prompt": "A large 1970s stainless steel coffee urn percolator for an office, with a black plastic tap at the bottom, a glass sight tube on the side, two black handles, coffee drips and water stains."
+  },
+  {
+   "id": "mc_coffee_maker",
+   "tier": "mid",
+   "h": 0.36,
+   "prompt": "A 1970s drip coffee maker in harvest gold and brown plastic with a glass carafe half full of dark coffee on the warming plate, a small red lit power switch, coffee stains."
+  },
+  {
+   "id": "mc_coat_rack",
+   "tier": "mid",
+   "h": 1.8,
+   "prompt": "A free-standing bentwood coat rack with a tan trench coat and a grey felt hat hanging on its hooks."
+  },
+  {
+   "id": "mc_fire_extinguisher",
+   "tier": "mid",
+   "h": 0.6,
+   "prompt": "A 1970s red steel fire extinguisher with a chrome valve, black hose and a plain instruction label without logos, scuffed paint."
+  },
+  {
+   "id": "mc_wastebasket",
+   "tier": "mid",
+   "h": 0.38,
+   "prompt": "A grey steel office waste basket overflowing with crumpled paper, torn computer printout and empty crushed cigarette packs."
+  },
+  {
+   "id": "mc_floor_ashtray",
+   "tier": "mid",
+   "h": 0.62,
+   "prompt": "A 1970s chrome pedestal floor-standing ashtray with a weighted round base and a bowl at the top filled with cigarette butts and grey ash."
+  },
+  {
+   "id": "mc_rolling_cart",
+   "tier": "mid",
+   "h": 0.9,
+   "prompt": "A grey steel two-shelf utility cart on casters holding a 1970s grey analog oscilloscope with a small round green CRT and rows of knobs on top, and a stack of thick technical manuals and coiled cables on the lower shelf."
+  },
+  {
+   "id": "mc_typewriter",
+   "tier": "mid",
+   "max": 0.5,
+   "prompt": "A 1970s electric office typewriter in pale blue with a golf-ball type element, a sheet of typed paper in the platen, black keys."
+  },
+  {
+   "id": "mc_overhead_projector",
+   "tier": "mid",
+   "h": 0.62,
+   "prompt": "A 1970s overhead projector: a boxy grey metal base with a glass stage and a folding arm holding the projection head with a mirror, power cable coiled."
+  },
+  {
+   "id": "mc_desk_fan",
+   "tier": "mid",
+   "h": 0.4,
+   "prompt": "A 1970s metal oscillating desk fan with a chrome wire cage and grey enamel base, dusty blades."
+  },
+  {
+   "id": "mc_speaker_wall",
+   "tier": "mid",
+   "dims": [
+    0.36,
+    0.2,
+    0.46
+   ],
+   "prompt": "A 1970s wall-mounted public address loudspeaker box in walnut-finish wood with a brown fabric grille and a small volume knob on the side."
+  },
+  {
+   "id": "mc_briefcase",
+   "tier": "mid",
+   "max": 0.46,
+   "prompt": "A worn brown leather 1970s hard briefcase with brass latches and a handle, scuffed corners."
+  },
+  {
+   "id": "mc_paper_box",
+   "tier": "mid",
+   "dims": [
+    0.45,
+    0.36,
+    0.3
+   ],
+   "prompt": "An open plain brown cardboard carton of continuous green-bar fanfold computer paper, the top fold of paper hanging over the edge, no printing on the box."
+  },
+  {
+   "id": "mc_lamp_goose",
+   "tier": "mid",
+   "h": 0.55,
+   "prompt": "A 1970s gooseneck desk lamp with a dark green enamel cone shade, a flexible chrome gooseneck and a heavy round black base with a toggle switch."
+  },
+  {
+   "id": "mc_lamp_arm",
+   "tier": "mid",
+   "h": 0.62,
+   "prompt": "A 1970s spring-balanced articulated desk lamp in cream-painted metal with a rounded shade, arm bent so the shade points down, on a heavy square weighted base."
+  },
+  {
+   "id": "mc_headset",
+   "tier": "mid",
+   "max": 0.3,
+   "prompt": "A 1970s communications operator headset lying on a desk: a single padded black earpiece on a thin metal headband with a boom microphone, a coiled grey cord ending in a large jack plug."
+  },
+  {
+   "id": "mc_desk_phone",
+   "tier": "mid",
+   "max": 0.3,
+   "prompt": "A 1970s beige multi-line office key telephone with a rotary dial and a row of clear plastic line-select push buttons along the front, coiled handset cord, yellowed plastic."
+  },
+  {
+   "id": "mc_rotary_phone",
+   "tier": "mid",
+   "max": 0.24,
+   "prompt": "A 1970s red rotary dial desk telephone with no dial numbers card, a coiled cord to the handset, glossy plastic slightly scratched."
+  },
+  {
+   "id": "mc_desk_mic",
+   "tier": "mid",
+   "h": 0.42,
+   "prompt": "A 1970s gooseneck desk microphone on a heavy black cast base with a chrome push-to-talk bar, a slim microphone capsule at the end of the gooseneck."
+  },
+  {
+   "id": "mc_intercom",
+   "tier": "mid",
+   "max": 0.26,
+   "prompt": "A 1970s desktop intercom box in beige and woodgrain with a perforated speaker grille, a row of small lever keys and a volume wheel."
+  },
+  {
+   "id": "mc_calculator",
+   "tier": "mid",
+   "max": 0.32,
+   "prompt": "A 1970s desktop printing calculator in grey and beige with chunky keys, a green vacuum fluorescent numeric display and a roll of paper tape curling out of the top."
+  },
+  {
+   "id": "mc_reel_recorder",
+   "tier": "mid",
+   "max": 0.42,
+   "prompt": "A 1970s portable reel-to-reel tape recorder in brushed aluminium and black with two tape reels, VU meters and piano-key controls."
+  },
+  {
+   "id": "mc_crt_terminal",
+   "tier": "hero",
+   "dims": [
+    0.45,
+    0.6,
+    0.42
+   ],
+   "prompt": "A 1970s computer video terminal with a boxy beige case, a curved green-phosphor CRT screen and an attached sloped keyboard with chunky grey keys, slightly yellowed plastic."
+  },
+  {
+   "id": "mc_card_tray",
+   "tier": "mid",
+   "max": 0.4,
+   "prompt": "A long grey steel tray full of cream computer punch cards standing on edge, a few cards sticking up out of the deck, with a rubber band around one stack."
+  },
+  {
+   "id": "mc_tape_reel",
+   "tier": "mid",
+   "max": 0.27,
+   "prompt": "A 1970s half-inch computer magnetic tape reel with brown tape wound on a clear blue plastic reel, a white plastic seal ring around it, a blank paper label."
+  },
+  {
+   "id": "mc_ashtray_glass",
+   "tier": "clutter",
+   "max": 0.15,
+   "prompt": "A heavy thick clear glass ashtray overflowing with many cigarette butts and grey ash, a few burnt matches."
+  },
+  {
+   "id": "mc_ashtray_tin",
+   "tier": "clutter",
+   "max": 0.11,
+   "prompt": "A small round dented tin ashtray full of cigarette butts and ash, one butt still resting in the notch."
+  },
+  {
+   "id": "mc_ashtray_square",
+   "tier": "clutter",
+   "max": 0.13,
+   "prompt": "A square brown glazed ceramic ashtray with four cigarette rests, heaped with cigarette butts and ash."
+  },
+  {
+   "id": "mc_mug_white",
+   "tier": "clutter",
+   "h": 0.095,
+   "prompt": "A plain white ceramic coffee mug with brown coffee stains running down the side and a ring of dried coffee inside, half full of black coffee."
+  },
+  {
+   "id": "mc_mug_brown",
+   "tier": "clutter",
+   "h": 0.1,
+   "prompt": "A brown glazed stoneware coffee mug with a speckled finish, half full of black coffee, a chip on the rim."
+  },
+  {
+   "id": "mc_mug_green",
+   "tier": "clutter",
+   "h": 0.09,
+   "prompt": "An olive green melamine coffee mug, scratched, with cold coffee in it and a spoon leaning on the rim."
+  },
+  {
+   "id": "mc_paper_cup",
+   "tier": "clutter",
+   "h": 0.095,
+   "prompt": "A white styrofoam coffee cup half full of coffee, slightly crushed rim, coffee drip on the side."
+  },
+  {
+   "id": "mc_thermos",
+   "tier": "clutter",
+   "h": 0.32,
+   "prompt": "A 1970s tartan-pattern metal vacuum flask with a red plastic cup lid, dented and scuffed."
+  },
+  {
+   "id": "mc_binder_open",
+   "tier": "clutter",
+   "max": 0.55,
+   "prompt": "A thick open three-ring binder lying flat, its pages of typed procedures with checklists and tabbed dividers, a blue cloth-covered cover, dog-eared pages."
+  },
+  {
+   "id": "mc_binder_closed",
+   "tier": "clutter",
+   "max": 0.32,
+   "prompt": "A closed thick black vinyl three-ring binder lying flat with a white blank spine label, worn corners, papers poking out."
+  },
+  {
+   "id": "mc_binder_stack",
+   "tier": "clutter",
+   "max": 0.34,
+   "prompt": "A messy stack of four thick ring binders lying flat in different colours, dark blue, black, maroon and grey, with coloured tabs and loose paper between them."
+  },
+  {
+   "id": "mc_binders_row",
+   "tier": "clutter",
+   "max": 0.5,
+   "prompt": "A row of eight thick ring binders standing upright between two steel bookends, mixed blue, black and grey spines with blank white labels."
+  },
+  {
+   "id": "mc_printout_stack",
+   "tier": "clutter",
+   "max": 0.4,
+   "prompt": "A stack of continuous fanfold green-bar computer printout paper with tractor-feed holes along the edges, printed with columns of numbers, slightly messy."
+  },
+  {
+   "id": "mc_printout_spill",
+   "tier": "clutter",
+   "max": 0.65,
+   "prompt": "A long strip of continuous fanfold green-bar computer printout paper unfolding off a stack into a loose cascading pile on the floor, printed columns of numbers, tractor-feed holes."
+  },
+  {
+   "id": "mc_clipboard",
+   "tier": "clutter",
+   "max": 0.33,
+   "prompt": "A brown masonite clipboard with a steel clip holding a typed checklist with handwritten ticks in pencil, a pencil clipped on top."
+  },
+  {
+   "id": "mc_logbook",
+   "tier": "clutter",
+   "max": 0.45,
+   "prompt": "An open hardcover green cloth log book with ruled pages full of handwritten entries in blue ink and times, a ballpoint pen lying in the gutter."
+  },
+  {
+   "id": "mc_manuals_stack",
+   "tier": "clutter",
+   "max": 0.3,
+   "prompt": "A stack of five thick technical manuals with plain grey and blue covers and blank labels, some paper bookmarks sticking out."
+  },
+  {
+   "id": "mc_pencil_cup",
+   "tier": "clutter",
+   "h": 0.17,
+   "prompt": "A metal mesh desk pencil cup full of yellow pencils, red grease pencils, a ruler and ballpoint pens."
+  },
+  {
+   "id": "mc_slide_rule",
+   "tier": "clutter",
+   "max": 0.3,
+   "prompt": "A 1970s bamboo and plastic slide rule with a clear cursor, printed scales, lying flat."
+  },
+  {
+   "id": "mc_cigarette_pack",
+   "tier": "clutter",
+   "max": 0.09,
+   "prompt": "An open crushed soft pack of cigarettes in a navy blue and cream design with a small line drawing of a sailing ship and the fictional brand name 'CORSAIR' in thin serif type, two cigarettes sticking out."
+  },
+  {
+   "id": "mc_lighter",
+   "tier": "clutter",
+   "max": 0.06,
+   "prompt": "A brushed steel flip-top petrol lighter with the lid open, scratched, no engraving."
+  },
+  {
+   "id": "mc_donut_box",
+   "tier": "clutter",
+   "max": 0.32,
+   "prompt": "An open plain white cardboard pastry box with grease spots holding three leftover glazed and chocolate doughnuts on wax paper."
+  },
+  {
+   "id": "mc_sandwich",
+   "tier": "clutter",
+   "max": 0.2,
+   "prompt": "A half-eaten sandwich on white bread on crumpled wax paper."
+  },
+  {
+   "id": "mc_soda_can",
+   "tier": "clutter",
+   "h": 0.122,
+   "prompt": "A 1970s steel soda can with a pull-ring tab, orange and white design with a fictional brand called 'ZEPHYR' in plain type, slightly dented."
+  },
+  {
+   "id": "mc_reading_glasses",
+   "tier": "clutter",
+   "max": 0.14,
+   "prompt": "A pair of 1970s thick black plastic framed glasses lying folded."
+  },
+  {
+   "id": "mc_paper_crumpled",
+   "tier": "clutter",
+   "max": 0.08,
+   "prompt": "A crumpled ball of white typing paper with typed lines visible on it."
+  },
+  {
+   "id": "mc_stapler",
+   "tier": "clutter",
+   "max": 0.2,
+   "prompt": "A heavy 1970s chrome and black desk stapler, scratched."
+  },
+  {
+   "id": "mc_desk_tray",
+   "tier": "clutter",
+   "max": 0.36,
+   "prompt": "A two-level grey steel desk letter tray stacked with typed memos, carbon copies and folded printouts."
+  },
+  {
+   "id": "mc_rolodex",
+   "tier": "clutter",
+   "max": 0.2,
+   "prompt": "A rotary card file with a black metal frame and knobs, full of slightly yellowed index cards with handwriting."
+  },
+  {
+   "id": "mc_flashlight",
+   "tier": "clutter",
+   "max": 0.26,
+   "prompt": "A 1970s black rubber and chrome flashlight lying on its side, scuffed."
+  },
+  {
+   "id": "mc_hard_hat",
+   "tier": "clutter",
+   "max": 0.3,
+   "prompt": "A scuffed white fibreglass hard hat with a plain stripe and no logos."
+  }
+ ],
+ "textures": [
+  {
+   "id": "launch_pad",
+   "size": "landscape_16_9",
+   "prompt": "Night photograph across a flat dark coastal marsh toward a distant floodlit rocket launch pad about three kilometres away: a tall white multi-stage rocket beside a red steel service tower lit by bright xenon floodlights, sodium-orange site lights, beams in thin haze, low lights of a distant causeway, dark sky with a few stars, no people, no text, no logos, no flags, realistic long-lens film still."
+  },
+  {
+   "id": "world_map",
+   "size": "landscape_16_9",
+   "prompt": "A flat equirectangular world map drawn as clean thin glowing cyan-green outline coastlines only on a pure black background, like a 1970s vector display, latitude and longitude grid lines every 15 degrees in dim green, no text, no labels, no country borders, no logos, the whole world edge to edge, high contrast."
+  },
+  {
+   "id": "poster_motto",
+   "size": "portrait_4_3",
+   "prompt": "A 1970s framed institutional wall poster: a dramatic photograph of a crescent moon over the curve of the earth in space, bold condensed white type reading 'FURTHER  HIGHER  SAFER' and small type 'AURORA FLIGHT DIRECTORATE', muted printed colours, slight fading, front view, flat, no other logos."
+  },
+  {
+   "id": "decal_coffee",
+   "size": "square_hd",
+   "prompt": "Several overlapping brown coffee mug ring stains and drips on a pure white background, top-down, flat, high detail, no other objects."
+  },
+  {
+   "id": "decal_burns",
+   "size": "square_hd",
+   "prompt": "Several small black and brown cigarette burn marks and scattered grey ash smudges on a pure white background, top-down, flat, high detail, no other objects."
+  },
+  {
+   "id": "concept_detail",
+   "size": "landscape_16_9",
+   "variant": "sunburst",
+   "prompt": "Close-up of a 1970s space mission control console at night during a long shift: a glowing green CRT with columns of telemetry numbers, a sloped panel of toggle switches and amber lit push-buttons, an overflowing glass ashtray with a cigarette still smouldering and a thin curl of smoke, a white coffee mug with stains, an open three-ring procedures binder, a headset with boom mic, fanfold green-bar printout, a gooseneck desk lamp throwing a warm pool, the big wall display softly out of focus behind. Photoreal cinematic film still, 50mm lens, natural film grain, practical lighting only, no people, no real-world brand names or logos, all labels fictional."
+  }
+ ]
+}

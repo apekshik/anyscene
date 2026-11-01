@@ -7,13 +7,13 @@
 // Commands
 //   image --out refs/tokyo-electronics-repair/concept_a --prompt "..." [--variant flare|sunburst] [--size landscape_16_9] [--quality high] [--n 1]
 //         -> <out>_<i>.png + <out>.json (keeps the fal URL so 3D endpoints can reuse it)
-//   3d    --model tripo-h31|tripo-p2|meshy --ref refs/props/x.json --out assets/gen/<model>/<id>
+//   3d    --model tripo-h31|tripo-p2|meshy --ref refs/props/x.json --out assets/gen/<model>/<id> [--face-limit 150000]
 //         -> <out>/model.glb + result.json
 //   spend -> totals so far
 //
 // All paid calls append {time, endpoint, est_usd, request_id, ...} to generate/spend.jsonl.
 
-import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
@@ -61,7 +61,7 @@ const { positionals, values: a } = parseArgs({
   options: {
     out: { type: 'string' }, prompt: { type: 'string' }, variant: { type: 'string', default: 'flare' },
     size: { type: 'string', default: 'landscape_16_9' }, quality: { type: 'string', default: 'high' }, n: { type: 'string', default: '1' },
-    model: { type: 'string' }, ref: { type: 'string' },
+    model: { type: 'string' }, ref: { type: 'string' }, 'face-limit': { type: 'string' }, force: { type: 'boolean' },
   },
 });
 
@@ -82,15 +82,34 @@ async function call(url, init = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-/** Queue-submit, poll, return result. Logs spend as soon as the request is accepted. */
-async function run(endpoint, input, { est, meta = {}, timeoutMin = 30 }) {
+/** Queue-submit, poll, return result. Logs spend as soon as the request is accepted.
+ *  With `pending` (a file path), the submitted job is recorded there until its result is in. If a run is cut off (the
+ *  process or the whole worker dies) and the same command runs again, it picks the recorded job back up instead of
+ *  paying for a new one. */
+async function run(endpoint, input, { est, meta = {}, timeoutMin = 30, pending = null }) {
   if (!KEY) throw new Error('FAL_KEY is not set (user environment variable)');
-  const spent = (await readSpend()).reduce((s, r) => s + r.est_usd, 0);
-  if (spent + est > TOTAL_CAP) throw new Error(`BUDGET: total would reach $${(spent + est).toFixed(2)} > $${TOTAL_CAP}. Stop and report.`);
   const t0 = performance.now();
-  const job = await call(`https://queue.fal.run/${endpoint}`, { method: 'POST', body: JSON.stringify(input) });
-  await logSpend({ endpoint, est_usd: est, request_id: job.request_id, ...meta });
-  console.log(`queued ${endpoint} ${job.request_id}`);
+  let job = null;
+  if (pending && existsSync(pending)) {
+    try {
+      job = JSON.parse(await readFile(pending, 'utf8'));
+      await call(job.status_url);  // still known to the queue?
+      console.log(`resuming ${endpoint} ${job.request_id}`);
+    } catch {
+      job = null;  // expired or unknown: submit again
+    }
+  }
+  if (!job) {
+    const spent = (await readSpend()).reduce((s, r) => s + r.est_usd, 0);
+    if (spent + est > TOTAL_CAP) throw new Error(`BUDGET: total would reach $${(spent + est).toFixed(2)} > $${TOTAL_CAP}. Stop and report.`);
+    job = await call(`https://queue.fal.run/${endpoint}`, { method: 'POST', body: JSON.stringify(input) });
+    await logSpend({ endpoint, est_usd: est, request_id: job.request_id, ...meta });
+    if (pending) {
+      await mkdir(dirname(pending), { recursive: true });
+      await writeFile(pending, JSON.stringify(job));
+    }
+    console.log(`queued ${endpoint} ${job.request_id}`);
+  }
   for (;;) {
     await new Promise((r) => setTimeout(r, 4000));
     const st = await call(job.status_url);
@@ -118,9 +137,15 @@ function need(name) {
 
 async function cmdImage() {
   const out = resolve(REPO, need('out'));
+  // already made (a resumed build re-running its batch): never pay twice. --force regenerates.
+  if (!a.force && existsSync(`${out}.json`) && [...Array(+a.n).keys()].every((i) => existsSync(`${out}_${i}.png`))) {
+    console.log(`exists ${a.out}_0.png (skipped; --force to regenerate)`);
+    return;
+  }
   const endpoint = `openai/gpt-image-2.5/${a.variant}/text-to-image`;
   const input = { prompt: need('prompt'), image_size: a.size, quality: a.quality, num_images: +a.n, output_format: 'png' };
-  const { result, request_id, seconds } = await run(endpoint, input, { est: EST.image * +a.n, meta: { kind: 'image', out: a.out } });
+  const { result, request_id, seconds } = await run(endpoint, input, { est: EST.image * +a.n, meta: { kind: 'image', out: a.out },
+                                                                   pending: `${out}.pending.json` });
   const files = [];
   for (const [i, img] of (result.images ?? []).entries()) {
     const f = `${out}_${i}.png`;
@@ -128,6 +153,7 @@ async function cmdImage() {
     files.push({ file: f, url: img.url, width: img.width, height: img.height });
   }
   await writeFile(`${out}.json`, JSON.stringify({ endpoint, request_id, seconds, input, files }, null, 2));
+  await unlink(`${out}.pending.json`).catch(() => {});
   console.log(`saved ${files.map((f) => f.file).join(', ')}`);
 }
 
@@ -136,14 +162,22 @@ async function cmd3d() {
   if (!spec) throw new Error(`--model must be one of ${Object.keys(MODELS3D).join(', ')}`);
   const ref = JSON.parse(await readFile(resolve(REPO, need('ref')), 'utf8'));
   const out = resolve(REPO, need('out'));
+  if (!a.force && existsSync(join(out, 'model.glb'))) {
+    console.log(`exists ${a.out}/model.glb (skipped; --force to regenerate)`);
+    return;
+  }
   const input = { ...spec.input, image_url: ref.files[0].url };
-  const { result, request_id, seconds } = await run(spec.endpoint, input, { est: EST[a.model], meta: { kind: '3d', model: a.model, out: a.out } });
+  // Tripo otherwise returns ~2M triangles per prop: slow to import, compare and decimate. Meshy ignores it.
+  if (a['face-limit'] && a.model.startsWith('tripo')) input.face_limit = Number(a['face-limit']);
+  const { result, request_id, seconds } = await run(spec.endpoint, input, { est: EST[a.model], meta: { kind: '3d', model: a.model, out: a.out },
+                                                                         pending: join(out, 'pending.json') });
   await mkdir(out, { recursive: true });
   await writeFile(join(out, 'result.json'), JSON.stringify({ endpoint: spec.endpoint, request_id, seconds, input, result }, null, 2));
   // Tripo returns model_mesh / pbr_model, Meshy returns model_glb; take the first GLB we find.
   const glb = JSON.stringify(result).match(/https:\/\/[^"]+?\.glb[^"]*/)?.[0];
   if (!glb) throw new Error('no GLB in response: ' + JSON.stringify(result).slice(0, 500));
   await download(glb, join(out, 'model.glb'));
+  await unlink(join(out, 'pending.json')).catch(() => {});
   console.log(`saved ${a.out}/model.glb (${seconds.toFixed(0)} s)`);
 }
 
