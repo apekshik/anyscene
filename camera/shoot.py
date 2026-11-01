@@ -1,3 +1,4 @@
+# synced from github.com/apekshik/anyshot camera/shoot.py
 """camrig CLI. Run through pipeline/gpu_run.sh:
   blender -b <scene.blend> --python camera/shoot.py -- --shots <shots.json> --out <abs dir>
       [--only a,b] [--preview | --framing | --lenschart NAME | --still N] [--frames a-b] [--save x.blend] [--no-encode]

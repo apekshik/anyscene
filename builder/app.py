@@ -6,6 +6,10 @@
 POST /build  reference images (+ prompt)  ->  stills, scene.blend, scene.glb, panoramas, package, critic rounds.
 The agent (scene_builder.py) streams ANYSCENE_STAGE lines that the fal queue relays to the caller as logs: every tool
 call, every report with its image, every critique. There is no time budget: it ends when the critic passes (or stalls).
+
+Shots of a build (/scene2image, /scene2video, /shots, and /ref2scene's `shots`) are made by AnyShot
+(github.com/apekshik/anyshot), a separate fal app named by the ANYSHOT_APP secret. This app only forwards the order
+over the fal API and relays AnyShot's stage lines into its own log.
 """
 
 import json
@@ -22,7 +26,6 @@ sys.path.insert(0, _HERE)
 sys.path.insert(0, os.path.join(os.path.dirname(_HERE), "endpoint"))
 import planner  # noqa: E402  (the critic's Claude client; bundled by value)
 import scene_builder  # noqa: E402
-import shots  # noqa: E402
 import gallery  # noqa: E402  (the shared builds gallery: /builds, /build_events)
 import schema  # noqa: E402,F401
 
@@ -74,10 +77,42 @@ def save_optix_cache():
 
 BLENDER_WRAPPER = '#!/bin/sh\nexec /usr/local/bin/blender.real --python /opt/anyscene/blender_gpu.py "$@"\n'
 BUILDS_DIR = "/data/anyscene/builder"
-# /ref2scene's optional `shots` go to the AnyShot app (anyshot/app.py) named by ANYSHOT_APP, a fal secret on your own
-# account (e.g. <your-fal-username>/anyshot). No default: an unset name says so instead of calling someone else's app.
+# Shots go to the AnyShot app (github.com/apekshik/anyshot) named by ANYSHOT_APP, a fal secret on your own account
+# (e.g. <your-fal-username>/anyshot). No default: an unset name says so instead of calling someone else's app.
 ANYSHOT_APP_ENV = "ANYSHOT_APP"
 SHOTS_WAIT_S = 7200 - 300  # wait for AnyShot until 5 min before this request's cap, then return its request_id
+
+
+def anyshot_app():
+    return os.environ.get(ANYSHOT_APP_ENV, "").strip().strip("/")
+
+
+async def call_anyshot(route, arguments, deadline, on_submit=None):
+    """Submit an order to AnyShot (<ANYSHOT_APP>/<route>) and relay its stage lines into this request's log until it
+    completes or `deadline` (epoch seconds) passes. Returns (request_id, response, or None if still running). AnyShot
+    is retry-safe on its side: a retry of the same order attaches to the same job instead of starting a second one."""
+    import asyncio
+    import time
+
+    import fal_client
+
+    app = anyshot_app()
+    client = fal_client.AsyncClient(key=os.environ.get("FAL_SERVERLESS_KEY") or os.environ.get("FAL_KEY"))
+    handle = await client.submit(f"{app}/{route}", arguments=arguments)
+    if on_submit:
+        on_submit(handle.request_id)
+    seen = set()
+    while time.time() < deadline:
+        st = await handle.status(with_logs=True)
+        for log in getattr(st, "logs", None) or []:
+            msg = log.get("message", "")
+            if scene_builder.PREFIX in msg and msg not in seen:
+                seen.add(msg)
+                print(msg, flush=True)
+        if isinstance(st, fal_client.Completed):
+            return handle.request_id, await handle.get()
+        await asyncio.sleep(10)
+    return handle.request_id, None
 BLENDER_VERSION = "5.0.1"
 
 DOCKERFILE = f"""
@@ -192,7 +227,7 @@ class SceneBuilderApp(fal.App):
     machine_type = ["GPU-RTX5090", "GPU-RTXPRO6000"]
     image = ContainerImage.from_dockerfile_str(DOCKERFILE)
     requirements = ["pydantic", "anthropic", "pillow", "fal==1.84.0", "fal-client", "claude-agent-sdk==0.2.176"]
-    local_python_modules = ["scene_builder", "shots", "planner", "schema", "gallery"]
+    local_python_modules = ["scene_builder", "planner", "schema", "gallery"]
     min_concurrency = 0
     max_concurrency = 10
     request_timeout = 7200  # fal's cap; longer builds resume in a second request
@@ -239,12 +274,9 @@ class SceneBuilderApp(fal.App):
     async def _anyshot(self, req: BuildRequest, res: BuildResponse, t0: float):
         """Hand a passed build to the AnyShot app and wait for it while this request has time left. AnyShot is
         retry-safe on its side, so a retry of this request attaches to the same shots job instead of a second one."""
-        import asyncio
         import time
 
-        import fal_client
-
-        app = os.environ.get(ANYSHOT_APP_ENV, "").strip().strip("/")
+        app = anyshot_app()
         route = "scene2video" if req.shots.mode == "video" else "scene2image"
         res.shots_job = {"app": app, "route": route, "status": "skipped"}
         if not app:
@@ -257,31 +289,21 @@ class SceneBuilderApp(fal.App):
             return
         say = lambda status, msg, **kw: print(scene_builder.PREFIX + json.dumps(
             {"t": round(time.time() - t0, 1), "stage": "shots", "status": status, "message": msg, **kw}), flush=True)
+        def submitted(request_id):
+            res.shots_job.update(request_id=request_id, status="running")
+            say("running", f"AnyShot {route}: {len(req.shots.shots)} shot(s) on {res.build_id}", request_id=request_id)
+
         try:
-            client = fal_client.AsyncClient(key=os.environ.get("FAL_SERVERLESS_KEY") or os.environ.get("FAL_KEY"))
-            handle = await client.submit(f"{app}/{route}", arguments={
+            request_id, out = await call_anyshot(route, {
                 "build_id": res.build_id, "shots": [s.model_dump() for s in req.shots.shots],
-                "settings": req.shots.settings, "dials": req.shots.dials, "effort": req.effort})
-            res.shots_job.update(request_id=handle.request_id, status="running")
-            say("running", f"AnyShot {route}: {len(req.shots.shots)} shot(s) on {res.build_id}",
-                request_id=handle.request_id)
-            deadline = t0 + SHOTS_WAIT_S
-            seen = set()
-            while time.time() < deadline:
-                st = await handle.status(with_logs=True)
-                for log in getattr(st, "logs", None) or []:  # relay AnyShot's stage lines into this build's log
-                    msg = log.get("message", "")
-                    if scene_builder.PREFIX in msg and msg not in seen:
-                        seen.add(msg)
-                        print(msg, flush=True)
-                if isinstance(st, fal_client.Completed):
-                    out = await handle.get()
-                    res.shot_stills, res.shot_videos = out.get("stills", []), out.get("videos", [])
-                    res.shots_job.update(status="done", job_id=out.get("job_id"), missing=out.get("missing", []))
-                    say("done", f"AnyShot: {len(res.shot_stills)} stills, {len(res.shot_videos)} videos")
-                    return
-                await asyncio.sleep(15)
-            say("running", f"AnyShot is still running; fetch request {handle.request_id} from {app} when it finishes")
+                "settings": req.shots.settings, "dials": req.shots.dials, "effort": req.effort},
+                t0 + SHOTS_WAIT_S, submitted)
+            if out is not None:
+                res.shot_stills, res.shot_videos = out.get("stills", []), out.get("videos", [])
+                res.shots_job.update(status="done", job_id=out.get("job_id"), missing=out.get("missing", []))
+                say("done", f"AnyShot: {len(res.shot_stills)} stills, {len(res.shot_videos)} videos")
+                return
+            say("running", f"AnyShot is still running; fetch request {request_id} from {app} when it finishes")
         except Exception as e:  # the build itself is delivered either way
             res.shots_job.update(status="failed", error=f"{type(e).__name__}: {str(e)[:300]}")
             say("running", f"AnyShot call failed: {res.shots_job['error']}")
@@ -445,33 +467,29 @@ class SceneBuilderApp(fal.App):
         return await self._shots(req)
 
     async def _shots(self, req: ShotsRequest) -> ShotsResponse:
-        """Scene to images / scene to video: an agent shoots a finished build (see builder/SHOTS.md)."""
+        """Scene to images / scene to video on a finished build: forwarded to the AnyShot app (ANYSHOT_APP), which
+        shoots the build in place on this account's storage. Its stage lines are relayed into this request's log."""
         import time
-        import uuid
-
-        from fal.toolkit import File
 
         t0 = time.time()
         if not req.build_id.replace("_", "").isalnum():
             raise ValueError("bad build_id")
-        work = os.path.join(BUILDS_DIR, req.build_id)
-        try:
-            scene = shots.build_scene_name(work)
-        except ValueError as e:
-            raise ValueError(f"build {req.build_id}: {e}")
-        # older builds carry older tools: refresh the toolkit (never the scene's own scripts or outputs)
-        shots.write_toolkit(work, TOOLKIT)
-        job_id = "j_" + uuid.uuid4().hex[:8]
-        upload = lambda p: File.from_path(p).url
-        # the same agent and tools as the AnyShot app (anyshot/app.py), on the build's own workspace
-        request = {**req.model_dump(), "source": {"kind": "build", "build_id": req.build_id}}
-        d, out = await shots.shoot(work, scene, job_id, request, upload, effort=req.effort)
-        res = ShotsResponse(**out, minutes=round((time.time() - t0) / 60, 1))
-        save_optix_cache()
-        d.emit("packaged", "done", f"{len(res.stills)} stills, {len(res.videos)} videos after {res.minutes:.0f} min",
-               stills=res.stills, videos=res.videos)
-        await __import__("asyncio").sleep(2)
-        return res
+        if not os.path.isdir(os.path.join(BUILDS_DIR, req.build_id)):
+            raise ValueError(f"build {req.build_id}: no such build")
+        app = anyshot_app()
+        if not app:
+            raise ValueError(f"no AnyShot app configured: set the fal secret {ANYSHOT_APP_ENV}="
+                             "<your-fal-username>/anyshot and redeploy")
+        route = "scene2video" if req.mode == "video" else "scene2image"
+        print(scene_builder.PREFIX + json.dumps({"t": 0, "stage": "received", "status": "running",
+                                                 "message": f"forwarding to AnyShot {route} on {req.build_id}"}), flush=True)
+        request_id, out = await call_anyshot(route, {
+            "build_id": req.build_id, "shots": [s.model_dump() for s in req.shots], "settings": req.settings,
+            "dials": req.dials, "effort": req.effort}, t0 + 7200 - 120)
+        if out is None:
+            raise RuntimeError(f"AnyShot is still running: fetch request {request_id} from {app}/{route} when it finishes")
+        await __import__("asyncio").sleep(2)  # let the last relayed lines reach the queue logs before COMPLETED
+        return ShotsResponse(**{k: out.get(k) for k in ShotsResponse.model_fields})
 
     # The shared builds gallery: every build anyone ran, read from storage (the fal queue only shows a request to the
     # key that submitted it). Light and read-only; see builder/gallery.py.

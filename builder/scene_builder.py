@@ -61,7 +61,6 @@ def toolkit_files():
     files = {"SKILL.md": open(os.path.join(REPO, "SKILL.md"), encoding="utf-8").read(),
              "CRAFT.md": open(os.path.join(HERE, "CRAFT.md"), encoding="utf-8").read(),
              ".builder/PROMPT.md": open(os.path.join(HERE, "PROMPT.md"), encoding="utf-8").read(),
-             ".builder/SHOTS.md": open(os.path.join(HERE, "SHOTS.md"), encoding="utf-8").read(),
              "endpoint/refine_blender.py": open(os.path.join(REPO, "endpoint", "refine_blender.py"), encoding="utf-8").read()}
     for d in TOOLKIT_DIRS:
         for root, dirs, names in os.walk(os.path.join(REPO, d)):
@@ -173,7 +172,7 @@ def run_critic(refs, stills):
 
 # ---------------------------------------------------------------- run
 class SceneBuilder:
-    # what a subclass changes for another job on the same workspace (see shots.py)
+    # what a subclass changes for another job on the same workspace
     PROMPT_FILE = "PROMPT.md"  # under .builder/
     ASK = "Build the scene from the reference in input/. Start by reading SKILL.md."
 

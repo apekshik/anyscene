@@ -1,3 +1,4 @@
+<!-- synced from github.com/apekshik/anyshot camera/README.md -->
 # camrig: cinematic camera rig and shot renderer
 
 `camera/shoot.py` adds one camera rig per shot to a scene .blend, then renders:
@@ -6,7 +7,8 @@
 - lens charts,
 - final Cycles frames and mp4s.
 
-Shots are described in a JSON file. Each scene keeps its own at `scenes/<scene>/shots.json`. Copies of the examples live in `examples/`.
+Shots are described in a JSON file: an AnyShot order writes its own as `out/shots/<job>/shots.json`, and an AnyScene
+build keeps its scouting cameras in `out/shots.json`. Examples live in `camera/examples/`.
 
 The contract is stable. New fields may be added, but existing ones will not change meaning.
 
@@ -15,10 +17,11 @@ The contract is stable. New fields may be added, but existing ones will not chan
 ```bash
 . pipeline/env.sh   # sets $B (Blender) and $ROOT_ABS (absolute repo root)
 # always through the shared GPU queue
-pipeline/gpu_run.sh "$B" -b scenes/tokyo-ramen-shop/ramen.blend --python camera/shoot.py -- \
-  --shots $ROOT_ABS/scenes/tokyo-ramen-shop/shots.json \
-  --out   $ROOT_ABS/scenes/tokyo-ramen-shop/out/shots \
-  [--only a,b] [--preview | --framing | --lenschart NAME] [--frames 1-24] [--still 12] [--save rigged.blend] [--no-encode] \n  [--engine eevee|cycles|workbench] [--step N]
+pipeline/gpu_run.sh "$B" -b scenes/my-set/set.blend --python camera/shoot.py -- \
+  --shots $ROOT_ABS/scenes/my-set/shots.json \
+  --out   $ROOT_ABS/scenes/my-set/out/shots \
+  [--only a,b] [--preview | --framing | --lenschart NAME] [--frames 1-24] [--still 12] [--save rigged.blend] [--no-encode] \
+  [--engine eevee|cycles|workbench] [--step N]
 ```
 
 | Mode | What it does | Output (`<out>/<shot>/…`) |
@@ -118,7 +121,7 @@ All moves interpolate between `keys`; `move` sets defaults and validation:
 - **Baking:** everything is baked per frame onto `CR_<shot>_shake` (location in metres, rotation in radians, in the camera's local axes).
   It is deterministic per shot index.
 - **Setting it up:** use `move: "path"` with 4–6 keys at a walking pace (about 0.3–0.6 m/s) and `ease: "inout"`, so the operator starts and stops gently.
-  Check the camera path against the scene before rendering. In the repair scene, `scenes/tokyo-electronics-repair/scripts/check_path.py` reports the closest mesh and its frame.
+  Check the camera path against the scene before rendering: load the scene once, build a BVH of its meshes, and report the closest mesh and its frame for every frame of the move.
 
 ## Rig hierarchy (in the saved .blend)
 
@@ -167,7 +170,7 @@ camrig.find("ramen_bowl")            # exact name or prefix match
 "$B" -b scene.blend --python camera/shoot.py -- --list bowl
 ```
 
-## Measured on this box (RTX 5070 Ti, Blender 5.0.1)
+## Measured (RTX 5070 Ti, Blender 5.0.1, on two of AnyScene's reference sets)
 
 | Pass | Scene | Time |
 |---|---|---|
@@ -204,11 +207,7 @@ Scale final times by pixels × samples before you pick a `--frames` chunk size.
 - Light falloff is flatter.
 - Previews are for framing, move and focus, not for look.
 
-## Examples and tests
-- `examples/ramen_shots.json` and `examples/repair_shots.json`: 35 mm push-in with a foreground→subject rack, 85 mm static handheld at f/1.8, 24 mm orbit, and a dolly zoom. All are wired to real object names in each scene.
-- Test outputs are in `test/{ramen,repair}/`:
-  - `_framing.png`
-  - `<shot>/preview.mp4`
-  - `scope_85_lenschart.png`
-  - `bench_push/frames` (Cycles, with lens_fx)
-  - `tiny/` (full chunked final → mp4 + contact)
+## Examples
+- `camera/examples/ramen_shots.json` and `camera/examples/repair_shots.json`: 35 mm push-in with a foreground->subject
+  rack, 85 mm static handheld at f/1.8, 24 mm orbit, and a dolly zoom, written for two of AnyScene's reference sets
+  (the object names are from those scenes).

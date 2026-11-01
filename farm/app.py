@@ -1,14 +1,16 @@
-"""AnyScene render farm: headless Blender on fal serverless GPUs.
+# synced from github.com/apekshik/anyshot farm/app.py
+"""Render farm: headless Blender on fal Serverless GPUs (AnyShot's /scene2video renders its frames here).
 
-One request = one chunk of frames. The scene arrives as a self-contained bundle (see farm/pack.py) behind a short-lived
-download URL; each runner downloads a bundle once to its own local disk, so later chunks of the same scene on that
-runner start rendering straight away. Frames go back as a zip on fal's file store, so the worker never holds storage credentials.
+One request = one chunk of frames. The scene arrives as a self-contained bundle zip (scene.blend plus whatever the
+Blender arguments reference) behind a download URL; each runner downloads a bundle once to its own local disk, so later
+chunks of the same scene on that runner start rendering straight away. Frames go back as a zip on fal's file store,
+so the worker never holds storage credentials.
 
-    fal deploy farm/app.py::BlenderFarm            # or: fal run farm/app.py::BlenderFarm for a throwaway URL
-    fal deploy farm/app.py::BlenderFarm --app-name blender-farm-2 --auth private
-                                                   (adds `outputs`, which the Blender add-on in blender_addon/
-                                                   uses to get non-PNG frames back; requests without it behave as before)
-    uv run --with fal-client --with boto3 python farm/submit.py ...   (see farm/README.md)
+    fal deploy farm/app.py::BlenderFarm --app-name blender-farm --auth private
+
+Request: bundle_url, bundle_id (the bundle's sha256 prefix), blender_args (after `blender -b`; {bundle} and {out}
+expand to the unpacked bundle and the output folder), optional timeout_s and outputs (globs of the files to return,
+default PNGs only). Any client can use it, not just AnyShot: AnyScene's Blender add-on renders the open scene on it.
 """
 
 import hashlib

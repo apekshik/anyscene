@@ -10,8 +10,11 @@ POST /build   plan_id (or reference images + auto_approve)       ->  package zip
 ```
 
 Both run on the fal queue and stream their progress as stage events (see Progress). The app lives in `endpoint/`;
-final renders go to the `blender-farm` app (`farm/`). A third call, `/scene-to-scene`, changes a built scene's dials
-(see Dials) and re-renders it.
+final renders go to the `blender-farm` app (`farm/app.py`, synced from AnyShot). A third call, `/scene-to-scene`,
+changes a built scene's dials (see Dials) and re-renders it.
+
+To shoot a finished build (stills or camera moves described in words), use
+[AnyShot](https://github.com/apekshik/anyshot): the builder's `/scene2image` and `/scene2video` forward to it.
 
 ## Dials
 

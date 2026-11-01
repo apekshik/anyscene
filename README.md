@@ -76,13 +76,14 @@ SKILL.md          the process; agents start here
 builder/CRAFT.md  the review loop that separates good scenes from first drafts
 generate/         fal client: images and image→3D (Tripo H3.1, Meshy 7.1), with a local spend log
 pipeline/         Blender/ffmpeg discovery, a FIFO GPU queue, comparison renders, gallery pages, floating-prop check
-camera/           camera rig and shot renderer: moves, rack focus, handheld walk, lens effects (camera/README.md)
+camera/           camera rig and shot renderer: moves, rack focus, handheld walk, lens effects (synced from AnyShot)
 breakdown/        behind-the-scenes videos, promo cuts and the launch supercut
 scenes/<name>/    one folder per scene: assets.json, picks.json, shots.json, NOTES.md, brief.md, scripts/
-farm/             a fal Serverless render farm for Cycles, and a client that renders a scene's shots on it
+farm/             a fal Serverless render farm for Cycles (app.py, synced from AnyShot), and a client that renders a scene's shots on it
 blender_addon/    the fal Render Farm add-on for Blender
 builder/          the same process packaged as a fal Serverless app (the hosted endpoint)
 docs/             endpoint and API notes, README images
+scripts/          sync_from_anyshot.py: refresh the files shared with AnyShot from a sibling ../anyshot checkout
 ```
 
 ## Hosted endpoint (optional)
@@ -97,12 +98,25 @@ The endpoint's code is in [`builder/`](builder) if you want to deploy your own c
 (`fal deploy builder/app.py::SceneBuilderApp --app-name anyscene-builder`). It needs `FAL_KEY` and `OPENROUTER_API_KEY` set
 as secrets on the app, and the `endpoint/` folder alongside it (the builder imports its planner and schema).
 
+## Shooting builds: AnyShot
+
+Stills and camera moves of a finished build are made by [AnyShot](https://github.com/apekshik/anyshot), an AI
+cinematographer that lives in its own repo and runs as its own fal app. Deploy it on the same fal account and set
+`fal secrets set ANYSHOT_APP=<your-fal-username>/anyshot`: the builder's `/scene2image`, `/scene2video` and `/shots`
+routes (and the optional `shots` order on `/ref2scene`) forward to it over the fal API and relay its live log, and
+AnyShot reads the build straight from the account's `/data` storage by `build_id`. AnyShot also takes any uploaded
+`.blend`, so you can call it directly.
+
+The code both repos use (`camera/`, `builder/blender_gpu.py`, `farm/app.py`, `pipeline/env.sh`, `pipeline/gpu_run.sh`)
+lives in AnyShot; the copies here carry a "synced from" header. Edit them there, then run
+`python scripts/sync_from_anyshot.py` with AnyShot checked out next to this repo.
+
 ## Render farm add-on
 
 [`blender_addon/`](blender_addon) is a Blender add-on that renders the open scene on fal GPUs instead of your own:
 direct a scene in Blender, press **Render animation on fal**, and the frames come back into the scene's output path
 with the same names a local render would give them. See [`blender_addon/README.md`](blender_addon/README.md) for
-install and settings. The farm itself is [`farm/app.py`](farm/app.py); you can deploy your own and point the add-on's
+install and settings. The farm itself is [`farm/app.py`](farm/app.py) (its home is AnyShot's `farm/app.py`); you can deploy your own and point the add-on's
 **Farm app** preference at it.
 
 ## Licence

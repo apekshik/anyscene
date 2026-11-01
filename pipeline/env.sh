@@ -1,3 +1,4 @@
+# synced from github.com/apekshik/anyshot pipeline/env.sh
 # Sourced by every shell script: finds the repo root, Blender and ffmpeg.
 #   . pipeline/env.sh            (from the repo root)
 # Override any of them in your shell: BLENDER=/path/to/blender FFMPEG=/path/to/ffmpeg

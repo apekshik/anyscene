@@ -1,3 +1,4 @@
+# synced from github.com/apekshik/anyshot camera/camrig.py
 """camrig: cinematic camera rigs for the night-shop scenes (Blender 5.0). See README.md for the shots.json contract.
 
 Rig per shot:  CR_<shot>_base (baked position) -> CR_<shot>_aim (Track To CR_<shot>_target) -> CR_<shot>_shake (noise)

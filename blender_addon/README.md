@@ -141,7 +141,7 @@ render (PSNR), and renders one EXR frame. It ends with a `TEST-SUMMARY` JSON lin
 ## Farm change (blender-farm-2)
 
 `farm/app.py` gained one optional request field, `outputs` (glob patterns relative to `{out}`). It defaults to
-`["**/*.png"]`, which is exactly the old behaviour, so existing clients (`farm/farm.py`, `builder/shots.py`) are
+`["**/*.png"]`, which is exactly the old behaviour, so existing clients (`farm/farm.py`, AnyShot's `farm_render`) are
 unaffected. The add-on always sends `["frames/**/*"]`, and an older `blender-farm` deployment ignores the unknown field.
 The changed app is deployed as `blender-farm-2` on your own account:
 

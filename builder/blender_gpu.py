@@ -1,6 +1,7 @@
-"""Every Blender the builder starts renders Cycles on the GPU, even with --factory-startup and no gpu_prefs script.
+# synced from github.com/apekshik/anyshot agent/blender_gpu.py
+"""Every Blender the agent starts renders Cycles on the GPU, even with --factory-startup and no GPU prefs script.
 On the fal worker `blender` is a wrapper that runs this first (`blender.real --python blender_gpu.py "$@"`): headless
-Blender otherwise renders on the CPU, which an agent forgot once and lost most of a build to."""
+Blender otherwise renders on the CPU, which an agent forgot once and lost most of a two-hour job to."""
 
 import bpy
 from bpy.app.handlers import persistent

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# synced from github.com/apekshik/anyshot pipeline/gpu_run.sh
 # Run a command holding the shared GPU, first come first served, so parallel scene builds never render in Cycles at once
 # (16 GB card) and nobody can re-grab the GPU ahead of a caller that is already waiting.
 #   pipeline/gpu_run.sh "$B" -b ...
