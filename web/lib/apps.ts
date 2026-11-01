@@ -8,7 +8,7 @@ const clean = (v: string | undefined) => (v || "").trim().replace(/^\/+|\/+$/g, 
 export const BUILDER_APP = clean(process.env.NEXT_PUBLIC_ANYSCENE_APP);
 /** The older plan + build pipeline (endpoint/app.py) behind ?mode=pipeline. Falls back to the builder app's id. */
 export const PIPELINE_APP = clean(process.env.NEXT_PUBLIC_ANYSCENE_PIPELINE_APP) || BUILDER_APP;
-/** AnyKit (kit/app.py): /kits, /kit_events. */
+/** AnyKit (github.com/apekshik/anykit): /kits, /kit_events. */
 export const KIT_APP = clean(process.env.NEXT_PUBLIC_ANYKIT_APP);
 /** Optional second builder deployment (e.g. a private test copy) that ?gallery_app=<id> may point the gallery at. */
 export const TEST_APP = clean(process.env.NEXT_PUBLIC_ANYSCENE_TEST_APP);

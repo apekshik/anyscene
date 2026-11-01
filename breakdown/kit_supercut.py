@@ -228,7 +228,13 @@ def cold_open(out, secs=12.4):
 def end_card(out, secs=4.0):
     canvas = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(canvas)
-    text_centered(d, (H - 120) // 2, "AnyKit", font("segoeuib.ttf", 110), INK)
+    lines = [(font("segoeuib.ttf", 96), INK, "AnyKit", 128),
+             (font("bahnschrift.ttf", 36), BRASS, "OPEN SOURCE  ·  github.com/apekshik/anykit", 92),
+             (font("segoeuisl.ttf", 30), DIM, "Production-ready prop kits, in one style, at real scale.", 0)]
+    y = (H - sum(g for *_, g in lines) - 30) // 2
+    for fnt, col, txt, g in lines:
+        text_centered(d, y, txt, fnt, col)
+        y += g
     return still_video(canvas, secs, out)
 
 
