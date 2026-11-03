@@ -66,3 +66,6 @@ refs/**/*.json
 # Unreal build logs
 *.out
 unreal_fx/work/
+# sample reference plates for the Studio picker
+!web/public/samples/
+!web/public/samples/*.jpg

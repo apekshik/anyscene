@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Dials, { type DialValues } from "./Dials";
 import InfoTip, { HELP } from "./InfoTip";
+import { SAMPLES, sampleFile, sampleThumb } from "@/lib/samples";
 
 export interface BuilderInputsState {
   file: File | null;
@@ -27,6 +28,8 @@ interface Props {
 export default function BuilderInputs({ value, onChange, disabled, canBuild, building, onBuild, note }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [sampleError, setSampleError] = useState("");
   const set = (patch: Partial<BuilderInputsState>) => onChange({ ...value, ...patch });
   const take = (f: File | undefined) => {
     if (!f || !f.type.startsWith("image/")) return;
@@ -70,6 +73,38 @@ export default function BuilderInputs({ value, onChange, disabled, canBuild, bui
       <p className="cap">
         {value.previewUrl ? `plate 1 of 1: ${value.file ? value.file.name : "recorded reference"}` : "no plate loaded"}
       </p>
+
+      <div className="samples">
+        <span className="field-label">Or try one of ours</span>
+        <div className="samples-grid">
+          {SAMPLES.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className={`sample ${value.file?.name === `${s.id}.jpg` ? "on" : ""}`}
+              disabled={disabled || loading !== null}
+              title={s.label}
+              aria-label={`Use the sample reference: ${s.label}`}
+              onClick={async () => {
+                setLoading(s.id);
+                setSampleError("");
+                try {
+                  take(await sampleFile(s));
+                } catch (err) {
+                  setSampleError(err instanceof Error ? err.message : String(err));
+                } finally {
+                  setLoading(null);
+                }
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={sampleThumb(s.id)} alt="" loading="lazy" />
+              <span>{loading === s.id ? "Loading" : s.label}</span>
+            </button>
+          ))}
+        </div>
+        {sampleError && <p className="error-note">{sampleError}</p>}
+      </div>
 
       <label className="field">
         <span className="field-label">
