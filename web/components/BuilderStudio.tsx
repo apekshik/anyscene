@@ -71,8 +71,8 @@ export default function BuilderStudio() {
         .then((s) => {
           if (cancelled) return;
           setSource(s);
-          // a mock keeps the plate you picked; a plain replay shows the recorded one
-          if (mock) return;
+          // a mock keeps the plate you picked, else shows the recorded build's; a plain replay always shows the recorded one
+          if (mock) return setInputs((i) => (i.previewUrl ? i : { ...i, previewUrl: s.referenceUrl }));
           setInputs((i) => ({ ...i, previewUrl: s.referenceUrl }));
           refUrl.current = s.referenceUrl;
         })
@@ -391,7 +391,7 @@ export default function BuilderStudio() {
             setInputs(v);
           }}
           disabled={running}
-          canBuild={!!(inputs.file || refUrl.current || (mock && inputs.previewUrl)) && !running && !!source}
+          canBuild={!!(inputs.file || refUrl.current || mock) && !running && !!source}
           building={running || checking}
           onBuild={requestBuild}
           note={live ? <CostNote me={me} /> : null}
@@ -399,7 +399,11 @@ export default function BuilderStudio() {
           onMock={(on) => {
             setMock(on);
             if (on && speed === 1) setSpeed(16);
-            if (!on) setSpeed(1);
+            if (!on) {
+              setSpeed(1);
+              // drop the recorded plate a mock filled in: a live build needs one of yours
+              if (!inputs.file && !refUrl.current) setInputs((i) => ({ ...i, previewUrl: "" }));
+            }
           }}
         />
         {res && res.build_id && openKind === "scene" && <ShotsOrder res={res} source={source instanceof LiveSource ? source : null} />}

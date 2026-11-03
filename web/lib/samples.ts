@@ -1,5 +1,5 @@
 // Sample reference plates for trying the builder without your own image. Generated with GPT Image 2.5 Sunburst by
-// generate/samples.sh; served from public/samples/<id>.jpg (1536 px) with <id>_thumb.jpg (384 px) for the picker.
+// generate/samples.sh; served from public/samples/<id>.jpg (1536 px) with <id>_thumb.jpg (768 px) for the picker.
 export interface Sample {
   id: string;
   label: string;

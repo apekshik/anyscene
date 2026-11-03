@@ -131,7 +131,7 @@ export default function BuilderInputs({ value, onChange, disabled, canBuild, bui
       </button>
       <p className="fine">
         {mock
-          ? "Plays at 16x; change the speed in the toolbar. The frames and results are from a recorded build, not your plate."
+          ? "No plate needed: it uses the recorded build's unless you pick one. Plays at 16x (speed in the toolbar); the frames and results are the recorded build's."
           : <>One agent builds it end to end and loops with a critic. Up to 2 hours.{note ? <> {note}</> : null}</>}
       </p>
     </div>
