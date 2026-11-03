@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Dials, { type DialValues } from "./Dials";
 import InfoTip, { HELP } from "./InfoTip";
-import { SAMPLES, sampleFile, sampleThumb } from "@/lib/samples";
+import SamplePicker from "./SamplePicker";
 
 export interface BuilderInputsState {
   file: File | null;
@@ -23,13 +23,14 @@ interface Props {
   onBuild: () => void;
   /** Under the button: what a build costs, how many are left today. */
   note?: React.ReactNode;
+  /** Mock build: replay a recorded build instead of calling fal. Undefined hides the switch (plain replays). */
+  mock?: boolean;
+  onMock?: (on: boolean) => void;
 }
 
-export default function BuilderInputs({ value, onChange, disabled, canBuild, building, onBuild, note }: Props) {
+export default function BuilderInputs({ value, onChange, disabled, canBuild, building, onBuild, note, mock, onMock }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
-  const [loading, setLoading] = useState<string | null>(null);
-  const [sampleError, setSampleError] = useState("");
   const set = (patch: Partial<BuilderInputsState>) => onChange({ ...value, ...patch });
   const take = (f: File | undefined) => {
     if (!f || !f.type.startsWith("image/")) return;
@@ -74,37 +75,7 @@ export default function BuilderInputs({ value, onChange, disabled, canBuild, bui
         {value.previewUrl ? `plate 1 of 1: ${value.file ? value.file.name : "recorded reference"}` : "no plate loaded"}
       </p>
 
-      <div className="samples">
-        <span className="field-label">Or try one of ours</span>
-        <div className="samples-grid">
-          {SAMPLES.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              className={`sample ${value.file?.name === `${s.id}.jpg` ? "on" : ""}`}
-              disabled={disabled || loading !== null}
-              title={s.label}
-              aria-label={`Use the sample reference: ${s.label}`}
-              onClick={async () => {
-                setLoading(s.id);
-                setSampleError("");
-                try {
-                  take(await sampleFile(s));
-                } catch (err) {
-                  setSampleError(err instanceof Error ? err.message : String(err));
-                } finally {
-                  setLoading(null);
-                }
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={sampleThumb(s.id)} alt="" loading="lazy" />
-              <span>{loading === s.id ? "Loading" : s.label}</span>
-            </button>
-          ))}
-        </div>
-        {sampleError && <p className="error-note">{sampleError}</p>}
-      </div>
+      <SamplePicker current={value.file?.name} disabled={disabled} onPick={take} />
 
       <label className="field">
         <span className="field-label">
@@ -147,10 +118,22 @@ export default function BuilderInputs({ value, onChange, disabled, canBuild, bui
           ))}
         </select>
       </label>
+      {mock !== undefined && (
+        <label className="mock-switch">
+          <input type="checkbox" checked={mock} disabled={disabled} onChange={(e) => onMock?.(e.target.checked)} />
+          <span>
+            <b>Mock build</b> <span className="dim">free: replays a recorded build through the UI, nothing runs on fal</span>
+          </span>
+        </label>
+      )}
       <button className="primary" disabled={!canBuild} onClick={onBuild}>
-        {building ? "Building" : "Build the scene"}
+        {building ? "Building" : mock ? "Build the scene (mock)" : "Build the scene"}
       </button>
-      <p className="fine">One agent builds it end to end and loops with a critic. Up to 2 hours.{note ? <> {note}</> : null}</p>
+      <p className="fine">
+        {mock
+          ? "Plays at 16x; change the speed in the toolbar. The frames and results are from a recorded build, not your plate."
+          : <>One agent builds it end to end and loops with a critic. Up to 2 hours.{note ? <> {note}</> : null}</>}
+      </p>
     </div>
   );
 }

@@ -35,7 +35,10 @@ export default function BuilderStudio() {
   const galleryHref = `/?${new URLSearchParams({ view: "gallery", ...(openKind === "kit" ? { kind: "kit" } : {}), ...(galleryOverride ? { gallery_app: galleryOverride } : {}) })}`;
   const [opened, setOpened] = useState<GalleryItem | null>(null);
   const auto = params.get("auto") === "1";
-  const initialSpeed = Math.max(0.25, Math.min(256, Number(params.get("speed")) || 1));
+  // ?mock=1 (or the Mock switch by the Build button): Build replays the recorded builder fixture through every UI state,
+  // with no confirm card and nothing sent to fal
+  const [mock, setMock] = useState(params.get("mock") === "1");
+  const initialSpeed = Math.max(0.25, Math.min(256, Number(params.get("speed")) || (mock ? 16 : 1)));
 
   const [source, setSource] = useState<Source | null>(null);
   const [sourceError, setSourceError] = useState("");
@@ -63,11 +66,13 @@ export default function BuilderStudio() {
 
   useEffect(() => {
     let cancelled = false;
-    if (replayName) {
-      ReplaySource.load(replayName, initialSpeed)
+    if (replayName || mock) {
+      ReplaySource.load(replayName || "builder", initialSpeed)
         .then((s) => {
           if (cancelled) return;
           setSource(s);
+          // a mock keeps the plate you picked; a plain replay shows the recorded one
+          if (mock) return;
           setInputs((i) => ({ ...i, previewUrl: s.referenceUrl }));
           refUrl.current = s.referenceUrl;
         })
@@ -76,9 +81,9 @@ export default function BuilderStudio() {
     return () => {
       cancelled = true;
     };
-  }, [replayName, initialSpeed]);
+  }, [replayName, mock, initialSpeed]);
 
-  const live = !replayName;
+  const live = !replayName && !mock;
   useEffect(() => {
     if (!live) return;
     if (!getWho()) return setWhoOpen("first");
@@ -123,6 +128,7 @@ export default function BuilderStudio() {
         url = await source.uploadReference(inputs.file);
         refUrl.current = url;
       }
+      if (!url && source instanceof ReplaySource) url = inputs.previewUrl || source.referenceUrl;
       if (!url) throw new Error("Add a reference image first.");
       const floorPlanUrl = inputs.floorPlan && source.mode === "live" ? await source.uploadReference(inputs.floorPlan) : undefined;
       const r = await source.builder(
@@ -331,7 +337,7 @@ export default function BuilderStudio() {
         <div className="toolbar">
           {replay ? (
             <div className="replay-ctl" title="Replaying a recorded build">
-              <span>Replay: {replay.manifest.name}</span>
+              <span>{mock ? "Mock build (free)" : `Replay: ${replay.manifest.name}`}</span>
               <div className="speeds" role="group" aria-label="Replay speed">
                 {SPEEDS.map((s) => (
                   <button key={s} className={speed === s ? "on" : ""} onClick={() => setSpeed(s)} aria-pressed={speed === s}>
@@ -347,7 +353,7 @@ export default function BuilderStudio() {
               </span>
             )
           )}
-          {!replay && (
+          {(!replay || mock) && (
             <a className="text-btn" href={galleryHref}>
               {openId ? "Back to gallery" : "Gallery"}
             </a>
@@ -366,7 +372,7 @@ export default function BuilderStudio() {
               {copied ? "Link copied" : "Copy link"}
             </button>
           )}
-          {!replay && (
+          {(!replay || mock) && (
             <button className={`text-btn ${needsKey ? "bad" : ""}`} onClick={() => setWhoOpen("edit")} title={me?.owner || undefined}>
               {needsKey ? "Password needed" : me?.owner ? `${ownerName(me.owner)}${me.admin ? " (admin)" : ""}` : "Sign in"}
             </button>
@@ -385,10 +391,16 @@ export default function BuilderStudio() {
             setInputs(v);
           }}
           disabled={running}
-          canBuild={!!(inputs.file || refUrl.current) && !running && !!source}
+          canBuild={!!(inputs.file || refUrl.current || (mock && inputs.previewUrl)) && !running && !!source}
           building={running || checking}
           onBuild={requestBuild}
           note={live ? <CostNote me={me} /> : null}
+          mock={replayName ? undefined : mock}
+          onMock={(on) => {
+            setMock(on);
+            if (on && speed === 1) setSpeed(16);
+            if (!on) setSpeed(1);
+          }}
         />
         {res && res.build_id && openKind === "scene" && <ShotsOrder res={res} source={source instanceof LiveSource ? source : null} />}
         <BuilderSchedule run={run} now={serverNow} />
@@ -420,7 +432,7 @@ export default function BuilderStudio() {
         <CriticPanel run={run} />
       </aside>
 
-      {whoOpen && (
+      {whoOpen && !(mock && whoOpen === "first") && (
         <WhoAmI
           reason={whoOpen === "build" ? (me?.error ?? "Tell AnyScene who you are before starting a build.") : undefined}
           onCancel={whoOpen === "first" ? undefined : () => setWhoOpen("")}
