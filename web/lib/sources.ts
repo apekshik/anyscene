@@ -36,7 +36,7 @@ export interface Source {
 
 // ---------------------------------------------------------------- live
 
-// The proxy can require a shared access key (ANYSCENE_ACCESS_KEY on the server). The viewer types it once; it is kept
+// The proxy can require a shared password (ANYSCENE_ACCESS_KEY on the server). The viewer types it once; it is kept
 // in this browser's localStorage and sent as x-anyscene-key to our own proxy only (the proxy never forwards it to fal).
 export const ACCESS_KEY_STORAGE = "anyscene.access-key";
 export function getAccessKey(): string {
@@ -57,15 +57,56 @@ export function setAccessKey(k: string) {
 }
 let sessionKey = "";
 
+// Who is building: an email or username the viewer gives once, kept in localStorage and sent to our proxy as
+// x-anyscene-user / x-anyscene-name. The proxy tags each build with it (`owner`, listed in /builds) and counts it
+// against the per-person daily limit. Self-declared, behind the shared password: a label, not authentication.
+export interface Who {
+  name: string;
+  email: string;
+}
+export const WHO_STORAGE = "anyscene.who";
+let sessionWho: Who | null = null;
+export function getWho(): Who | null {
+  if (sessionWho) return sessionWho;
+  try {
+    const w = JSON.parse(localStorage.getItem(WHO_STORAGE) || "null");
+    return w?.email ? { name: String(w.name || ""), email: String(w.email) } : null;
+  } catch {
+    return null;
+  }
+}
+export function setWho(w: Who | null) {
+  sessionWho = w;
+  try {
+    if (w) localStorage.setItem(WHO_STORAGE, JSON.stringify(w));
+    else localStorage.removeItem(WHO_STORAGE);
+  } catch {
+    /* private window: kept for this page only */
+  }
+}
+/** The owner tag a build carries: "Name <email>". */
+export const ownerEmail = (owner?: string | null) => (owner?.match(/<([^>]+)>/)?.[1] ?? owner ?? "").toLowerCase();
+export const ownerName = (owner?: string | null) => owner?.replace(/\s*<[^>]*>\s*$/, "").trim() || ownerEmail(owner).split("@")[0];
+
+/** Our own headers for /api/* calls: the access key and who is asking. */
+export function anysceneHeaders(): Record<string, string> {
+  const h: Record<string, string> = {};
+  const key = sessionKey || getAccessKey();
+  if (key) h["x-anyscene-key"] = key;
+  const who = getWho();
+  if (who) {
+    h["x-anyscene-user"] = who.email;
+    h["x-anyscene-name"] = encodeURIComponent(who.name);
+  }
+  return h;
+}
+
 let falConfigured = false;
 export function configureFal() {
   if (falConfigured) return;
   fal.config({
     proxyUrl: "/api/fal/proxy",
-    requestMiddleware: async (req) => {
-      const key = sessionKey || getAccessKey();
-      return key ? { ...req, headers: { ...(req.headers || {}), "x-anyscene-key": key } } : req;
-    },
+    requestMiddleware: async (req) => ({ ...req, headers: { ...(req.headers || {}), ...anysceneHeaders() } }),
   });
   falConfigured = true;
 }

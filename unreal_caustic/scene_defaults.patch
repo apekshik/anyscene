@@ -1,0 +1,58 @@
+--- unreal/render_mrq.ps1	2026-11-01 18:37:16.501042600 -0800
++++ unreal_caustic/render_mrq.ps1	2026-11-01 20:21:08.228280500 -0800
+@@ -1,17 +1,21 @@
+ # Headless Movie Render Queue stills of a built level, one process per camera sequence (no editor, no window):
+ #   UnrealEditor-Cmd <uproject> <map> -game -LevelSequence=<SEQ> -MoviePipelineConfig=<CFG> -RenderOffscreen
+-#   powershell -File render_mrq.ps1 [-Cams cam_street,cam_table,cam_wok] [-Config MRQ_Still|MRQ_Linear]
++#   powershell -File render_mrq.ps1 [-Cams hero_axial,hero_lounge] [-Config MRQ_Still|MRQ_Linear|MRQ_Clip]
+ param(
+-  [string]$Project = "C:\Users\apek-anna\Developer\anyscene-unreal\AnySceneUE\AnySceneUE.uproject",
+-  [string]$Dest = "/Game/AnyScene/HK", [string]$Level = "L_HK",
+-  [string]$Cams = "cam_street,cam_table,cam_wok", [string]$Config = "MRQ_Still"
++  [string]$Project = "C:\Users\apek-anna\Developer\anyscene-unreal\AnySceneCaustic\AnySceneCaustic.uproject",
++  [string]$Dest = "/Game/AnyScene/Chamber", [string]$Level = "L_Chamber",
++  [string]$Cams = "hero_axial,hero_lounge,pv_bench_wall", [string]$Config = "MRQ_Still",
++  [int]$ResX = 1920, [int]$ResY = 804
+ )
+ $ue = "C:\Program Files\Epic Games\UE_5.8\Engine\Binaries\Win64\UnrealEditor-Cmd.exe"
++# Async compilation off (props render invisible / placeholder under -RenderOffscreen otherwise), Niagara waits for
++# its shaders, no texture streaming (low mips in a short session).
++$dp = "-dpcvars=Editor.AsyncAssetCompilation=0,Editor.AsyncTextureCompilation=0,Editor.AsyncStaticMeshCompilation=0,fx.Niagara.ForceWaitForCompilationOnActivate=1,r.TextureStreaming=0"
+ foreach ($c in $Cams.Split(",")) {
+   $t = Measure-Command {
+     & $ue $Project "$Dest/$Level" -game "-LevelSequence=$Dest/Sequences/SEQ_$c.SEQ_$c" "-MoviePipelineConfig=$Dest/MRQ/$Config.$Config" `
+-      -RenderOffscreen -windowed -resx=1920 -resy=804 -unattended -nosplash -nop4 -nosound -notexturestreaming "-log=mrq_$c.log" `
+-      "-dpcvars=Editor.AsyncAssetCompilation=0" | Out-Null
++      -RenderOffscreen -windowed "-resx=$ResX" "-resy=$ResY" -unattended -nosplash -nop4 -nosound -notexturestreaming "-log=mrq_$c.log" `
++      $dp | Out-Null
+   }
+   "$c $Config {0:N1}s" -f $t.TotalSeconds
+ }
+--- unreal/perf.ps1	2026-11-01 20:25:28.278341600 -0800
++++ unreal_caustic/perf.ps1	2026-11-01 20:21:31.117259300 -0800
+@@ -3,8 +3,8 @@
+ # total GPU memory with nvidia-smi before and during the run.
+ #   powershell -File perf.ps1 [-Map /Game/AnyScene/HK/L_HK] [-ResX 2560] [-ResY 1440] [-Frames 900] [-Extra "r.Lumen.HardwareRayTracing 0"]
+ param(
+-  [string]$Project = "C:\Users\apek-anna\Developer\anyscene-unreal\AnySceneUE\AnySceneUE.uproject",
+-  [string]$Map = "/Game/AnyScene/HK/L_HK",
++  [string]$Project = "C:\Users\apek-anna\Developer\anyscene-unreal\AnySceneCaustic\AnySceneCaustic.uproject",
++  [string]$Map = "/Game/AnyScene/Chamber/L_Chamber",
+   [int]$ResX = 2560, [int]$ResY = 1440, [int]$Frames = 900, [int]$TimeoutS = 600,
+   [string]$Tag = "perf", [string]$Extra = ""
+ )
+@@ -14,12 +14,11 @@
+ $before = Get-ChildItem $csvDir -Filter *.csv -ErrorAction SilentlyContinue | ForEach-Object FullName
+ $mem0 = [int](& nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
+ # The bare cvar names print their current values to the log (proof that Lumen / Nanite / volumetric fog are on).
+-# -resx/-resy are ignored under -RenderOffscreen (the HK run captured 1066x600 until r.setres was passed by hand).
+-$cmds = "r.setres ${ResX}x${ResY}w,r.DynamicGlobalIlluminationMethod,r.ReflectionMethod,r.Nanite,r.VolumetricFog,r.Lumen.HardwareRayTracing,r.RayTracing,r.Shadow.Virtual.Enable,t.MaxFPS 0,r.VSync 0,r.GPUCsvStatsEnabled 1,csvprofile frames=$Frames"
++$cmds = "r.DynamicGlobalIlluminationMethod,r.ReflectionMethod,r.Nanite,r.VolumetricFog,r.Lumen.HardwareRayTracing,r.RayTracing,r.Shadow.Virtual.Enable,t.MaxFPS 0,r.VSync 0,r.GPUCsvStatsEnabled 1,csvprofile frames=$Frames"
+ if ($Extra) { $cmds = "$Extra,$cmds" }
+ $args = @($Project, $Map, "-game", "-RenderOffscreen", "-windowed", "-resx=$ResX", "-resy=$ResY", "-unattended", "-nosplash",
+           "-nop4", "-nosound", "-log=$Tag.log", "`"-ExecCmds=$cmds`"",
+-          "-dpcvars=Editor.AsyncAssetCompilation=0")  # async compilation leaves props invisible (render_shots.py); PS 5.1 Start-Process does not quote array items
++          "-dpcvars=Editor.AsyncAssetCompilation=0,Editor.AsyncTextureCompilation=0,Editor.AsyncStaticMeshCompilation=0,fx.Niagara.ForceWaitForCompilationOnActivate=1")  # async compilation leaves props invisible (render_shots.py); PS 5.1 Start-Process does not quote array items
+ $proc = Start-Process -FilePath $ue -ArgumentList $args -PassThru
+ $peak = $mem0
+ $sw = [Diagnostics.Stopwatch]::StartNew()

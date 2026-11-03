@@ -1,0 +1,10 @@
+{
+ "name": "NS_FountainJet",
+ "description": "Water jet / spray / sprinkler / hose: GPU velocity-aligned streaks launched along Velocity and falling under gravity; Velocity = sqrt(2 g h) along the nozzle.",
+ "fx_types": ["fountain", "splash"],
+ "common": {"spawn": 1500, "life": [1.0, 1.4], "size": [0.4, 0.8], "vel": [0, 0, 440], "color": [0.85, 0.9, 0.95], "intensity": 20, "opacity": 0.4,
+            "box": [1, 1, 1], "gravity": 1.0, "drag": 0.1, "jitter": 0.06, "aspect": 6.0},
+ "system": {"seed": 7707, "bounds": [[-300, -300, -50], [300, 300, 400]]},
+ "emitters": [{"name": "Jet", "template": "Fountain",
+               "core": {"gpu": true, "material": "M_AFX_Streak", "fade": [30.0, 6.0], "aligned": true, "curl": false, "grow": false, "nonuniform": true}}]
+}

@@ -10,3 +10,7 @@ public/replay/
 !fixtures/**/*.png
 !screenshots/*.png
 !fixtures/**/*.glb
+
+# deployment secrets (written by the deploy, never committed)
+STUDIO_ACCESS_KEY.txt
+.vercel

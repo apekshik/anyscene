@@ -1,7 +1,7 @@
-import { timingSafeEqual } from "node:crypto";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { createRouteHandler } from "@fal-ai/server-proxy/nextjs";
-import { ALL_APPS } from "@/lib/apps";
+import { ALL_APPS, BUILDER_APP } from "@/lib/apps";
+import { BUILDS_PER_DAY, DEV_OPEN, JOBS_PER_HOUR, buildsToday, clientIp, ipLimited, keyError, keyRole, owner, quotaMessage, recordBuild } from "@/lib/guard";
 
 // fal's server-side proxy: the browser talks to /api/fal/proxy and the server adds FAL_KEY (never sent to the client).
 // POSTs are limited to the AnyScene apps and fal storage uploads (for the reference image), so the key can't be used
@@ -9,72 +9,65 @@ import { ALL_APPS } from "@/lib/apps";
 // with none set, only uploads get through.
 const fal = createRouteHandler({
   allowedEndpoints: [...ALL_APPS.map((app) => `${app}/**`), "storage/upload/**"],
-  allowUnauthorizedRequests: true, // our own guard below decides who gets through
+  allowUnauthorizedRequests: true, // our own guard below decides who gets through (lib/guard.ts)
 });
 
-// ---------------------------------------------------------------- guard
-// Shared secret: set ANYSCENE_ACCESS_KEY on the server and every proxied request must carry it as x-anyscene-key.
-// Off in local dev when the variable is unset; in production an unset key closes the proxy (fail closed), so a fresh
-// deployment can't be used to start builds on the owner's account.
-const ACCESS_KEY = process.env.ANYSCENE_ACCESS_KEY || "";
-const DEV_OPEN = !ACCESS_KEY && process.env.NODE_ENV !== "production";
+// Gallery reads (every build on storage, one build's events) are cheap lookups, not jobs: they don't count.
+const READ_ONLY = /\/(builds|build_events|kits|kit_events)\/?(\?.*)?$/;
+// A new scene build: the expensive one, counted against the per-person daily limit and tagged with its owner.
+const BUILD = BUILDER_APP ? new RegExp(`^/${BUILDER_APP}/(ref2scene|build)/?$`) : null;
 
-// Rate limit on new jobs (POSTs to an app; status polls and uploads are not counted), per client IP, in memory.
-// Per serverless instance only: a backstop behind the key, not a quota. ANYSCENE_JOBS_PER_HOUR, default 6.
-const JOBS_PER_HOUR = Number(process.env.ANYSCENE_JOBS_PER_HOUR || 6);
-const jobs = new Map<string, number[]>();
+const APP_TARGETS = ALL_APPS.map((app) => `/${app}/`);
 
 function json(status: number, error: string) {
   return new Response(JSON.stringify({ detail: error }), { status, headers: { "content-type": "application/json" } });
 }
 
-function keyOk(req: NextRequest) {
-  if (DEV_OPEN) return true;
-  if (!ACCESS_KEY) return false;
-  const got = Buffer.from(req.headers.get("x-anyscene-key") || "");
-  const want = Buffer.from(ACCESS_KEY);
-  return got.length === want.length && timingSafeEqual(got, want);
-}
-
-// Gallery reads (every build on storage, one build's events) are cheap lookups, not jobs: they don't count.
-const READ_ONLY = /\/(builds|build_events|kits|kit_events)\/?(\?.*)?$/;
-
-const APP_TARGETS = ALL_APPS.map((app) => `/${app}/`);
-
-function startsJob(req: NextRequest) {
+/** The fal path of a new job (a POST to one of our apps, not a gallery read), or null. */
+function jobPath(req: NextRequest) {
   const target = req.headers.get("x-fal-target-url") || "";
   const m = target.match(/^https:\/\/(?:queue\.)?fal\.run(\/[^?]*)/);
-  return !!m && APP_TARGETS.some((p) => `${m[1]}/`.startsWith(p)) && !READ_ONLY.test(target);
+  return m && req.method === "POST" && APP_TARGETS.some((p) => `${m[1]}/`.startsWith(p)) && !READ_ONLY.test(target) ? m[1] : null;
 }
 
-function rateLimited(req: NextRequest) {
-  if (DEV_OPEN || !startsJob(req)) return false;
-  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || req.headers.get("x-real-ip") || "unknown";
-  const now = Date.now();
-  const recent = (jobs.get(ip) || []).filter((t) => now - t < 3600_000);
-  if (recent.length >= JOBS_PER_HOUR) {
-    jobs.set(ip, recent);
-    return true;
-  }
-  recent.push(now);
-  jobs.set(ip, recent);
-  return false;
-}
+async function guarded(req: NextRequest, forward: (req: NextRequest) => Promise<Response>): Promise<Response> {
+  const role = keyRole(req);
+  if (!role) return json(401, keyError(req));
+  const path = jobPath(req);
+  if (!path) return forward(req);
 
-function guard(req: NextRequest): Response | null {
-  if (!keyOk(req)) {
-    return json(401, ACCESS_KEY ? "This AnyScene needs an access key." : "The AnyScene proxy is closed: ANYSCENE_ACCESS_KEY is not set on the server.");
+  // local dev with no access key set: no limits, and a build is tagged only if the page says who you are
+  const who = owner(req, role);
+  if ("error" in who && !DEV_OPEN) return json(403, who.error);
+  const limited = role !== "admin" && !DEV_OPEN;
+  if (limited && ipLimited(clientIp(req))) return json(429, `Too many jobs from this address: ${JOBS_PER_HOUR} an hour.`);
+  if (!BUILD?.test(path) || "error" in who) return forward(req);
+
+  if (limited && (await buildsToday(who.email)) >= BUILDS_PER_DAY) return json(429, quotaMessage());
+  // tag the build with who asked for it (builder/app.py stores `owner`; it is not part of the retry fingerprint)
+  let body: Record<string, unknown>;
+  try {
+    body = JSON.parse((await req.text()) || "{}");
+  } catch {
+    return json(400, "The build request is not JSON.");
   }
-  if (req.method === "POST" && rateLimited(req)) return json(429, `Too many builds from this address: ${JOBS_PER_HOUR} an hour.`);
-  return null;
+  const headers = new Headers(req.headers);
+  headers.delete("content-length");
+  const tagged = new NextRequest(req.url, { method: "POST", headers, body: JSON.stringify({ ...body, owner: who.tag }) });
+  const res = await forward(tagged);
+  if (res.ok && limited) {
+    const requestId = (await res.clone().json().catch(() => ({})))?.request_id || "";
+    await recordBuild(who.email, requestId).catch((e) => console.error("quota record failed", e));
+  }
+  return res;
 }
 
 export async function GET(req: NextRequest) {
-  return guard(req) ?? fal.GET(req);
+  return guarded(req, fal.GET);
 }
 export async function POST(req: NextRequest) {
-  return guard(req) ?? fal.POST(req);
+  return guarded(req, fal.POST);
 }
 export async function PUT(req: NextRequest) {
-  return guard(req) ?? fal.PUT(req);
+  return guarded(req, fal.PUT);
 }

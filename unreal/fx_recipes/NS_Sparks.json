@@ -1,0 +1,12 @@
+{
+ "name": "NS_Sparks",
+ "description": "Sparks / embers: hot additive velocity-aligned streaks under gravity and drag (grinders, welding, fireworks; campfire embers with Gravity ~ -0.05 and a long life). Ships its own material: the pattern for an agent adding a new look.",
+ "fx_types": ["sparks", "embers"],
+ "common": {"spawn": 200, "life": [0.4, 0.9], "size": [0.2, 0.4], "vel": [0, 0, 400], "color": [1.0, 0.55, 0.15], "intensity": 20000, "opacity": 1.0,
+            "box": [2, 2, 2], "gravity": 1.0, "drag": 0.5, "jitter": 0.5, "aspect": 8.0, "temperature": 1900},
+ "system": {"seed": 6606, "bounds": [[-300, -300, -200], [300, 300, 400]]},
+ "materials": {"M_AFX_Spark": {"blend": "ADDITIVE", "lit": false, "op": "return 0;",
+   "rgb": "float x = abs(UV.x - 0.5) * 2.0;\nfloat a = saturate(1.0 - x);\na *= a * saturate(UV.y * 3.0) * saturate((1.0 - UV.y) * 6.0);\nfloat3 col = DP.y > 0 ? X.bb(DP.y) : PC;\nreturn col * a * PA * DP.x;"}},
+ "emitters": [{"name": "Sparks", "template": "Fountain",
+               "core": {"gpu": true, "material": "M_AFX_Spark", "fade": [50.0, 1.5], "aligned": true, "curl": false, "grow": false, "nonuniform": true}}]
+}

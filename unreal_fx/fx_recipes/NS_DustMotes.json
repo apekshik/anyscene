@@ -1,0 +1,9 @@
+{
+ "name": "NS_DustMotes",
+ "description": "Floating dust / pollen / ash motes in a box with curl-noise drift; only reads inside light shafts.",
+ "fx_types": ["dust"],
+ "common": {"spawn": 150, "life": [8.0, 12.0], "size": [0.08, 0.2], "vel": [0, 0, 0], "color": [0.9, 0.85, 0.75], "intensity": 0.0, "opacity": 0.8,
+            "box": [200, 200, 150], "drag": 2.0, "jitter": 1.0, "noise": 20, "noise_freq": 0.01},
+ "system": {"seed": 5505, "bounds": [[-300, -300, -250], [300, 300, 250]]},
+ "emitters": [{"name": "Motes", "template": "Fountain", "core": {"gpu": true, "material": "M_AFX_Mote", "fade": [4.0, 4.0], "grow": false}}]
+}

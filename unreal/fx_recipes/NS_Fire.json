@@ -1,0 +1,310 @@
+{
+ "name": "NS_Fire",
+ "description": "Flame tongues on a ring (gas burner, wok, brazier; candle at small sizes): CPU additive sprites + blue core + one capped flickering Niagara light (off by default when the scene has a practical).",
+ "fx_types": [
+  "fire"
+ ],
+ "common": {
+  "spawn": 60,
+  "life": [
+   0.25,
+   0.45
+  ],
+  "size": [
+   4,
+   7
+  ],
+  "vel": [
+   0,
+   0,
+   70
+  ],
+  "color": [
+   1.0,
+   0.45,
+   0.1
+  ],
+  "intensity": 4000,
+  "opacity": 1.0,
+  "box": [
+   14,
+   14,
+   2
+  ],
+  "drag": 3.0,
+  "jitter": 0.15,
+  "noise": 400,
+  "noise_freq": 0.05,
+  "grow": -0.5,
+  "aspect": 2.6
+ },
+ "extra": {
+  "CoreIntensity": [
+   "float",
+   0.35,
+   "blue core luminance as a fraction of Intensity"
+  ],
+  "RingRadius": [
+   "float",
+   16.0,
+   "burner ring radius, cm (flames spawn on the ring)"
+  ],
+  "LightIntensity": [
+   "float",
+   0.0,
+   "Niagara point light brightness; 0 = off (scene has a practical). Capped at 2e4"
+  ],
+  "LightRadius": [
+   "float",
+   150.0,
+   "Niagara light attenuation radius, cm"
+  ],
+  "LightOffset": [
+   "vec3",
+   [
+    0,
+    0,
+    10
+   ],
+   "light position relative to the fire, cm"
+  ]
+ },
+ "system": {
+  "seed": 1101,
+  "bounds": [
+   [
+    -60,
+    -60,
+    -20
+   ],
+   [
+    60,
+    60,
+    80
+   ]
+  ]
+ },
+ "emitters": [
+  {
+   "name": "Flames",
+   "template": "Fountain",
+   "core": {
+    "gpu": true,
+    "material": "M_AFX_Flame",
+    "fade": [
+     10.0,
+     3.0
+    ],
+    "nonuniform": true,
+    "pivot": [
+     0.5,
+     0.85
+    ]
+   },
+   "inputs": [
+    [
+     "ParticleSpawnScript",
+     "ShapeLocation",
+     "Shape Primitive",
+     {
+      "enum": "Ring"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "ShapeLocation",
+     "Ring Radius",
+     {
+      "link": "User.RingRadius",
+      "type": "float"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "Core",
+   "template": "Fountain",
+   "core": {
+    "gpu": true,
+    "material": "M_AFX_Flame",
+    "fade": [
+     10.0,
+     3.0
+    ],
+    "curl": false,
+    "grow": false,
+    "nonuniform": true,
+    "pivot": [
+     0.5,
+     0.85
+    ]
+   },
+   "inputs": [
+    [
+     "ParticleSpawnScript",
+     "ShapeLocation",
+     "Shape Primitive",
+     {
+      "enum": "Ring"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "ShapeLocation",
+     "Ring Radius",
+     {
+      "hlsl": "User.RingRadius * 0.85"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Color",
+     {
+      "hlsl": "float4(0.25, 0.42, 1.0, User.Opacity)"
+     }
+    ],
+    [
+     "EmitterUpdateScript",
+     "SpawnRate",
+     "SpawnRate",
+     {
+      "hlsl": "User.SpawnRate * 0.8"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Lifetime Min",
+     {
+      "hlsl": "User.LifetimeMin * 0.35"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Lifetime Max",
+     {
+      "hlsl": "User.LifetimeMax * 0.35"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Sprite Size Min",
+     {
+      "hlsl": "float2(User.SizeMin * 0.5, User.SizeMin * 0.8)"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Sprite Size Max",
+     {
+      "hlsl": "float2(User.SizeMax * 0.5, User.SizeMax * 0.8)"
+     }
+    ]
+   ],
+   "set_params": [
+    [
+     "ParticleSpawnScript",
+     "Particles.DynamicMaterialParameter",
+     "vec4",
+     "float4(User.Intensity * User.CoreIntensity, 0.0, 0.0, 0.0)"
+    ]
+   ]
+  },
+  {
+   "name": "Light",
+   "template": "SingleLoopingParticle",
+   "emitter_data": {
+    "SimTarget": "CPUSim",
+    "bDeterminism": true,
+    "RandomSeed": 77,
+    "CalculateBoundsMode": "Fixed",
+    "FixedBounds": {
+     "min": {
+      "x": -60,
+      "y": -60,
+      "z": -20
+     },
+     "max": {
+      "x": 60,
+      "y": 60,
+      "z": 80
+     },
+     "isValid": true
+    }
+   },
+   "inputs": [
+    [
+     "EmitterUpdateScript",
+     "EmitterState",
+     "Life Cycle Mode",
+     {
+      "enum": "Self"
+     }
+    ],
+    [
+     "EmitterUpdateScript",
+     "EmitterState",
+     "Loop Behavior",
+     {
+      "enum": "Once"
+     }
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "UsePositionOffset",
+     true
+    ],
+    [
+     "ParticleSpawnScript",
+     "InitializeParticle",
+     "Position Offset",
+     {
+      "link": "User.LightOffset",
+      "type": "vec3"
+     }
+    ],
+    [
+     "ParticleUpdateScript",
+     "ParticleState",
+     "Kill Particles When Lifetime Has Elapsed",
+     false
+    ]
+   ],
+   "set_params": [
+    [
+     "ParticleUpdateScript",
+     "Particles.LightRadius",
+     "float",
+     "User.LightRadius",
+     "SolveForcesAndVelocity"
+    ],
+    [
+     "ParticleUpdateScript",
+     "Particles.Color",
+     "color",
+     "float4(User.Color.r, User.Color.g, User.Color.b, 1.0) * min(User.LightIntensity, 20000.0) * (1.0 + 0.22 * sin(Engine.Time * 11.3) + 0.14 * sin(Engine.Time * 23.7 + 1.3) + 0.08 * sin(Engine.Time * 41.0))",
+     "SolveForcesAndVelocity"
+    ]
+   ],
+   "remove_renderers": [
+    0
+   ],
+   "add_renderers": [
+    {
+     "class": "NiagaraLightRendererProperties",
+     "data": {
+      "bUseInverseSquaredFalloff": true,
+      "bAffectsTranslucency": true,
+      "RadiusScale": 1.0,
+      "bAlphaScalesBrightness": false
+     }
+    }
+   ]
+  }
+ ]
+}

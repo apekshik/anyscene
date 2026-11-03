@@ -1,0 +1,712 @@
+{
+ "systems": {
+  "NS_Drips": {
+   "path": "/Game/AnySceneFX/Systems/NS_Drips.NS_Drips",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Drops",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Drops",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Drops",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "drips"
+   ],
+   "description": "Drops falling off an edge or line (awnings, pipes, leaves) under gravity; lifetime = fall time to the ground below."
+  },
+  "NS_DustMotes": {
+   "path": "/Game/AnySceneFX/Systems/NS_DustMotes.NS_DustMotes",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Motes",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Motes",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Motes",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "dust"
+   ],
+   "description": "Floating dust / pollen / ash motes in a box with curl-noise drift; only reads inside light shafts."
+  },
+  "NS_Fire": {
+   "path": "/Game/AnySceneFX/Systems/NS_Fire.NS_Fire",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": true,
+    "bIsStale": true,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Flames",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Flames",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Flames",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Core",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Core",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Core",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Light",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "Unknown",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Light",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "Unknown",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float",
+    "CoreIntensity": "float",
+    "RingRadius": "float",
+    "LightIntensity": "float",
+    "LightRadius": "float",
+    "LightOffset": "vec3"
+   },
+   "fx_types": [
+    "fire"
+   ],
+   "description": "Flame tongues on a ring (gas burner, wok, brazier; candle at small sizes): CPU additive sprites + blue core + one capped flickering Niagara light (off by default when the scene has a practical)."
+  },
+  "NS_FountainJet": {
+   "path": "/Game/AnySceneFX/Systems/NS_FountainJet.NS_FountainJet",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Jet",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Jet",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Jet",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "fountain",
+    "splash"
+   ],
+   "description": "Water jet / spray / sprinkler / hose: GPU velocity-aligned streaks launched along Velocity and falling under gravity; Velocity = sqrt(2 g h) along the nozzle."
+  },
+  "NS_Rain": {
+   "path": "/Game/AnySceneFX/Systems/NS_Rain.NS_Rain",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Streaks",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Streaks",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Streaks",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "rain"
+   ],
+   "description": "Rain / drizzle over a box: GPU velocity-aligned lit streaks with a faint emissive; streak length = drop + speed x shutter (Aspect)."
+  },
+  "NS_Smoke": {
+   "path": "/Game/AnySceneFX/Systems/NS_Smoke.NS_Smoke",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "smoke"
+   ],
+   "description": "Darker, slower, longer-lived plume (chimneys, exhaust, incense; cigarettes at small sizes): the steam puff look with smoke defaults."
+  },
+  "NS_Sparks": {
+   "path": "/Game/AnySceneFX/Systems/NS_Sparks.NS_Sparks",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Sparks",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Sparks",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Sparks",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "sparks",
+    "embers"
+   ],
+   "description": "Sparks / embers: hot additive velocity-aligned streaks under gravity and drag (grinders, welding, fireworks; campfire embers with Gravity ~ -0.05 and a long life). Ships its own material: the pattern for an agent adding a new look."
+  },
+  "NS_Steam": {
+   "path": "/Game/AnySceneFX/Systems/NS_Steam.NS_Steam",
+   "issues": [],
+   "compile": {
+    "aggregateStatus": "UpToDate",
+    "bIsCompiling": false,
+    "bIsStale": false,
+    "bHasErrors": false,
+    "bHasWarnings": false,
+    "scripts": [
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemSpawnScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "None",
+      "scriptName": "ENiagaraScriptUsage::SystemUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleSpawnScriptInterpolated",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleUpdateScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     },
+     {
+      "emitterName": "Puffs",
+      "scriptName": "ENiagaraScriptUsage::ParticleGPUComputeScript",
+      "lastCompileStatus": "UpToDate",
+      "errorSummary": "",
+      "compileEvents": []
+     }
+    ]
+   },
+   "stack_issues": null,
+   "params": {
+    "SpawnRate": "float",
+    "LifetimeMin": "float",
+    "LifetimeMax": "float",
+    "SizeMin": "float",
+    "SizeMax": "float",
+    "Aspect": "float",
+    "Velocity": "vec3",
+    "VelocityJitter": "float",
+    "Wind": "vec3",
+    "Gravity": "float",
+    "Drag": "float",
+    "BoxExtent": "vec3",
+    "Color": "color",
+    "Intensity": "float",
+    "Opacity": "float",
+    "Temperature": "float",
+    "NoiseStrength": "float",
+    "NoiseFreq": "float",
+    "Grow": "float"
+   },
+   "fx_types": [
+    "steam"
+   ],
+   "description": "Rising lit vapour plume (woks, pots, kettles, vents, manholes): GPU soft puffs, growing, curl noise, drifting with Wind, depth-sorted, before-DOF."
+  }
+ },
+ "materials": [
+  "/Game/AnySceneFX/Materials/M_AFX_Flame",
+  "/Game/AnySceneFX/Materials/M_AFX_Mote",
+  "/Game/AnySceneFX/Materials/M_AFX_Spark",
+  "/Game/AnySceneFX/Materials/M_AFX_Steam",
+  "/Game/AnySceneFX/Materials/M_AFX_Streak"
+ ],
+ "errors": [],
+ "curl_inputs": [
+  "Bias Noise",
+  "Bias Noise Field",
+  "Coordinate Space",
+  "Curl Noise Cone Mask Angle",
+  "Curl Noise Cone Mask Axis",
+  "Curl Noise Cone Mask Falloff Angle",
+  "CurlNoise",
+  "Debug Every N Particles",
+  "Debug Force Line Length",
+  "Mask Curl Noise",
+  "Noise Frequency",
+  "Noise Quality / Cost",
+  "Noise Strength",
+  "Pan Noise",
+  "Pan Noise Field",
+  "Random Seed",
+  "Randomization Vector",
+  "Randomize Noise Sample",
+  "Sample Position",
+  "Scale Curl Lookup By Engine Owner Scale",
+  "Write to Intrinsic Parameters"
+ ],
+ "scalesize_inputs": {
+  "Scale Sprite Size Mode": [
+   "ENiagara_ScaleSpriteSize",
+   true
+  ],
+  "Uniform Curve Sprite Scale": [
+   "NiagaraDataInterfaceCurve",
+   false
+  ],
+  "Non-Uniform Curve Sprite Scale": [
+   "NiagaraDataInterfaceVector2DCurve",
+   false
+  ],
+  "Uniform Curve Index": [
+   "NiagaraFloat",
+   false
+  ],
+  "Non-Uniform Curve Index": [
+   "NiagaraFloat",
+   false
+  ],
+  "Non-Uniform Curve Scale": [
+   "Vector2f",
+   false
+  ],
+  "Uniform Curve Scale": [
+   "NiagaraFloat",
+   false
+  ],
+  "Scale Factor": [
+   "Vector2f",
+   true
+  ],
+  "Uniform Scale Factor": [
+   "NiagaraFloat",
+   false
+  ],
+  "Initial Sprite Size": [
+   "Vector2f",
+   true
+  ]
+ },
+ "toolset_log": []
+}

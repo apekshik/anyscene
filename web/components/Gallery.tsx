@@ -4,8 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SCORE_KEYS } from "@/lib/builder";
 import { ago, cachedList, galleryApp, listGallery, storeList, STATUS_LABEL, type GalleryItem, type GalleryKind, type GalleryList } from "@/lib/gallery";
-import { getAccessKey } from "@/lib/sources";
+import { getAccessKey, getWho, ownerEmail, ownerName } from "@/lib/sources";
 import Stamp from "./Stamp";
+import WhoAmI from "./WhoAmI";
+
+const WHOSE_STORAGE = "anyscene.gallery.whose";
 
 const POLL_MS = 30_000; // the list refreshes while open, so new and running builds show up
 
@@ -20,6 +23,28 @@ export default function Gallery() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<"all" | "running" | "done">("all");
+  // My builds / Everyone (scenes carry an owner tag; kits don't yet)
+  const [whose, setWhose] = useState<"mine" | "everyone">("everyone");
+  const [me, setMe] = useState("");
+  const [whoOpen, setWhoOpen] = useState(false);
+  useEffect(() => {
+    setMe(getWho()?.email ?? "");
+    try {
+      if (localStorage.getItem(WHOSE_STORAGE) === "mine") setWhose("mine");
+    } catch {
+      /* default: everyone */
+    }
+  }, []);
+  const pickWhose = (w: "mine" | "everyone") => {
+    if (w === "mine" && !getWho()) return setWhoOpen(true);
+    setWhose(w);
+    try {
+      localStorage.setItem(WHOSE_STORAGE, w);
+    } catch {
+      /* not remembered */
+    }
+  };
+  const mine = whose === "mine" && kind === "scene";
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -51,7 +76,9 @@ export default function Gallery() {
     if (override) p.set("gallery_app", override);
     return `/?${p.toString()}`;
   };
-  const builds = (list?.builds ?? []).filter((b) => filter === "all" || (filter === "running" ? b.status === "running" : b.status !== "running"));
+  const builds = (list?.builds ?? [])
+    .filter((b) => !mine || (!!me && ownerEmail(b.owner) === me))
+    .filter((b) => filter === "all" || (filter === "running" ? b.status === "running" : b.status !== "running"));
   const running = (list?.builds ?? []).filter((b) => b.status === "running").length;
 
   return (
@@ -89,6 +116,15 @@ export default function Gallery() {
               Kits
             </a>
           </div>
+          {kind === "scene" && (
+            <div className="seg small" role="group" aria-label="Whose builds">
+              {(["mine", "everyone"] as const).map((w) => (
+                <button key={w} className={(w === "mine") === mine ? "on" : ""} aria-pressed={(w === "mine") === mine} onClick={() => pickWhose(w)}>
+                  {w === "mine" ? "My builds" : "Everyone"}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="seg small" role="group" aria-label="Show">
             {(["all", "running", "done"] as const).map((f) => (
               <button key={f} className={filter === f ? "on" : ""} aria-pressed={filter === f} onClick={() => setFilter(f)}>
@@ -111,7 +147,14 @@ export default function Gallery() {
         {error && (
           <p className="error-note">
             {error}
-            {/access key|proxy is closed/i.test(error) && !getAccessKey() ? " Set the access key on the build page first." : ""}
+            {/password|access key/i.test(error) && (
+              <>
+                {" "}
+                <button className="text-btn" onClick={() => setWhoOpen(true)}>
+                  {getAccessKey() ? "Change the password" : "Enter the password"}
+                </button>
+              </>
+            )}
           </p>
         )}
         {!list && !error && (
@@ -122,7 +165,13 @@ export default function Gallery() {
         )}
         {list && builds.length === 0 && (
           <div className="empty gallery-empty">
-            <p>{filter === "all" ? `No ${kind === "kit" ? "kits" : "builds"} on ${app} yet.` : "Nothing here with this filter."}</p>
+            <p>
+              {mine && filter === "all"
+                ? `No builds under ${me} yet. Builds you start on the build page are saved here.`
+                : filter === "all"
+                  ? `No ${kind === "kit" ? "kits" : "builds"} on ${app} yet.`
+                  : "Nothing here with this filter."}
+            </p>
           </div>
         )}
         <ul className="gallery-grid">
@@ -131,6 +180,17 @@ export default function Gallery() {
           ))}
         </ul>
       </main>
+      {whoOpen && (
+        <WhoAmI
+          onCancel={() => setWhoOpen(false)}
+          onDone={() => {
+            setWhoOpen(false);
+            setMe(getWho()?.email ?? "");
+            if (error) load();
+            else pickWhose("mine");
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -171,6 +231,7 @@ function Card({ b, href, now }: { b: GalleryItem; href: string; now?: number }) 
             <b>{b.id.replace(/^[bk]_/, "").slice(0, 6).toUpperCase()}</b>
             <span title={b.started ? new Date(b.started * 1000).toLocaleString() : ""}>{b.started ? ago(b.started, now) : ""}</span>
             <span>{b.minutes != null ? `${Math.round(b.minutes)} min` : ""}</span>
+            {b.owner && <span className="gallery-owner" title={b.owner}>{ownerName(b.owner)}</span>}
             <span>
               {b.critic_rounds ? `${b.critic_rounds} round${b.critic_rounds === 1 ? "" : "s"}${avg != null ? `, avg ${avg.toFixed(1)}` : ""}` : "no critic"}
             </span>

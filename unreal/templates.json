@@ -1,0 +1,233 @@
+{
+ "NS_Drips": {
+  "path": "/Game/AnySceneFX/Systems/NS_Drips.NS_Drips",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "drips"
+  ],
+  "description": "Drops falling off an edge or line (awnings, pipes, leaves) under gravity; lifetime = fall time to the ground below."
+ },
+ "NS_DustMotes": {
+  "path": "/Game/AnySceneFX/Systems/NS_DustMotes.NS_DustMotes",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "dust"
+  ],
+  "description": "Floating dust / pollen / ash motes in a box with curl-noise drift; only reads inside light shafts."
+ },
+ "NS_Fire": {
+  "path": "/Game/AnySceneFX/Systems/NS_Fire.NS_Fire",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float",
+   "CoreIntensity": "float",
+   "RingRadius": "float",
+   "LightIntensity": "float",
+   "LightRadius": "float",
+   "LightOffset": "vec3"
+  },
+  "fx_types": [
+   "fire"
+  ],
+  "description": "Flame tongues on a ring (gas burner, wok, brazier; candle at small sizes): CPU additive sprites + blue core + one capped flickering Niagara light (off by default when the scene has a practical)."
+ },
+ "NS_FountainJet": {
+  "path": "/Game/AnySceneFX/Systems/NS_FountainJet.NS_FountainJet",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "fountain",
+   "splash"
+  ],
+  "description": "Water jet / spray / sprinkler / hose: GPU velocity-aligned streaks launched along Velocity and falling under gravity; Velocity = sqrt(2 g h) along the nozzle."
+ },
+ "NS_Rain": {
+  "path": "/Game/AnySceneFX/Systems/NS_Rain.NS_Rain",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "rain"
+  ],
+  "description": "Rain / drizzle over a box: GPU velocity-aligned lit streaks with a faint emissive; streak length = drop + speed x shutter (Aspect)."
+ },
+ "NS_Smoke": {
+  "path": "/Game/AnySceneFX/Systems/NS_Smoke.NS_Smoke",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "smoke"
+  ],
+  "description": "Darker, slower, longer-lived plume (chimneys, exhaust, incense; cigarettes at small sizes): the steam puff look with smoke defaults."
+ },
+ "NS_Sparks": {
+  "path": "/Game/AnySceneFX/Systems/NS_Sparks.NS_Sparks",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "sparks",
+   "embers"
+  ],
+  "description": "Sparks / embers: hot additive velocity-aligned streaks under gravity and drag (grinders, welding, fireworks; campfire embers with Gravity ~ -0.05 and a long life). Ships its own material: the pattern for an agent adding a new look."
+ },
+ "NS_Steam": {
+  "path": "/Game/AnySceneFX/Systems/NS_Steam.NS_Steam",
+  "params": {
+   "SpawnRate": "float",
+   "LifetimeMin": "float",
+   "LifetimeMax": "float",
+   "SizeMin": "float",
+   "SizeMax": "float",
+   "Aspect": "float",
+   "Velocity": "vec3",
+   "VelocityJitter": "float",
+   "Wind": "vec3",
+   "Gravity": "float",
+   "Drag": "float",
+   "BoxExtent": "vec3",
+   "Color": "color",
+   "Intensity": "float",
+   "Opacity": "float",
+   "Temperature": "float",
+   "NoiseStrength": "float",
+   "NoiseFreq": "float",
+   "Grow": "float"
+  },
+  "fx_types": [
+   "steam"
+  ],
+  "description": "Rising lit vapour plume (woks, pots, kettles, vents, manholes): GPU soft puffs, growing, curl noise, drifting with Wind, depth-sorted, before-DOF."
+ }
+}

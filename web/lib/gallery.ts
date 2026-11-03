@@ -30,6 +30,8 @@ export interface GalleryItem {
   floor_plan_url?: string | null;
   items?: string[] | null;
   name?: string | null;
+  /** Who started it, "Name <email>" (builds since the owner tag; older ones have none). */
+  owner?: string | null;
   critic_rounds: number;
   last_scores?: Record<string, number> | null;
   last_summary?: string | null;

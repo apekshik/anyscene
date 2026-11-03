@@ -1,0 +1,9 @@
+{
+ "name": "NS_Smoke",
+ "description": "Darker, slower, longer-lived plume (chimneys, exhaust, incense; cigarettes at small sizes): the steam puff look with smoke defaults.",
+ "fx_types": ["smoke"],
+ "common": {"spawn": 25, "life": [5.0, 8.0], "size": [6, 12], "vel": [0, 0, 20], "color": [0.32, 0.31, 0.3], "intensity": 0.0, "opacity": 0.3,
+            "box": [4, 4, 1], "wind": [10, 0, 0], "drag": 1.0, "jitter": 0.15, "noise": 30, "noise_freq": 0.03, "grow": 4.0},
+ "system": {"seed": 2303, "bounds": [[-200, -200, -10], [300, 200, 400]]},
+ "emitters": [{"name": "Puffs", "template": "Fountain", "core": {"gpu": true, "material": "M_AFX_Steam", "fade": [3.0, 1.2], "sort": true}}]
+}

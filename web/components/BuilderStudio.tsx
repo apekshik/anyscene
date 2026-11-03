@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { builderReducer, clock, initialBuilder, type BuilderResponse } from "@/lib/builder";
-import { LiveSource, ReplaySource, getAccessKey, setAccessKey, type Source } from "@/lib/sources";
+import { LiveSource, ReplaySource, getWho, ownerName, type Source } from "@/lib/sources";
 import { BUILDER_APP } from "@/lib/apps";
 import { galleryApp, galleryEvents, toBuilderResponse, type GalleryItem, type GalleryKind } from "@/lib/gallery";
 import BuilderInputs, { type BuilderInputsState } from "./BuilderInputs";
@@ -15,8 +15,11 @@ import BuilderViewport, { type BTab } from "./BuilderViewport";
 import ProductionLog from "./ProductionLog";
 import CriticPanel from "./CriticPanel";
 import Stamp from "./Stamp";
+import WhoAmI, { Confirm, fetchMe, type Me } from "./WhoAmI";
 
 const SPEEDS = [1, 4, 16, 32, 64];
+/** What one build costs on fal (agent + generations + GPU time), for the note on the button and the confirm card. */
+const BUILD_COST = "$60-100";
 
 /** The agent builder (NEXT_PUBLIC_ANYSCENE_APP): one request builds the whole scene; the agent's log streams in, its
  *  milestones fill the schedule, the critic scores each round. */
@@ -46,9 +49,13 @@ export default function BuilderStudio() {
   const followRef = useRef(true);
   followRef.current = follow;
   const [rightOpen, setRightOpen] = useState(true);
-  const [keyOpen, setKeyOpen] = useState(false);
-  const [keyDraft, setKeyDraft] = useState("");
   const [needsKey, setNeedsKey] = useState(false);
+  // live only: who this browser is (app/api/me), the sign-in card, and the confirm card before a paid build
+  const [me, setMe] = useState<Me | null>(null);
+  const [whoOpen, setWhoOpen] = useState<"" | "first" | "edit" | "build">("");
+  const [confirming, setConfirming] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [, tick] = useState(0);
   const refUrl = useRef("");
   // event times are the builder's own clock (from when the worker started); the slate clock counts from the click
@@ -70,6 +77,18 @@ export default function BuilderStudio() {
       cancelled = true;
     };
   }, [replayName, initialSpeed]);
+
+  const live = !replayName;
+  useEffect(() => {
+    if (!live) return;
+    if (!getWho()) return setWhoOpen("first");
+    fetchMe()
+      .then(setMe)
+      .catch(() => {
+        setNeedsKey(true);
+        setWhoOpen("first");
+      });
+  }, [live]);
 
   useEffect(() => {
     if (source instanceof ReplaySource) source.speed = speed;
@@ -126,11 +145,29 @@ export default function BuilderStudio() {
       if (followRef.current) setTab("stills");
     } catch (e) {
       const msg = errorMessage(e);
-      if (/access key|proxy is closed/i.test(msg)) setNeedsKey(true);
+      if (/password|access key|proxy is closed/i.test(msg)) setNeedsKey(true);
       dispatch({ type: "fail", message: msg });
       setEndAt(source.clock());
     }
   }, [source, inputs]);
+
+  // Live: a build costs real money, so check who you are and what's left today, then ask before starting.
+  const requestBuild = useCallback(async () => {
+    if (!live) return doBuild();
+    if (!getWho()) return setWhoOpen("build");
+    setChecking(true);
+    try {
+      const m = await fetchMe();
+      setMe(m);
+      if (m.error) return setWhoOpen("build");
+      setConfirming(true);
+    } catch {
+      setNeedsKey(true);
+      setWhoOpen("build");
+    } finally {
+      setChecking(false);
+    }
+  }, [live, doBuild]);
 
   // ?watch=<fal request id>: follow a build started elsewhere. Its "received" event carries the request's inputs
   // (reference, prompt, dials, effort), which fill the form so the page shows what the build was given.
@@ -165,7 +202,7 @@ export default function BuilderStudio() {
       })
       .catch((e) => {
         const msg = errorMessage(e);
-        if (/access key|proxy is closed/i.test(msg)) setNeedsKey(true);
+        if (/password|access key|proxy is closed/i.test(msg)) setNeedsKey(true);
         dispatch({ type: "fail", message: msg });
         setEndAt(source.clock());
       });
@@ -189,7 +226,7 @@ export default function BuilderStudio() {
         } catch (e) {
           if (stop) return;
           const msg = errorMessage(e);
-          if (/access key|proxy is closed/i.test(msg)) setNeedsKey(true);
+          if (/password|access key|proxy is closed/i.test(msg)) setNeedsKey(true);
           dispatch({ type: "fail", message: msg });
           setEndAt(source.clock());
           return;
@@ -245,7 +282,7 @@ export default function BuilderStudio() {
 
   const autoDone = useRef(false);
   useEffect(() => {
-    if (auto && source && !autoDone.current) {
+    if (auto && source instanceof ReplaySource && !autoDone.current) {
       autoDone.current = true;
       setTimeout(() => doBuild(), 1200);
     }
@@ -315,35 +352,24 @@ export default function BuilderStudio() {
               {openId ? "Back to gallery" : "Gallery"}
             </a>
           )}
+          {!replay && run.buildId && (
+            <button
+              className="text-btn"
+              title="A link to this build that anyone with the password can open"
+              onClick={() => {
+                navigator.clipboard?.writeText(`${location.origin}/?open=${run.buildId}`).then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1600);
+                });
+              }}
+            >
+              {copied ? "Link copied" : "Copy link"}
+            </button>
+          )}
           {!replay && (
-            <span className="key-ctl">
-              {keyOpen ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setAccessKey(keyDraft.trim());
-                    setKeyOpen(false);
-                    setNeedsKey(false);
-                  }}
-                >
-                  <input
-                    type="password"
-                    autoComplete="off"
-                    aria-label="Access key"
-                    placeholder="access key"
-                    value={keyDraft}
-                    onChange={(e) => setKeyDraft(e.target.value)}
-                  />
-                  <button className="text-btn" type="submit">
-                    Save
-                  </button>
-                </form>
-              ) : (
-                <button className={`text-btn ${needsKey ? "bad" : ""}`} onClick={() => setKeyOpen(true)}>
-                  {needsKey ? "Access key needed" : getAccessKey() ? "Access key set" : "Access key"}
-                </button>
-              )}
-            </span>
+            <button className={`text-btn ${needsKey ? "bad" : ""}`} onClick={() => setWhoOpen("edit")} title={me?.owner || undefined}>
+              {needsKey ? "Password needed" : me?.owner ? `${ownerName(me.owner)}${me.admin ? " (admin)" : ""}` : "Sign in"}
+            </button>
           )}
           <button className="text-btn" onClick={() => setRightOpen((o) => !o)} aria-expanded={rightOpen}>
             {rightOpen ? "Hide critic" : "Show critic"}
@@ -360,8 +386,9 @@ export default function BuilderStudio() {
           }}
           disabled={running}
           canBuild={!!(inputs.file || refUrl.current) && !running && !!source}
-          building={running}
-          onBuild={doBuild}
+          building={running || checking}
+          onBuild={requestBuild}
+          note={live ? <CostNote me={me} /> : null}
         />
         {res && res.build_id && openKind === "scene" && <ShotsOrder res={res} source={source instanceof LiveSource ? source : null} />}
         <BuilderSchedule run={run} now={serverNow} />
@@ -392,7 +419,54 @@ export default function BuilderStudio() {
       <aside className="right" aria-hidden={!rightOpen}>
         <CriticPanel run={run} />
       </aside>
+
+      {whoOpen && (
+        <WhoAmI
+          reason={whoOpen === "build" ? (me?.error ?? "Tell AnyScene who you are before starting a build.") : undefined}
+          onCancel={whoOpen === "first" ? undefined : () => setWhoOpen("")}
+          onDone={(m) => {
+            const next = whoOpen;
+            setMe(m);
+            setNeedsKey(false);
+            setWhoOpen("");
+            if (next === "build") setConfirming(true);
+          }}
+        />
+      )}
+      {confirming && (
+        <Confirm
+          title="Start this build?"
+          yes="Start the build"
+          onNo={() => setConfirming(false)}
+          onYes={() => {
+            setConfirming(false);
+            doBuild();
+            setTimeout(() => fetchMe().then(setMe, () => {}), 10_000); // the build is counted once fal accepts it
+          }}
+        >
+          <p>
+            It runs on fal for up to 2 hours and costs about <b>{BUILD_COST}</b>. It keeps going if you close this tab; find it later under
+            My builds in the gallery.
+          </p>
+          <p className="fine">{quotaLine(me)}</p>
+        </Confirm>
+      )}
     </div>
+  );
+}
+
+function quotaLine(me: Me | null) {
+  if (!me) return "";
+  if (me.admin || me.open) return "No daily limit for you.";
+  const left = Math.max(0, me.limit - me.used);
+  return `${left} of ${me.limit} builds left today for ${ownerName(me.owner)} (resets 00:00 UTC).`;
+}
+
+function CostNote({ me }: { me: Me | null }) {
+  return (
+    <span className="cost-note">
+      Costs about <b>{BUILD_COST}</b> a build.{me && !me.admin && !me.open ? ` ${Math.max(0, me.limit - me.used)} of ${me.limit} left today.` : ""}
+    </span>
   );
 }
 

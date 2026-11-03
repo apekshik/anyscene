@@ -1,0 +1,1038 @@
+--- unreal/export_blend.py	2026-11-01 20:25:14.754928300 -0800
++++ unreal_caustic/export_blend.py	2026-11-01 20:17:24.643016700 -0800
+@@ -194,8 +194,6 @@
+                 for k in ("Object", "Generated"):
+                     if n.outputs[k].is_linked:
+                         hits.add("COORD_" + k)
+-            if n.type == "ATTRIBUTE" and n.attribute_type in ("OBJECT", "INSTANCER"):
+-                hits.add("ATTR_" + n.attribute_name)
+             if n.type == "GROUP" and n.node_tree:
+                 walk(n.node_tree)
+     walk(m.node_tree)
+@@ -223,21 +221,9 @@
+     return srcs, emitters
+ 
+ 
+-def object_attr_values(o):
+-    """Values of the object attributes (Attribute node, type Object/Instancer) its materials read, e.g. a per-console
+-    screen_idx choosing which CRT page shows. Instances that differ in them cannot share one bake."""
+-    vals = set()
+-    for s in o.material_slots:
+-        for h in uses_object_dependence(s.material):
+-            if h.startswith("ATTR_"):
+-                vals.add(f"{h[5:]}={o.get(h[5:])}")
+-    return sorted(vals)
+-
+-
+ def mesh_key(o):
+     if o.type == "MESH" and not any(md.show_render for md in o.modifiers):
+-        av = object_attr_values(o)
+-        return "m_" + o.data.name + ("|" + ",".join(av) if av else "")
++        return "m_" + o.data.name
+     return "o_" + o.name
+ 
+ 
+@@ -495,36 +481,6 @@
+     return uv, float(a.sum())
+ 
+ 
+-def uv_world_scale(o, me, uv):
+-    """Area-weighted mean world length (m) of one UV unit along u and along v (per-loop uv array, n x 2)."""
+-    co = np.empty(len(me.vertices) * 3, np.float32)
+-    me.vertices.foreach_get("co", co)
+-    co = co.reshape(-1, 3) @ np.array(o.matrix_world.to_3x3()).T
+-    me.calc_loop_triangles()
+-    nt = len(me.loop_triangles)
+-    if nt == 0:
+-        return 0.0, 0.0
+-    vt = np.empty(nt * 3, np.int32)
+-    lt = np.empty(nt * 3, np.int32)
+-    me.loop_triangles.foreach_get("vertices", vt)
+-    me.loop_triangles.foreach_get("loops", lt)
+-    P = co[vt.reshape(-1, 3)].astype(np.float64)
+-    T = uv[lt.reshape(-1, 3)].astype(np.float64)
+-    e1, e2 = P[:, 1] - P[:, 0], P[:, 2] - P[:, 0]
+-    d1, d2 = T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]
+-    det = d1[:, 0] * d2[:, 1] - d2[:, 0] * d1[:, 1]
+-    ok = np.abs(det) > 1e-12
+-    if not ok.any():
+-        return 0.0, 0.0
+-    e1, e2, d1, d2, det = e1[ok], e2[ok], d1[ok], d2[ok], det[ok][:, None]
+-    dpdu = (e1 * d2[:, 1:2] - e2 * d1[:, 1:2]) / det
+-    dpdv = (e2 * d1[:, 0:1] - e1 * d2[:, 0:1]) / det
+-    w = 0.5 * np.linalg.norm(np.cross(e1, e2), axis=1)
+-    if w.sum() <= 0:
+-        return 0.0, 0.0
+-    return float((np.linalg.norm(dpdu, axis=1) * w).sum() / w.sum()), float((np.linalg.norm(dpdv, axis=1) * w).sum() / w.sum())
+-
+-
+ def ensure_bake_uv(o, me_owner):
+     """Pick the UV to bake into: a good existing atlas (square texture), or a fresh smart-projected 'bake' layer
+     whose islands are stretched to fill 0..1 so long thin parts get a non-square texture instead of a mostly
+@@ -565,13 +521,6 @@
+     aspect = float(span[0] / span[1])
+     uv = (uv - lo) / span * 0.99 + 0.005
+     me.uv_layers["bake"].data.foreach_set("uv", uv.astype(np.float32).ravel())  # re-fetch: edit-mode toggles free the old layer pointer
+-    # smart_project unwraps in object-local space, so a non-uniformly scaled object (a unit plane scaled to a 4.2 x 2.1 m
+-    # display) gets islands whose UV proportions are not its world proportions, and the span ratio above was 1:16 for a
+-    # 2:1 quad (512 x 4096 texture: 1/4 the texels across the short side). Pick W:H from the world-space length of one
+-    # UV unit along u and v instead, so texels come out square on the real surface.
+-    su, sv = uv_world_scale(me_owner, me, uv)
+-    if su > 0 and sv > 0:
+-        aspect = su / sv
+     _, cov = uv_stats(me, "bake")
+     me_owner["_bake_aspect"], me_owner["_bake_cov"] = aspect, cov
+     return "bake", False, aspect, max(cov, 0.05)
+@@ -737,6 +686,267 @@
+ 
+ # ------------------------------------------------------------------ lights / cameras / world / grade
+ 
++def export_ies(nd, light_name):
++    """IES profile -> <OUT>/ies/<name>.ies (external file copied, internal text datablock written). Returns the
++    path relative to OUT, or None."""
++    d = os.path.join(OUT, "ies")
++    os.makedirs(d, exist_ok=True)
++    try:
++        if nd.mode == "EXTERNAL":
++            src = bpy.path.abspath(nd.filepath)
++            if not os.path.exists(src):
++                log("ies missing", light_name, src)
++                return None
++            dst = os.path.join(d, safe(os.path.splitext(os.path.basename(src))[0]) + ".ies")
++            if not os.path.exists(dst):
++                with open(src, "rb") as fi, open(dst, "wb") as fo:
++                    fo.write(fi.read())
++        else:
++            if nd.ies is None:
++                return None
++            dst = os.path.join(d, safe(nd.ies.name.rsplit(".", 1)[0]) + ".ies")
++            with open(dst, "w", encoding="utf-8") as fo:
++                fo.write(nd.ies.as_string())
++    except OSError as ex:
++        log("ies export failed", light_name, ex)
++        return None
++    return os.path.relpath(dst, OUT)
++
++
++def export_image_file(img, sub="gobo"):
++    """A (possibly packed) image -> <OUT>/<sub>/<name>.<ext>; returns the path relative to OUT."""
++    d = os.path.join(OUT, sub)
++    os.makedirs(d, exist_ok=True)
++    base = os.path.basename(bpy.path.abspath(img.filepath)) or img.name
++    stem, ext = os.path.splitext(base)
++    ext = ext.lower() if ext.lower() in (".png", ".jpg", ".jpeg", ".tga", ".exr", ".tif", ".tiff") else ".png"
++    dst = os.path.join(d, safe(stem) + ext)
++    if not os.path.exists(dst):
++        if img.packed_file:
++            with open(dst, "wb") as fo:
++                fo.write(img.packed_file.data)
++        elif os.path.exists(bpy.path.abspath(img.filepath)):
++            with open(bpy.path.abspath(img.filepath), "rb") as fi, open(dst, "wb") as fo:
++                fo.write(fi.read())
++        else:  # generated / missing on disk: write the pixels
++            dst = os.path.join(d, safe(stem) + ".png")
++            im2 = img.copy()
++            save_png(im2, dst)
++            bpy.data.images.remove(im2)
++    return os.path.relpath(dst, OUT)
++
++
++def _fcurves(idblock):
++    """All F-curves of an ID's action (Blender 5 layered actions: layers -> strips -> channelbag(slot))."""
++    ad = getattr(idblock, "animation_data", None)
++    act = ad.action if ad else None
++    if act is None:
++        return []
++    out = list(getattr(act, "fcurves", []) or [])
++    if not out and hasattr(act, "layers"):
++        for ly in act.layers:
++            for st in ly.strips:
++                cb = st.channelbag(ad.action_slot) if ad.action_slot else None
++                if cb:
++                    out += list(cb.fcurves)
++    return out
++
++
++def fit_channel(t, y, n_sines=2, fmin=0.01, fmax=1.5, step=0.002):
++    """y(t) ~ c0 + v t + sum_k A_k sin(2 pi f_k t + phi_k), greedy frequency search + joint linear least squares.
++    Returns {"c0", "v", "sines": [[A, f, phi], ...], "rms"} (t in seconds)."""
++    t = np.asarray(t, np.float64)
++    y = np.asarray(y, np.float64)
++    cols = [np.ones_like(t), t]
++    freqs = []
++    grid = np.arange(fmin, fmax, step)
++    for _ in range(n_sines):
++        best = None
++        for f in grid:
++            if any(abs(f - g) < 2 * step for g in freqs):
++                continue
++            w = 2 * math.pi * f
++            A = np.vstack(cols + [np.sin(w * t), np.cos(w * t)]).T
++            c, res, *_ = np.linalg.lstsq(A, y, rcond=None)
++            r = float(((A @ c - y) ** 2).sum())
++            if best is None or r < best[0]:
++                best = (r, f)
++        if best is None:
++            break
++        f = best[1]
++        freqs.append(f)
++        w = 2 * math.pi * f
++        cols += [np.sin(w * t), np.cos(w * t)]
++    A = np.vstack(cols).T
++    c, *_ = np.linalg.lstsq(A, y, rcond=None)
++    rms = float(np.sqrt(((A @ c - y) ** 2).mean()))
++    sines = []
++    for k, f in enumerate(freqs):
++        a, b = c[2 + 2 * k], c[3 + 2 * k]
++        sines.append([float(math.hypot(a, b)), float(f), float(math.atan2(b, a))])  # A sin(wt+phi) = A cos(phi) sin + A sin(phi) cos
++    return {"c0": float(c[0]), "v": float(c[1]), "sines": sines, "rms": rms, "range": [float(y.min()), float(y.max())]}
++
++
++def _reduce_strength(sock, layers, light):
++    """Reduce the node chain feeding a light's emission Strength to gain * (sum_i w_i * tex_i + bias) ^ gamma.
++    Supports Math ADD/SUBTRACT/MULTIPLY/DIVIDE/POWER with constants, Map Range (linear) and Image Texture leaves
++    (Color or Alpha output). Returns a dict or raises ValueError."""
++    if not sock.is_linked:
++        return {"w": {}, "bias": float(sock.default_value), "gamma": 1.0, "gain": 1.0, "clamp": False}
++    n = sock.links[0].from_node
++    if n.type == "TEX_IMAGE":
++        i = next(k for k, l in enumerate(layers) if l["node"] == n.name)
++        return {"w": {i: 1.0}, "bias": 0.0, "gamma": 1.0, "gain": 1.0, "clamp": False}
++    if n.type == "MAP_RANGE" and n.data_type == "FLOAT" and n.interpolation_type == "LINEAR":
++        f = _reduce_strength(n.inputs[0], layers, light)
++        a, b, c, d = (n.inputs[k].default_value for k in (1, 2, 3, 4))
++        if any(n.inputs[k].is_linked for k in (1, 2, 3, 4)) or abs(a) > 1e-6 or abs(c) > 1e-6:
++            raise ValueError(f"{light}: map range other than 0..b -> 0..d")
++        f["gain"] *= d / b
++        f["clamp"] = f["clamp"] or n.clamp
++        return f
++    if n.type == "MATH":
++        op = n.operation
++        lk = [i.is_linked for i in n.inputs[:2]]
++        if op in ("ADD", "SUBTRACT") and all(lk):
++            fa, fb = _reduce_strength(n.inputs[0], layers, light), _reduce_strength(n.inputs[1], layers, light)
++            if fa["gamma"] != 1 or fb["gamma"] != 1:
++                raise ValueError(f"{light}: sum of non-linear terms")
++            s = -1.0 if op == "SUBTRACT" else 1.0
++            w = {k: fa["gain"] * v for k, v in fa["w"].items()}
++            for k, v in fb["w"].items():
++                w[k] = w.get(k, 0.0) + s * fb["gain"] * v
++            return {"w": w, "bias": fa["gain"] * fa["bias"] + s * fb["gain"] * fb["bias"], "gamma": 1.0, "gain": 1.0, "clamp": False}
++        if lk[0] and not lk[1] or lk[1] and not lk[0]:
++            src = n.inputs[0] if lk[0] else n.inputs[1]
++            k = n.inputs[1].default_value if lk[0] else n.inputs[0].default_value
++            f = _reduce_strength(src, layers, light)
++            if op == "MULTIPLY" or (op == "DIVIDE" and lk[0]):
++                m = k if op == "MULTIPLY" else 1.0 / k
++                if f["gamma"] == 1.0:
++                    f["w"] = {i: v * m for i, v in f["w"].items()}
++                    f["bias"] *= m
++                else:
++                    f["gain"] *= m
++                return f
++            if op in ("ADD", "SUBTRACT") and f["gamma"] == 1.0 and f["gain"] == 1.0:
++                f["bias"] += k if op == "ADD" else (-k if lk[0] else k)
++                if op == "SUBTRACT" and lk[1]:
++                    raise ValueError(f"{light}: const - texture")
++                return f
++            if op == "POWER" and lk[0]:
++                f["gain"] = f["gain"] ** k
++                f["gamma"] *= k
++                return f
++        raise ValueError(f"{light}: unsupported math {op}")
++    raise ValueError(f"{light}: unsupported node {n.type} in the strength chain")
++
++
++def gobo_entry(o):
++    """Projected-texture (gobo) light: the image layers, their Mapping transform and its animation fitted to drift +
++    sines, and the strength chain reduced to gain * (sum w_i tex_i + bias)^gamma. None if the light has no image."""
++    L = o.data
++    nt = L.node_tree
++    texs = [n for n in nt.nodes if n.type == "TEX_IMAGE" and n.image]
++    if not texs:
++        return None
++    fcs = {(fc.data_path, fc.array_index): fc for fc in _fcurves(nt)}
++    fps = sc.render.fps / sc.render.fps_base
++    layers, warns = [], []
++    coord = "unknown"
++    for tx in texs:
++        lay = {"node": tx.name, "image": export_image_file(tx.image), "extension": tx.extension,
++               "interpolation": tx.interpolation, "colorspace": tx.image.colorspace_settings.name,
++               "size": list(tx.image.size)}
++        vin = tx.inputs["Vector"]
++        mp = vin.links[0].from_node if vin.is_linked else None
++        if mp is not None and mp.type == "MAPPING":
++            if mp.vector_type not in ("POINT", "TEXTURE"):
++                warns.append(f"mapping type {mp.vector_type}")
++            rot = mp.inputs["Rotation"].default_value
++            if abs(rot[0]) > 1e-4 or abs(rot[1]) > 1e-4:
++                warns.append("mapping X/Y rotation ignored")
++            chans = {}
++            for key, sock, idx in (("loc_x", "Location", 0), ("loc_y", "Location", 1), ("rot", "Rotation", 2),
++                                   ("scale_x", "Scale", 0), ("scale_y", "Scale", 1)):
++                si = list(mp.inputs).index(mp.inputs[sock])
++                fc = fcs.get((f'nodes["{mp.name}"].inputs[{si}].default_value', idx))
++                if fc is None or len(fc.keyframe_points) < 2:
++                    chans[key] = {"c0": float(mp.inputs[sock].default_value[idx]), "v": 0.0, "sines": [], "rms": 0.0}
++                    continue
++                k0, k1 = fc.keyframe_points[0].co[0], fc.keyframe_points[-1].co[0]
++                frames = np.arange(math.floor(k0), math.ceil(k1) + 1)
++                vals = [fc.evaluate(float(f)) for f in frames]
++                chans[key] = fit_channel(frames / fps, vals)
++                chans[key]["keys"] = len(fc.keyframe_points)
++                chans[key]["frames"] = [int(frames[0]), int(frames[-1])]
++                if fc.modifiers:
++                    warns.append(f"{key}: fcurve modifiers {[m.type for m in fc.modifiers]} sampled, not exported")
++            if mp.vector_type == "TEXTURE":  # inverse transform: not supported by the master material
++                warns.append("TEXTURE-type mapping treated as POINT")
++            lay["mapping"] = chans
++            lay["animated"] = any(c.get("keys") for c in chans.values())
++            src = mp.inputs["Vector"].links[0].from_node if mp.inputs["Vector"].is_linked else None
++        else:
++            lay["mapping"] = None
++            src = mp
++        # Coordinate source: TexCoord Normal -> x/z, y/z (perspective projector) is the standard spot gobo.
++        c = "unknown"
++        if src is not None and src.type == "COMBXYZ":
++            ins = [src.inputs[i].links[0].from_node if src.inputs[i].is_linked else None for i in (0, 1)]
++            if all(n is not None and n.type == "MATH" and n.operation == "DIVIDE" for n in ins):
++                seps = {l.from_node.type for n in ins for i in n.inputs[:2] for l in i.links}
++                tc = {l.from_node for n in ins for i in n.inputs[:2] for l in i.links if l.from_node.type == "SEPXYZ"}
++                if seps == {"SEPXYZ"} and len(tc) == 1:
++                    sep = next(iter(tc))
++                    ln = sep.inputs[0].links[0] if sep.inputs[0].is_linked else None
++                    if ln and ln.from_node.type == "TEX_COORD":
++                        c = "normal_projective" if ln.from_socket.name == "Normal" else ln.from_socket.name.lower() + "_projective"
++        elif src is not None and src.type == "TEX_COORD":
++            c = src.outputs[0].name.lower()
++            for s in src.outputs:
++                if s.is_linked:
++                    c = s.name.lower() + "_raw"
++        coord = c if coord == "unknown" else coord
++        if c != coord:
++            warns.append(f"layers use different coordinates ({coord} vs {c})")
++        layers.append(lay)
++    em = next((n for n in nt.nodes if n.type == "EMISSION"), None)
++    g = {"coord": coord, "layers": layers, "fps": fps}
++    try:
++        f = _reduce_strength(em.inputs["Strength"], layers, o.name) if em else None
++    except ValueError as ex:
++        warns.append(str(ex))
++        f = None
++    if f is None:  # fall back to an equal-weight average of the layers, unit gain
++        f = {"w": {i: 1.0 / len(layers) for i in range(len(layers))}, "bias": 0.0, "gamma": 1.0, "gain": 1.0, "clamp": False}
++    g["combine"] = {"weights": [f["w"].get(i, 0.0) for i in range(len(layers))], "bias": f["bias"], "gamma": f["gamma"],
++                    "gain": f["gain"], "clamp": f["clamp"]}
++    # Peak (all textures at 1) and mean (layers decorrelated) of the strength pattern.
++    w = np.array(g["combine"]["weights"])
++    g["peak"] = float(f["gain"] * max(w.clip(0).sum() + f["bias"], 1e-6) ** f["gamma"])
++    try:
++        rng = np.random.default_rng(0)
++        acc = np.full(100000, f["bias"], np.float64)
++        for i, tx in enumerate(texs):
++            im = tx.image
++            px = np.empty(im.size[0] * im.size[1] * im.channels, np.float32)
++            im.pixels.foreach_get(px)
++            px = px.reshape(-1, im.channels)[:, :3].mean(axis=1)
++            acc += w[i] * px[rng.integers(0, px.size, acc.size)]
++        g["mean"] = float((f["gain"] * np.clip(acc, 0, None) ** f["gamma"]).mean())
++    except Exception as ex:  # noqa: BLE001
++        g["mean"] = None
++        warns.append(f"mean estimate failed: {ex}")
++    if em is not None:
++        ec = em.inputs["Color"]
++        g["emission_color"] = list(ec.default_value)[:3] if not ec.is_linked else [1.0, 1.0, 1.0]
++    g["warnings"] = warns
++    for wmsg in warns:
++        log("gobo", o.name, wmsg)
++    return g
++
++
+ def light_entry(o):
+     L = o.data
+     col = Vector(L.color[:3])
+@@ -777,8 +987,17 @@
+         for nd in L.node_tree.nodes:
+             if nd.type == "TEX_IES":
+                 e["ies"] = bpy.path.abspath(nd.filepath) if nd.mode == "EXTERNAL" else "internal:" + (nd.ies.name if nd.ies else "")
++                f = export_ies(nd, o.name)
++                if f:
++                    e["ies_file"] = f
+             if nd.type == "TEX_IMAGE" and nd.image:
+                 e["gobo"] = bpy.path.abspath(nd.image.filepath)
++        em = next((nd for nd in L.node_tree.nodes if nd.type == "EMISSION"), None)
++        if em is not None and not em.inputs["Strength"].is_linked and "candela" in e:
++            e["candela"] *= em.inputs["Strength"].default_value  # a constant node strength scales the light
++        g = gobo_entry(o)
++        if g:
++            e["gobo_fx"] = g
+     att = math.sqrt(max(e.get("candela", 0), 1) / 3.0) * 100
+     e["attenuation_radius"] = max(300.0, min(att, 8000.0))
+     return e
+@@ -974,11 +1193,6 @@
+         ev = rep.evaluated_get(dg).data
+         tris = tri_count(ev)
+         area = surface_area(rep, ev)
+-        # Material sections the GLB really has, in order (0 = baked, k+1 = glass k). glTF drops unused materials, so an
+-        # all-glass pane has one section, the glass one; build_level used to give it the baked (opaque) material.
+-        mi_ = np.empty(len(ev.polygons), np.int32)
+-        ev.polygons.foreach_get("material_index", mi_)
+-        sect = sorted({(glass.index(int(i)) + 1) if int(i) in glass else 0 for i in np.unique(mi_)}) if len(mi_) else [0]
+         texd = os.path.join(OUT, "tex")
+         p = {c: os.path.join(texd, f"{an}_{c}.png") for c in ("base", "orm", "normal", "emit")}
+         glb = os.path.join(OUT, "mesh", an + ".glb")
+@@ -997,7 +1211,7 @@
+              "res": list(res), "uv_coverage": round(cov, 3), "slots": [m.name if m else None for m in mats], "glass": [glass_params(mats[i]) for i in glass],
+              "emissive": False, "normal": False, "emissive_scale": 0.0, "object_dependent": sorted({h for m in bake_mats if m for h in uses_object_dependence(m)}),
+              "animated_materials": [m.name for m in bake_mats if m and animated(m)], "instances": len(group),
+-             "shadow": bool(rep.visible_shadow), "camera_visible": bool(rep.visible_camera), "sections": sect}
++             "shadow": bool(rep.visible_shadow), "camera_visible": bool(rep.visible_camera)}
+         t1 = time.time()
+         if bake_mats and not NO_BAKE:
+             if not done:  # a crash between channels leaves base without orm: redo the whole set
+--- unreal/build_level.py	2026-11-01 20:25:17.725321300 -0800
++++ unreal_caustic/build_level.py	2026-11-01 21:37:29.617093600 -0800
+@@ -29,6 +29,7 @@
+ STAGES = os.environ.get("ANYSCENE_STAGES", "textures,meshes,materials,level,sequences").split(",")
+ ONLY = set(x for x in os.environ.get("ANYSCENE_ONLY", "").split(",") if x)
+ NANITE_TRIS = int(os.environ.get("ANYSCENE_NANITE_TRIS", "2000"))
++MESH_BATCH = int(os.environ.get("ANYSCENE_MESH_BATCH", "16"))  # Interchange imports in flight per wait (memory)
+ EXPO_OFF = float(os.environ.get("ANYSCENE_EXPOSURE_OFFSET", "0"))
+ 
+ EAL = unreal.EditorAssetLibrary
+@@ -107,7 +108,30 @@
+             else:
+                 tx.set_editor_property("srgb", True)
+             EAL.save_loaded_asset(tx, False)
++        # 4K bakes: without a GC per chunk the commandlet held every imported texture and ran out of memory
++        # (~550 of 796 on a 32 GB box shared with other editors).
++        unreal.SystemLibrary.collect_garbage()
+         log(f"textures {min(i + 64, len(todo))}/{len(todo)} ({time.time() - t:.0f}s)")
++    # A crash inside a chunk leaves imported textures without their settings: re-check the linear channels.
++    fixed = 0
++    lin = [(ch, tex_path(os.path.splitext(os.path.basename(rel))[0])) for a in ASSETS for ch, rel in a.get("tex", {}).items() if ch in ("orm", "normal")]
++    for k, (ch, p) in enumerate(lin):
++        d = unreal.EditorAssetLibrary.find_asset_data(p)
++        if not d.is_valid():
++            continue
++        tx = d.get_asset()
++        if tx and tx.get_editor_property("srgb"):
++            tx.set_editor_property("srgb", False)
++            tx.set_editor_property("compression_settings", unreal.TextureCompressionSettings.TC_MASKS if ch == "orm" else unreal.TextureCompressionSettings.TC_NORMALMAP)
++            if ch == "normal":
++                tx.set_editor_property("flip_green_channel", True)
++            EAL.save_loaded_asset(tx, False)
++            fixed += 1
++        if k % 64 == 63:
++            unreal.SystemLibrary.collect_garbage()
++    if fixed:
++        log(f"textures: fixed settings on {fixed} linear textures")
++    stage_light_textures()
+     if extra:
+         import_files(extra, f"{DEST}/Tex")
+         l = EAL.load_asset(tex_path("lut_grade"))
+@@ -123,6 +147,50 @@
+     REPORT["timings"]["textures_s"] = round(time.time() - t)
+ 
+ 
++def gobo_tex_path(rel):
++    return f"{DEST}/Gobo/{os.path.splitext(os.path.basename(rel.replace(chr(92), '/')))[0]}"
++
++
++def ies_path(rel):
++    return f"{DEST}/IES/{os.path.splitext(os.path.basename(rel.replace(chr(92), '/')))[0]}"
++
++
++def stage_light_textures():
++    """Gobo images (linear grayscale, wrapping) and IES profiles (TextureLightProfile) referenced by the lights."""
++    gobos, ies = {}, {}
++    for L in scene["lights"]:
++        for lay in (L.get("gobo_fx") or {}).get("layers", []):
++            gobos[gobo_tex_path(lay["image"])] = lay
++        if L.get("ies_file"):
++            ies[ies_path(L["ies_file"])] = L["ies_file"]
++    todo = [os.path.join(EXPORT, lay["image"]) for p, lay in gobos.items() if not EAL.does_asset_exist(p)]
++    if todo:
++        import_files(todo, f"{DEST}/Gobo")
++    for p, lay in gobos.items():
++        tx = EAL.load_asset(p)
++        if tx is None:
++            warn(f"gobo import failed {lay['image']}")
++            continue
++        lin = lay.get("colorspace", "Non-Color") in ("Non-Color", "Linear Rec.709", "Raw")
++        tx.set_editor_property("srgb", not lin)
++        tx.set_editor_property("compression_settings", unreal.TextureCompressionSettings.TC_GRAYSCALE)
++        wrap = unreal.TextureAddress.TA_WRAP if lay.get("extension", "REPEAT") == "REPEAT" else unreal.TextureAddress.TA_CLAMP
++        tx.set_editor_property("address_x", wrap)
++        tx.set_editor_property("address_y", wrap)
++        tx.set_editor_property("lod_group", unreal.TextureGroup.TEXTUREGROUP_EFFECTS)
++        EAL.save_loaded_asset(tx, False)
++    todo = [os.path.join(EXPORT, f) for p, f in ies.items() if not EAL.does_asset_exist(p)]
++    if todo:
++        import_files(todo, f"{DEST}/IES")
++    for p, f in ies.items():
++        prof = EAL.load_asset(p) if EAL.does_asset_exist(p) else None
++        if prof is None:
++            warn(f"IES import failed {f}")
++            continue
++        EAL.save_loaded_asset(prof, False)  # import tasks run with save=False
++    log(f"light textures: {len(gobos)} gobo images, {len(ies)} IES profiles")
++
++
+ # ------------------------------------------------------------------ meshes
+ 
+ def mesh_folder(a):
+@@ -188,8 +256,9 @@
+ 
+     for i, a in enumerate(todo):
+         queue(a)
+-        if i % 16 == 15 or i == len(todo) - 1:
++        if i % MESH_BATCH == MESH_BATCH - 1 or i == len(todo) - 1:
+             flush(a)
++            unreal.SystemLibrary.collect_garbage()
+             log(f"meshes {i + 1}/{len(todo)} ({time.time() - t:.0f}s)")
+     for attempt in range(2):
+         miss = [a for a in ASSETS if find_mesh(a) is None]
+@@ -327,6 +396,214 @@
+     return m
+ 
+ 
++GOBO_CH = ("LocX", "LocY", "Rot", "ScaleX", "ScaleY")
++GOBO_KEYS = {"LocX": "loc_x", "LocY": "loc_y", "Rot": "rot", "ScaleX": "scale_x", "ScaleY": "scale_y"}
++
++
++def mpc_time():
++    """Material parameter collection holding the gobo clock: GoboUseSeq = 0 -> real time (Time node + per-light
++    TimeOffset); 1 -> GoboTime, keyed by the level sequences so MRQ frames land on the exact Blender frame."""
++    path = f"{DEST}/Materials/MPC_AnyTime"
++    if EAL.does_asset_exist(path):
++        return EAL.load_asset(path)
++    m = AT.create_asset("MPC_AnyTime", f"{DEST}/Materials", unreal.MaterialParameterCollection, unreal.MaterialParameterCollectionFactoryNew())
++    ps = []
++    for n in ("GoboTime", "GoboUseSeq"):
++        p = unreal.CollectionScalarParameter()
++        p.set_editor_property("parameter_name", n)
++        p.set_editor_property("default_value", 0.0)
++        ps.append(p)
++    m.set_editor_property("scalar_parameters", ps)
++    EAL.save_loaded_asset(m, False)
++    return m
++
++
++def master_gobo():
++    """Light-function master for projected-texture (gobo) spots, matching Blender's TexCoord-Normal x/z, y/z
++    projector: two texture layers, each with Mapping location / Z rotation / scale animated as
++    c0 + v t + A1 sin(2 pi f1 t + p1) + A2 sin(2 pi f2 t + p2) (per channel: vector params <L>_<Ch> = (c0, v, A1, f1)
++    and <L>_<Ch>P = (p1, A2, f2, p2)), combined as Gain * (WA a + WB b + Bias)^Gamma, divided by Peak (light
++    functions are clamped to 0..1; the light's intensity carries the peak)."""
++    path = f"{DEST}/Materials/M_AnyGobo"
++    if EAL.does_asset_exist(path):
++        return EAL.load_asset(path)
++    m = AT.create_asset("M_AnyGobo", f"{DEST}/Materials", unreal.Material, unreal.MaterialFactoryNew())
++    m.set_editor_property("material_domain", unreal.MaterialDomain.MD_LIGHT_FUNCTION)
++    mpc = mpc_time()
++    gobo_default = next((EAL.load_asset(gobo_tex_path(lay["image"])) for L in scene["lights"]
++                         for lay in (L.get("gobo_fx") or {}).get("layers", []) if EAL.does_asset_exist(gobo_tex_path(lay["image"]))), None)
++    if gobo_default is None:
++        warn("M_AnyGobo: no imported gobo texture to use as the sampler default")
++
++    def scalar(name, v, x, y):
++        n = MEL.create_material_expression(m, unreal.MaterialExpressionScalarParameter, x, y)
++        n.set_editor_property("parameter_name", name)
++        n.set_editor_property("default_value", v)
++        return n
++
++    def vec(name, v, x, y):
++        n = MEL.create_material_expression(m, unreal.MaterialExpressionVectorParameter, x, y)
++        n.set_editor_property("parameter_name", name)
++        n.set_editor_property("default_value", unreal.LinearColor(*v))
++        return n
++
++    # Clock: lerp(Time + TimeOffset, GoboTime, GoboUseSeq)
++    tm = MEL.create_material_expression(m, unreal.MaterialExpressionTime, -2400, -600)
++    toff = scalar("TimeOffset", 0.0, -2400, -500)
++    add = MEL.create_material_expression(m, unreal.MaterialExpressionAdd, -2200, -560)
++    MEL.connect_material_expressions(tm, "", add, "A")
++    MEL.connect_material_expressions(toff, "", add, "B")
++    cps = []
++    for i, n in enumerate(("GoboTime", "GoboUseSeq")):
++        c = MEL.create_material_expression(m, unreal.MaterialExpressionCollectionParameter, -2400, -400 + 100 * i)
++        c.set_editor_property("collection", mpc)
++        c.set_editor_property("parameter_name", n)
++        cps.append(c)
++    lt = MEL.create_material_expression(m, unreal.MaterialExpressionLinearInterpolate, -2000, -500)
++    MEL.connect_material_expressions(add, "", lt, "A")
++    MEL.connect_material_expressions(cps[0], "", lt, "B")
++    MEL.connect_material_expressions(cps[1], "", lt, "Alpha")
++    uv = MEL.create_material_expression(m, unreal.MaterialExpressionTextureCoordinate, -2400, -800)
++    tan = scalar("TanOuter", 0.8391, -2400, -700)
++
++    def ch(c):
++        return (f"({c}.x + {c}.y*T + {c}.z*sin(6.2831853*{c}.w*T + {c}P.x) + {c}P.y*sin(6.2831853*{c}P.z*T + {c}P.w))")
++
++    code = ("float2 p = (UV * 2.0 - 1.0) * Tan;\n"
++            "float2 d = float2(-p.y, -p.x);  // Blender light-local (x/z, y/z)\n"
++            f"float lx = {ch('LocX')}; float ly = {ch('LocY')}; float r = {ch('Rot')};\n"
++            f"float2 s = d * float2({ch('ScaleX')}, {ch('ScaleY')});\n"
++            "float c = cos(r); float sn = sin(r);\n"
++            "float2 q = float2(s.x * c - s.y * sn, s.x * sn + s.y * c) + float2(lx, ly);\n"
++            "return float2(q.x, -q.y);  // Blender image v runs bottom-up")
++    samples = []
++    defaults = {"LocX": (0, 0, 0, 0), "LocY": (0, 0, 0, 0), "Rot": (0, 0, 0, 0), "ScaleX": (1, 0, 0, 0), "ScaleY": (1, 0, 0, 0)}
++    camv = MEL.create_material_expression(m, unreal.MaterialExpressionCameraVectorWS, -2400, 300)
++    lfs = scalar("LFScale", 1024.0, -2400, 400)
++    srad = scalar("SourceRadius", 0.0, -2400, 500)
++    pbias = scalar("PenumbraBias", -1.0, -2400, 600)
++    for li, L in enumerate(("A", "B")):
++        y0 = li * 1400
++        cu = MEL.create_material_expression(m, unreal.MaterialExpressionCustom, -1500, y0)
++        cu.set_editor_property("code", code)
++        cu.set_editor_property("output_type", unreal.CustomMaterialOutputType.CMOT_FLOAT2)
++        cu.set_editor_property("description", f"GoboUV_{L}")
++        names = ["UV", "Tan", "T"] + [n for c in GOBO_CH for n in (c, c + "P")]
++        ins = []
++        for n in names:
++            ci = unreal.CustomInput()
++            ci.set_editor_property("input_name", n)
++            ins.append(ci)
++        cu.set_editor_property("inputs", ins)
++        MEL.connect_material_expressions(uv, "", cu, "UV")
++        MEL.connect_material_expressions(tan, "", cu, "Tan")
++        MEL.connect_material_expressions(lt, "", cu, "T")
++        vecs = {}
++        for k, c in enumerate(GOBO_CH):
++            a = vec(f"{L}_{c}", defaults[c], -1900, y0 + k * 220)
++            b = vec(f"{L}_{c}P", (0, 0, 0, 0), -1900, y0 + k * 220 + 110)
++            MEL.connect_material_expressions(a, "RGBA", cu, c)
++            MEL.connect_material_expressions(b, "RGBA", cu, c + "P")
++            vecs[c] = a
++        # Penumbra: Cycles evaluates the gobo from every point of the light's disk, so the pattern blurs by the
++        # angle SourceRadius / distance (tan units), times the mapping scale in texture space. Light functions are
++        # point-projected; pick the mip whose texel matches that blur. CameraVector in a light function is the
++        # light-space vector divided by LightFunctionScale (LightFunctionPixelShader.usf).
++        mipc = MEL.create_material_expression(m, unreal.MaterialExpressionCustom, -1500, y0 + 1150)
++        # Blur radius R texels = s * r / d * TexSize. A disk of radius R is roughly a Gaussian of sigma R/2, which
++        # mip log2(R) - 1 (bilinear) approximates; PenumbraBias (default -1) is the look-match knob.
++        mipc.set_editor_property("code", "float d = length(LV) * LFScale; if (d < 1.0) return 0.0;\n"
++                                 "float s = max(abs(SX.x), abs(SY.x));\n"
++                                 "return clamp(log2(max(s * SourceRadius / d * TexSize, 1.0)) + Bias, 0.0, 8.0);")
++        mipc.set_editor_property("output_type", unreal.CustomMaterialOutputType.CMOT_FLOAT1)
++        mipc.set_editor_property("description", f"GoboPenumbraMip_{L}")
++        ins = []
++        for n in ("LV", "LFScale", "SourceRadius", "TexSize", "SX", "SY", "Bias"):
++            ci = unreal.CustomInput()
++            ci.set_editor_property("input_name", n)
++            ins.append(ci)
++        mipc.set_editor_property("inputs", ins)
++        MEL.connect_material_expressions(camv, "", mipc, "LV")
++        MEL.connect_material_expressions(lfs, "", mipc, "LFScale")
++        MEL.connect_material_expressions(srad, "", mipc, "SourceRadius")
++        MEL.connect_material_expressions(scalar(f"TexSize{L}", 2048.0, -1900, y0 + 1250), "", mipc, "TexSize")
++        MEL.connect_material_expressions(vecs["ScaleX"], "RGBA", mipc, "SX")
++        MEL.connect_material_expressions(vecs["ScaleY"], "RGBA", mipc, "SY")
++        MEL.connect_material_expressions(pbias, "", mipc, "Bias")
++        tx = MEL.create_material_expression(m, unreal.MaterialExpressionTextureSampleParameter2D, -1100, y0)
++        tx.set_editor_property("parameter_name", f"Tex{L}")
++        tx.set_editor_property("mip_value_mode", unreal.TextureMipValueMode.TMVM_MIP_LEVEL)
++        if not MEL.connect_material_expressions(mipc, "", tx, "Level"):  # pin is "Level" in TMVM_MIP_LEVEL mode
++            warn("M_AnyGobo: could not connect the penumbra mip")
++        # The default must match the sampler type (linear grayscale), or the master fails to compile and every
++        # light function silently does nothing (same trap as the ORM default in M_AnyBaked).
++        tx.set_editor_property("texture", gobo_default)
++        tx.set_editor_property("sampler_type", unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_GRAYSCALE)
++        MEL.connect_material_expressions(cu, "", tx, "UVs")
++        w = scalar(f"W{L}", 0.5, -1100, y0 + 250)
++        mul = MEL.create_material_expression(m, unreal.MaterialExpressionMultiply, -800, y0)
++        MEL.connect_material_expressions(tx, "R", mul, "A")
++        MEL.connect_material_expressions(w, "", mul, "B")
++        samples.append(mul)
++    cu = MEL.create_material_expression(m, unreal.MaterialExpressionCustom, -500, 0)
++    cu.set_editor_property("code", "return saturate(Gain * pow(max(A + B + Bias, 0.0), Gamma) * InvPeak);")
++    cu.set_editor_property("output_type", unreal.CustomMaterialOutputType.CMOT_FLOAT1)
++    cu.set_editor_property("description", "GoboCombine")
++    ins = []
++    for n in ("A", "B", "Bias", "Gamma", "Gain", "InvPeak"):
++        ci = unreal.CustomInput()
++        ci.set_editor_property("input_name", n)
++        ins.append(ci)
++    cu.set_editor_property("inputs", ins)
++    MEL.connect_material_expressions(samples[0], "", cu, "A")
++    MEL.connect_material_expressions(samples[1], "", cu, "B")
++    for n, v, yy in (("Bias", 0.0, 300), ("Gamma", 1.0, 400), ("Gain", 1.0, 500), ("InvPeak", 1.0, 600)):
++        MEL.connect_material_expressions(scalar(n, v, -800, yy), "", cu, n)
++    MEL.connect_material_property(cu, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
++    MEL.recompile_material(m)
++    EAL.save_loaded_asset(m, False)
++    return m
++
++
++def gobo_mi(L):
++    """Material instance of M_AnyGobo for one light's gobo_fx entry."""
++    g = L["gobo_fx"]
++    m = mi("MI_Gobo_" + L["name"], master_gobo())
++    lays = g["layers"][:2]
++    if len(g["layers"]) > 2:
++        warn(f"{L['name']}: {len(g['layers'])} gobo layers, master takes 2")
++    if g.get("coord") != "normal_projective":
++        warn(f"{L['name']}: gobo coordinates '{g.get('coord')}' approximated as the Normal x/z, y/z projector")
++    fps = g.get("fps", 24.0)
++    MEL.set_material_instance_scalar_parameter_value(m, "TanOuter", math.tan(math.radians(L["outer_cone"])))
++    MEL.set_material_instance_scalar_parameter_value(m, "TimeOffset", scene.get("frame", 0) / fps)
++    cb = g["combine"]
++    w = list(cb["weights"][:2]) + [0.0] * (2 - len(lays))
++    for li, Ln in enumerate(("A", "B")):
++        lay = lays[min(li, len(lays) - 1)]
++        tx = EAL.load_asset(gobo_tex_path(lay["image"]))
++        if tx:
++            MEL.set_material_instance_texture_parameter_value(m, f"Tex{Ln}", tx)
++        MEL.set_material_instance_scalar_parameter_value(m, f"W{Ln}", w[li] if li < len(lays) else 0.0)
++        mp = lay.get("mapping") or {}
++        for c in GOBO_CH:
++            e = mp.get(GOBO_KEYS[c]) or {"c0": 1.0 if c.startswith("Scale") else 0.0, "v": 0.0, "sines": []}
++            s = (e.get("sines") or []) + [[0.0, 0.0, 0.0]] * 2
++            MEL.set_material_instance_vector_parameter_value(m, f"{Ln}_{c}", unreal.LinearColor(e["c0"], e["v"], s[0][0], s[0][1]))
++            MEL.set_material_instance_vector_parameter_value(m, f"{Ln}_{c}P", unreal.LinearColor(s[0][2], s[1][0], s[1][1], s[1][2]))
++    MEL.set_material_instance_scalar_parameter_value(m, "Bias", cb["bias"])
++    MEL.set_material_instance_scalar_parameter_value(m, "Gamma", cb["gamma"])
++    MEL.set_material_instance_scalar_parameter_value(m, "Gain", cb["gain"])
++    MEL.set_material_instance_scalar_parameter_value(m, "InvPeak", 1.0 / max(g["peak"], 1e-6))
++    MEL.set_material_instance_scalar_parameter_value(m, "SourceRadius", L.get("source_radius", 0.0))
++    MEL.set_material_instance_scalar_parameter_value(m, "LFScale", 1024.0)
++    for li, Ln in enumerate(("A", "B")):
++        lay = lays[min(li, len(lays) - 1)]
++        MEL.set_material_instance_scalar_parameter_value(m, f"TexSize{Ln}", float(max(lay.get("size") or [2048])))
++    EAL.save_loaded_asset(m, False)
++    return m
++
++
+ def mi(name, parent):
+     path = f"{DEST}/Materials/MI/{name}"
+     if EAL.does_asset_exist(path):
+@@ -362,9 +639,6 @@
+             MEL.set_material_instance_scalar_parameter_value(gm, "Roughness", g["roughness"])
+             EAL.save_loaded_asset(gm, False)
+             mats.append(gm)
+-        if a.get("sections"):
+-            # The GLB keeps only the materials its faces use (an all-glass pane has just the glass section).
+-            mats = [mats[min(s, len(mats) - 1)] for s in a["sections"]]
+         n = sm.get_num_sections(0)
+         for i in range(n):
+             sm.set_material(i, mats[min(i, len(mats) - 1)])
+@@ -391,6 +665,29 @@
+     return act
+ 
+ 
++LFV_BASE_CM = 500.0  # ULocalFogVolumeComponent::GetBaseVolumeSize()
++
++
++def lfv_tiles(b, max_aspect=1.5):
++    """Cover a box (center, half-extent cm) with spheres: one sphere of radius max(half-extent) when the box is
++    roughly cubic, else a row of spheres of radius = the smaller of the two larger half-extents along the long axis
++    (a long flat box must not become one giant ball). Returns [(center, radius_cm)]."""
++    e = list(b["extent"])
++    c = list(b["center"])
++    order = sorted(range(3), key=lambda i: -e[i])
++    big, mid = e[order[0]], e[order[1]]
++    if big <= max_aspect * mid:
++        return [(c, max(e))]
++    r = mid
++    n = max(1, math.ceil(big / r))
++    out = []
++    for k in range(n):
++        p = list(c)
++        p[order[0]] = c[order[0]] - big + r + (2 * big - 2 * r) * (k / max(n - 1, 1))
++        out.append((p, r))
++    return out
++
++
+ def stage_level():
+     t = time.time()
+     les = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+@@ -473,6 +770,30 @@
+         c.set_editor_property("specular_scale", L["specular"])
+         c.set_editor_property("diffuse_scale", L["diffuse"])
+         c.set_editor_property("volumetric_scattering_intensity", L["volume"])
++        if L.get("gobo_fx") and L["type"] == "SPOT":
++            # Light functions are clamped to 0..1: the material divides the pattern by its peak, the light carries it.
++            g = L["gobo_fx"]
++            c.set_editor_property("intensity", L["candela"] * g["peak"])
++            c.set_editor_property("light_function_material", gobo_mi(L))
++            c.set_editor_property("light_function_scale", unreal.Vector(1024, 1024, 1024))  # uniform: x/z ratio intact
++            c.set_editor_property("light_function_fade_distance", 1.0e6)
++            ec = g.get("emission_color") or [1, 1, 1]
++            if max(ec) > 0 and any(abs(x - 1) > 1e-3 for x in ec):
++                col = [a * b for a, b in zip(L["color"], ec)]
++                mx = max(col)
++                c.set_light_color(unreal.LinearColor(*(x / mx for x in col), 1.0), True)
++                c.set_editor_property("intensity", L["candela"] * g["peak"] * mx)
++            REPORT.setdefault("gobos", {})[L["name"]] = {"peak": g["peak"], "mean": g.get("mean"), "layers": len(g["layers"])}
++        elif L.get("gobo_fx"):
++            warn(f"{L['name']}: gobo on a {L['type']} light not converted (spot only)")
++        if L.get("ies_file"):
++            prof = EAL.load_asset(ies_path(L["ies_file"]))
++            if prof:
++                c.set_editor_property("ies_texture", prof)
++                # Cycles' IES node normalises the profile and the light power carries the brightness: keep candela.
++                c.set_editor_property("use_ies_brightness", False)
++            else:
++                warn(f"{L['name']}: IES profile {L['ies_file']} not imported")
+         nl += 1
+     log(f"level: {nl} lights")
+     # Cameras.
+@@ -536,24 +857,35 @@
+     for name, v in vols.items():
+         if name == haze[0]:
+             continue
+-        b = v["bounds_ue"]
+-        lf = eas.spawn_actor_from_class(unreal.LocalFogVolume, V(b["center"]), unreal.Rotator(0, 0, 0))
+-        lf.set_actor_label("LFV_" + name)
+-        lf.set_folder_path("Volumes")
+-        # Local fog volumes are unit spheres of radius 100 cm at scale 1 (assumed); scale to the box.
+-        lf.set_actor_scale3d(unreal.Vector(b["extent"][0] / 100, b["extent"][1] / 100, b["extent"][2] / 100))
+-        lc = lf.get_component_by_class(unreal.LocalFogVolumeComponent)
+-        dens = max(v["density"])
+-        emit = max(v["emission"])
+-        lc.set_editor_property("radial_fog_extinction", dens)
+-        lc.set_editor_property("height_fog_extinction", 0.0)
+-        al = v["albedo"]
+-        lc.set_editor_property("fog_albedo", unreal.LinearColor(al[0], al[1], al[2], 1))
+-        lc.set_editor_property("fog_phase_g", min(v["anisotropy"], 0.9))
+-        if emit > 0 and v.get("emission_color"):
+-            ec = v["emission_color"]
+-            lc.set_editor_property("radial_fog_extinction", 1.0)
+-            lc.set_editor_property("fog_emissive", unreal.LinearColor(ec[0] * emit, ec[1] * emit, ec[2] * emit, 1))
++        for k, (ctr, r_cm) in enumerate(lfv_tiles(v["bounds_ue"])):
++            lf = eas.spawn_actor_from_class(unreal.LocalFogVolume, V(ctr), unreal.Rotator(0, 0, 0))
++            lf.set_actor_label(f"LFV_{name}" + (f"_{k}" if k else ""))
++            lf.set_folder_path("Volumes")
++            # LocalFogVolume: base radius 500 cm (GetBaseVolumeSize), the proxy turns the scale into a sphere from
++            # the max axis (LocalFogVolumeSceneProxy.cpp:34), so scale uniformly to the wanted radius.
++            sc_ = r_cm / LFV_BASE_CM
++            lf.set_actor_scale3d(unreal.Vector(sc_, sc_, sc_))
++            lc = lf.get_component_by_class(unreal.LocalFogVolumeComponent)
++            dens = max(v["density"])  # Blender density = extinction per metre
++            emit = max(v["emission"])
++            path_m = 2.0 * r_cm / 100.0
++            # RadialFogExtinction is the optical depth straight through the centre (LocalFogVolumeCommon.ush),
++            # independent of size: sigma (1/m) x path length (m).
++            tau = max(dens * path_m, 1e-3)  # emissive-only volumes still need a little medium (coverage > 0)
++            lc.set_editor_property("radial_fog_extinction", tau)
++            lc.set_editor_property("height_fog_extinction", 0.0)
++            al = v["albedo"]
++            lc.set_editor_property("fog_albedo", unreal.LinearColor(al[0], al[1], al[2], 1))
++            lc.set_editor_property("fog_phase_g", min(v["anisotropy"], 0.9))
++            if emit > 0 and v.get("emission_color"):
++                ec = v["emission_color"]
++                # UE adds FogEmissive x coverage (1 - e^-tau) (LocalFogVolumeCommon.ush). Cycles through the centre:
++                # 683 x emit x (1 - e^-(sigma p)) / sigma nits (683 x emit x p when sigma -> 0). Match the two.
++                lc_nits = 683 * emit * ((1 - math.exp(-dens * path_m)) / dens if dens > 1e-6 else path_m)
++                E = lc_nits / (1 - math.exp(-tau))
++                lc.set_editor_property("fog_emissive", unreal.LinearColor(ec[0] * E, ec[1] * E, ec[2] * E, 1))
++            REPORT.setdefault("local_fog", []).append({"volume": name, "radius_cm": round(r_cm, 1), "scale": round(sc_, 4),
++                                                       "radial_fog_extinction": round(dens * path_m, 5)})
+         if v.get("animated"):
+             warn(f"volume {name}: animated procedural density baked to a static local fog volume")
+     # Post-process (grade).
+@@ -588,7 +920,8 @@
+     ppv.settings = s
+     REPORT["exposure_bias"] = bias
+     # Player start at the first hero camera for standalone perf runs.
+-    hero = next((c for c in scene["cameras"] if c["name"] == "cam_street"), scene["cameras"][0] if scene["cameras"] else None)
++    hero_name = os.environ.get("ANYSCENE_HERO", "cam_street")
++    hero = next((c for c in scene["cameras"] if c["name"] == hero_name), scene["cameras"][0] if scene["cameras"] else None)
+     if hero:
+         ps = eas.spawn_actor_from_class(unreal.PlayerStart, V(hero["loc"]), rot_fu(hero["forward"], [0, 0, 1]))
+         ps.set_actor_label("PlayerStart_" + hero["name"])
+@@ -598,6 +931,102 @@
+     REPORT["actors"] = {"meshes": n, "lights": nl, "cameras": len(scene["cameras"])}
+ 
+ 
++def key_gobo_time(seq, n_frames, frame0=None):
++    """Drive MPC_AnyTime from the sequence: GoboUseSeq = 1 and GoboTime = (Blender frame0 + f) / fps keyed on every
++    frame, so MRQ frame f shows the gobo state of Blender frame frame0 + f (temporal sub-samples interpolate)."""
++    if not any(L.get("gobo_fx") for L in scene["lights"]):
++        return
++    mpc = mpc_time()
++    fps = scene["grade"].get("fps", 24)
++    frame0 = scene.get("frame", 0) if frame0 is None else frame0
++    try:
++        tr = seq.add_track(unreal.MovieSceneMaterialParameterCollectionTrack)
++    except Exception:
++        tr = seq.add_master_track(unreal.MovieSceneMaterialParameterCollectionTrack)
++    tr.set_editor_property("mpc", mpc)
++    sec = tr.add_section()
++    sec.set_range(0, n_frames)
++    tick = seq.get_tick_resolution()
++    tpf = tick.numerator / tick.denominator / fps
++    lin = unreal.MovieSceneKeyInterpolation.LINEAR
++    sec.add_scalar_parameter_key("GoboUseSeq", unreal.FrameNumber(0), 1.0, lin)
++    for f in range(n_frames + 1):
++        sec.add_scalar_parameter_key("GoboTime", unreal.FrameNumber(round(f * tpf)), (frame0 + f) / fps, lin)
++
++
++def make_dolly(spec, eas, fps):
++    """ANYSCENE_DOLLY="camA>camB:frames[:name]": a CineCamera moving linearly from camera A's transform to camera
++    B's (lens from A) over N frames, as SEQ_<name> for an MRQ clip."""
++    a, rest = spec.split(">", 1)
++    parts = rest.split(":")
++    b, n = parts[0], int(parts[1]) if len(parts) > 1 else 96
++    name = parts[2] if len(parts) > 2 else f"dolly_{a}"
++    ca = next((C for C in scene["cameras"] if C["name"] == a), None)
++    if b.startswith("fwd") and ca is not None:  # "camA>fwd150": push in 150 cm along camera A's view axis
++        d = float(b[3:])
++        cb = dict(ca, loc=[ca["loc"][i] + ca["forward"][i] * d for i in range(3)])
++    else:
++        cb = next((C for C in scene["cameras"] if C["name"] == b), None)
++    if ca is None or cb is None:
++        warn(f"dolly {spec}: camera missing")
++        return
++    old = next((x for x in eas.get_all_level_actors() if x.get_actor_label() == name), None)
++    if old:
++        eas.destroy_actor(old)
++    ra, rb = rot_fu(ca["forward"], ca["up"]), rot_fu(cb["forward"], cb["up"])
++    act = eas.spawn_actor_from_class(unreal.CineCameraActor, V(ca["loc"]), ra)
++    act.set_actor_label(name)
++    act.set_folder_path("Cameras")
++    cc = act.get_cine_camera_component()
++    fb = cc.get_editor_property("filmback")
++    fb.set_editor_property("sensor_width", ca["sensor_width_mm"])
++    fb.set_editor_property("sensor_height", ca["sensor_height_mm"])
++    cc.set_editor_property("filmback", fb)
++    cc.set_editor_property("current_focal_length", ca["lens_mm"])
++    cc.set_editor_property("current_aperture", 22.0)
++    fs = cc.get_editor_property("focus_settings")
++    fs.set_editor_property("focus_method", unreal.CameraFocusMethod.DISABLE)
++    cc.set_editor_property("focus_settings", fs)
++    sp = f"{DEST}/Sequences/SEQ_{name}"
++    if EAL.does_asset_exist(sp):
++        EAL.delete_asset(sp)
++    seq = AT.create_asset(f"SEQ_{name}", f"{DEST}/Sequences", unreal.LevelSequence, unreal.LevelSequenceFactoryNew())
++    seq.set_display_rate(unreal.FrameRate(fps, 1))
++    seq.set_playback_start(0)
++    seq.set_playback_end(n)
++    bnd = seq.add_possessable(act)
++    tt = bnd.add_track(unreal.MovieScene3DTransformTrack)
++    ts = tt.add_section()
++    ts.set_range(0, n)
++    chs = ts.get_all_channels()
++    lin = unreal.MovieSceneKeyInterpolation.LINEAR
++
++    def unwrap(x, y):
++        while y - x > 180:
++            y -= 360
++        while y - x < -180:
++            y += 360
++        return y
++    va = [ca["loc"][0], ca["loc"][1], ca["loc"][2], ra.roll, ra.pitch, ra.yaw]
++    vb = [cb["loc"][0], cb["loc"][1], cb["loc"][2], unwrap(ra.roll, rb.roll), unwrap(ra.pitch, rb.pitch), unwrap(ra.yaw, rb.yaw)]
++    for i in range(6):
++        chs[i].add_key(unreal.FrameNumber(0), va[i], interpolation=lin)
++        chs[i].add_key(unreal.FrameNumber(n), vb[i], interpolation=lin)
++    for i in range(6, 9):
++        chs[i].add_key(unreal.FrameNumber(0), 1.0)
++    try:
++        ct = seq.add_track(unreal.MovieSceneCameraCutTrack)
++    except Exception:
++        ct = seq.add_master_track(unreal.MovieSceneCameraCutTrack)
++    cs = ct.add_section()
++    cs.set_range(0, n)
++    cs.set_camera_binding_id(seq.get_binding_id(bnd) if hasattr(seq, "get_binding_id") else unreal.MovieSceneSequenceExtensions.get_binding_id(seq, bnd))
++    key_gobo_time(seq, n)
++    EAL.save_loaded_asset(seq, False)
++    unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).save_current_level()
++    log(f"dolly {name}: {a} -> {b}, {n} frames")
++
++
+ def stage_sequences():
+     """One single-shot LevelSequence per scene camera (camera cut bound to the CineCameraActor) plus a saved MRQ
+     primary config, so a still or clip renders headless with:
+@@ -629,11 +1058,15 @@
+         bid = unreal.MovieSceneObjectBindingID()
+         bid = seq.get_binding_id(b) if hasattr(seq, "get_binding_id") else unreal.MovieSceneSequenceExtensions.get_binding_id(seq, b)
+         sec.set_camera_binding_id(bid)
++        key_gobo_time(seq, 48)
+         EAL.save_loaded_asset(seq, False)
++    for spec in [s for s in os.environ.get("ANYSCENE_DOLLY", "").split(";") if s]:
++        make_dolly(spec, eas, fps)
+     # MRQ configs: MRQ_Still = deferred + PNG (UE tone curve + grade LUT); MRQ_Linear = EXR with the tone curve off
+     # (scene-linear, already exposed) so Blender's AgX view transform can be applied to the Unreal lighting.
+-    res = scene["grade"].get("resolution", [1920, 804])
+-    for name, linear in (("MRQ_Still", False), ("MRQ_Linear", True)):
++    res = [int(x) for x in os.environ["ANYSCENE_MRQ_RES"].split("x")] if os.environ.get("ANYSCENE_MRQ_RES") else scene["grade"].get("resolution", [1920, 804])
++    # MRQ_Clip = MRQ_Still over the sequence's whole playback range (dolly clips).
++    for name, linear in (("MRQ_Still", False), ("MRQ_Linear", True), ("MRQ_Clip", False)):
+         cp = f"{DEST}/MRQ/{name}"
+         if EAL.does_asset_exist(cp):
+             EAL.delete_asset(cp)
+@@ -653,7 +1086,7 @@
+         out.output_directory = unreal.DirectoryPath(os.path.join(EXPORT, "..", "compare", "mrq").replace("\\", "/"))
+         out.file_name_format = "{sequence_name}" + ("_linear" if linear else "") + ".{frame_number}"
+         out.output_resolution = unreal.IntPoint(res[0], res[1])
+-        out.use_custom_playback_range = True
++        out.use_custom_playback_range = name != "MRQ_Clip"
+         out.custom_start_frame, out.custom_end_frame = 0, 1
+         aa = cfg.find_or_add_setting_by_class(unreal.MoviePipelineAntiAliasingSetting)
+         aa.override_anti_aliasing = True
+--- unreal/export.sh	2026-11-01 20:36:10.032235300 -0800
++++ unreal_caustic/export.sh	2026-11-01 20:16:55.422631500 -0800
+@@ -5,17 +5,15 @@
+ #   bash unreal/export.sh <copy.blend> <out_dir> [export_blend.py args...]     (log: <out_dir>/export.log)
+ #   EXPORT_TRIES=6 EXPORT_PRE="scenes/<id>/scripts/gpu_prefs.py"
+ A="$(cd "$(dirname "$0")/.." && pwd)"
++HERE="$(cd "$(dirname "$0")" && (pwd -W 2>/dev/null || pwd))"  # this folder's exporter (C:/ form for Windows Blender)
+ . "$A/pipeline/env.sh"
+ blend="$1"; out="$2"; shift 2
+ mkdir -p "$out"
+ : > "$out/export.log"
+ pre=()
+ [ -n "$EXPORT_PRE" ] && pre=(--python "$EXPORT_PRE")
+-# Only a --gpu bake needs the shared GPU queue; a CPU bake runs now instead of waiting behind other scenes' renders.
+-q=()
+-case " $* " in *" --gpu "*) q=(bash "$A/pipeline/gpu_run.sh") ;; esac
+ for i in $(seq 1 "${EXPORT_TRIES:-6}"); do
+-  "${q[@]}" "$BLENDER" -b "$blend" "${pre[@]}" --python "$A/unreal/export_blend.py" -- --out "$out" "$@" \
++  bash "$A/pipeline/gpu_run.sh" "$BLENDER" -b "$blend" "${pre[@]}" --python "$HERE/export_blend.py" -- --out "$out" "$@" \
+     >> "$out/export.log" 2>&1
+   rc=$?
+   if grep -q "^EXPORT wrote" "$out/export.log"; then echo "export: done after $i run(s)"; exit 0; fi
+--- unreal/side_by_side.py	2026-11-01 18:40:20.523349700 -0800
++++ unreal_caustic/side_by_side.py	2026-11-01 21:10:00.226569300 -0800
+@@ -1,6 +1,8 @@
+ """Cycles-vs-Unreal comparison sheets: Cycles graded on the left, Unreal on the right, labelled, same height.
+     uv run --no-project --with pillow python -I side_by_side.py <cycles_dir> <ue_dir> <out_dir> [street,table,wok]
+ Reads <cycles_dir>/<cam>_graded.png and <ue_dir>/cam_<cam>.png; writes <out_dir>/<cam>.png and <out_dir>/all.png.
++File names are patterns: SBS_CYC="{cam}_graded.png", SBS_UE="cam_{cam}.png" (e.g. SBS_UE="SEQ_{cam}.0000.png" for MRQ).
++SBS_CYC_LABEL sets the left label (default "Cycles graded").
+ """
+ import os
+ import sys
+@@ -12,6 +14,9 @@
+ os.makedirs(out, exist_ok=True)
+ H = 804
+ LABEL = os.environ.get("SBS_LABEL", "Unreal 5.8 (Lumen)")
++CYC_LABEL = os.environ.get("SBS_CYC_LABEL", "Cycles graded")
++CYC_FMT = os.environ.get("SBS_CYC", "{cam}_graded.png")
++UE_FMT = os.environ.get("SBS_UE", "cam_{cam}.png")
+ try:
+     font = ImageFont.truetype("arial.ttf", 28)
+ except OSError:
+@@ -25,15 +30,15 @@
+ 
+ rows = []
+ for c in cams:
+-    a = fit(os.path.join(cyc, f"{c}_graded.png"))
+-    up = os.path.join(ue, f"cam_{c}.png")
++    a = fit(os.path.join(cyc, CYC_FMT.format(cam=c)))
++    up = os.path.join(ue, UE_FMT.format(cam=c))
+     b = fit(up) if os.path.exists(up) else Image.new("RGB", a.size, (60, 0, 0))
+     sheet = Image.new("RGB", (a.width + b.width + 8, H), (255, 255, 255))
+     sheet.paste(a, (0, 0))
+     sheet.paste(b, (a.width + 8, 0))
+     d = ImageDraw.Draw(sheet)
+-    for x, t in ((12, f"Cycles graded  {c}"), (a.width + 20, f"{LABEL}  {c}")):
+-        d.rectangle([x - 6, 8, x + 360, 46], fill=(0, 0, 0))
++    for x, t in ((12, f"{CYC_LABEL}  {c}"), (a.width + 20, f"{LABEL}  {c}")):
++        d.rectangle([x - 6, 8, x + 12 + int(d.textlength(t, font=font)), 46], fill=(0, 0, 0))
+         d.text((x, 12), t, fill=(255, 255, 255), font=font)
+     sheet.save(os.path.join(out, f"{c}.png"))
+     rows.append(sheet)

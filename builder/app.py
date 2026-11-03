@@ -156,6 +156,9 @@ class BuildRequest(BaseModel):
     shots: BuildShots | None = Field(None, description=(
         "Optional: shots of the finished set. When the build passes its critic, the AnyShot app (ANYSHOT_APP) shoots "
         "them and the stills/videos come back in shot_stills / shot_videos."))
+    owner: str | None = Field(None, description=(
+        "Optional: who asked for the build (e.g. an email). Listed in /builds; not part of the retry fingerprint, so "
+        "an identical request from someone else attaches to the same build."))
 
 
 class BuildResponse(BaseModel):
@@ -358,7 +361,8 @@ class SceneBuilderApp(fal.App):
             build_id, resume = rec["build_id"], True
         else:
             build_id = "b_" + uuid.uuid4().hex[:10]
-            json.dump({"build_id": build_id, "fingerprint": fp, "started": time.time()}, open(index, "w"))
+            json.dump({"build_id": build_id, "fingerprint": fp, "started": time.time(), "owner": req.owner},
+                      open(index, "w"))
         work = os.path.join(BUILDS_DIR, build_id)
         os.makedirs(os.path.join(work, "out"), exist_ok=True)
 
@@ -417,7 +421,7 @@ class SceneBuilderApp(fal.App):
                      "from the current state to the deliverables.")
         b.emit("received", "running", f"{'resuming' if resume else 'build'} {build_id}: {len(refs)} reference image(s)",
                reference_urls=req.reference_image_urls, prompt=req.prompt, dials=req.dials, effort=req.effort,
-               floor_plan_url=req.floor_plan_url)
+               floor_plan_url=req.floor_plan_url, owner=req.owner)
         result = None
         try:
             result = await b.run(scene_builder.agent_env())

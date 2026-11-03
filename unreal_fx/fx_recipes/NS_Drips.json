@@ -1,0 +1,10 @@
+{
+ "name": "NS_Drips",
+ "description": "Drops falling off an edge or line (awnings, pipes, leaves) under gravity; lifetime = fall time to the ground below.",
+ "fx_types": ["drips"],
+ "common": {"spawn": 6, "life": [0.6, 0.7], "size": [0.35, 0.5], "vel": [0, 0, -20], "color": [0.8, 0.85, 0.9], "intensity": 60, "opacity": 0.6,
+            "box": [2, 300, 1], "gravity": 1.0, "jitter": 0.05, "aspect": 3.0},
+ "system": {"seed": 4404, "bounds": [[-50, -400, -300], [50, 400, 20]]},
+ "emitters": [{"name": "Drops", "template": "Fountain",
+               "core": {"gpu": true, "material": "M_AFX_Streak", "fade": [40.0, 40.0], "aligned": true, "curl": false, "grow": false, "nonuniform": true}}]
+}

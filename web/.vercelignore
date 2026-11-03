@@ -1,0 +1,7 @@
+# never upload local secrets or build output
+.env*
+!.env.example
+STUDIO_ACCESS_KEY.txt
+node_modules
+.next
+screenshots

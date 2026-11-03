@@ -20,9 +20,11 @@ interface Props {
   canBuild: boolean;
   building: boolean;
   onBuild: () => void;
+  /** Under the button: what a build costs, how many are left today. */
+  note?: React.ReactNode;
 }
 
-export default function BuilderInputs({ value, onChange, disabled, canBuild, building, onBuild }: Props) {
+export default function BuilderInputs({ value, onChange, disabled, canBuild, building, onBuild, note }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   const set = (patch: Partial<BuilderInputsState>) => onChange({ ...value, ...patch });
@@ -113,7 +115,7 @@ export default function BuilderInputs({ value, onChange, disabled, canBuild, bui
       <button className="primary" disabled={!canBuild} onClick={onBuild}>
         {building ? "Building" : "Build the scene"}
       </button>
-      <p className="fine">One agent builds it end to end and loops with a critic. Up to 2 hours.</p>
+      <p className="fine">One agent builds it end to end and loops with a critic. Up to 2 hours.{note ? <> {note}</> : null}</p>
     </div>
   );
 }

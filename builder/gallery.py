@@ -103,8 +103,8 @@ def _fold(st, ev):
         st["last_t"] = ev["t"]
     if stage == "received":
         if ev.get("reference_urls") is not None and st["given"] is None:
-            st["given"] = {k: ev.get(k) for k in ("reference_urls", "prompt", "dials", "effort", "floor_plan_url", "items")
-                           if k in ev}
+            st["given"] = {k: ev.get(k) for k in ("reference_urls", "prompt", "dials", "effort", "floor_plan_url", "items",
+                                                  "owner") if k in ev}
         if re.match(r"(build|resuming) [bk]_", ev.get("message", "")):
             st["attempts"] += 1
     url = ev.get("preview_url")
@@ -225,7 +225,7 @@ def summary(root, bid, kind="scene"):
         "passed": bool(last and last.get("passed")),
         "reference_urls": given.get("reference_urls") or [], "prompt": given.get("prompt") or "",
         "dials": given.get("dials") or {}, "effort": given.get("effort"), "floor_plan_url": given.get("floor_plan_url"),
-        "items": given.get("items"), "name": (resp or {}).get("name"),
+        "items": given.get("items"), "name": (resp or {}).get("name"), "owner": (rec or {}).get("owner") or given.get("owner"),
         "critic_rounds": rounds, "last_scores": (last or {}).get("scores"), "last_summary": (last or {}).get("summary"),
         "minutes": minutes, "cover": cover,
         "stills": stills[:MAX_LIST_IMAGES], "previews": previews[:MAX_LIST_IMAGES],

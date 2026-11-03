@@ -60,13 +60,46 @@ npm run import:builder -- <run dir> fal_mc_1                                    
 It copies `events.jsonl`, `build.json` and any `still_*.png` (served locally in place of the remote stills), plus a
 reference image. A run without `build.json` yet replays up to its last event and stops there.
 
-## Access key and rate limit
+## Password, who's building, and limits
 
-The proxy checks a shared secret: set `ANYSCENE_ACCESS_KEY` in the server environment and every proxied request must
-carry it as `x-anyscene-key` (the page asks for it under **Access key** in the toolbar and keeps it in that browser's
-localStorage). With the variable unset the proxy is open in `next dev` and **closed** in production, so a fresh
-deployment can't start builds on the account. New jobs are also limited per IP (`ANYSCENE_JOBS_PER_HOUR`, default
-6; in memory, so per serverless instance: a backstop, not a quota).
+The proxy checks a shared password, verified on the server: set `ANYSCENE_ACCESS_KEY` in the server environment and every proxied request must
+carry it as `x-anyscene-key`. With the variable unset the proxy is open in `next dev` and **closed** in production,
+so a fresh deployment can't start builds on the account. `ANYSCENE_ADMIN_KEY`, given in place of the password, also
+skips the limits below.
+
+The page asks once for the password and an email or username (**Sign in** in the toolbar; kept in that browser's
+localStorage) and sends them to our own proxy only (`x-anyscene-key`, `x-anyscene-user`, `x-anyscene-name`). The proxy
+tags each `/ref2scene` build with `owner` (the email or username) (stored by `builder/app.py`, listed by `/builds`, left out of
+the retry fingerprint), so the gallery's **My builds** shows your own and **Everyone** shows all. A build's page is
+shareable as `/?open=<build id>` (**Copy link**). It is self-declared behind the shared password: a label, not
+authentication (see Google sign-in below).
+
+Limits, all server only:
+
+| variable | default | |
+|---|---|---|
+| `ANYSCENE_BUILDS_PER_DAY` | 3 | builds per email per UTC day; counted in a private Vercel Blob store when `BLOB_READ_WRITE_TOKEN` is set (else in memory) |
+| `ANYSCENE_JOBS_PER_HOUR` | 6 | new jobs (builds and shots) per IP per hour, in memory per instance: a backstop |
+| `ANYSCENE_OWNER_DOMAIN` | none | only emails at this domain may build, e.g. `fal.ai` (usernames are always allowed) |
+
+The build button notes the cost (about $60-100 a build) and what's left today, and asks before starting.
+`app/api/me` answers the page's "is my key right, who am I, what's left" check.
+
+### Google sign-in (later)
+
+To replace the self-declared name with real accounts restricted to one Google Workspace domain:
+
+1. Google Cloud console, the owner's project: **APIs & Services > OAuth consent screen**, user type **Internal** (only
+   the Workspace's accounts can sign in). Then **Credentials > Create credentials > OAuth client ID**, type **Web
+   application**, authorized redirect URI `https://studio.anyscene.org/api/auth/callback/google` (and
+   `http://localhost:3210/api/auth/callback/google` for dev).
+2. `npm install next-auth@5` and add `auth.ts` with the Google provider, `authorization: { params: { hd: "fal.ai" } }`,
+   and a `signIn` callback that returns `profile.email_verified && profile.email.endsWith("@fal.ai")` (`hd` alone is
+   only a hint); export `handlers` from `app/api/auth/[...nextauth]/route.ts`.
+3. Vercel env: `AUTH_SECRET` (`npx auth secret`), `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_TRUST_HOST=true`.
+4. In `lib/guard.ts`, take the owner from `await auth()` (session email and name) instead of the `x-anyscene-*`
+   headers, and treat a session as the access key (keep `ANYSCENE_ADMIN_KEY` for the owner). In the page, replace the
+   sign-in card with `signIn("google")`.
 
 ## Replay mode (pipeline)
 

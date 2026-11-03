@@ -1,0 +1,216 @@
+diff -ru -x _orig -x '*.md' -x __pycache__ -x '*.patch' _orig/build_level.py ./build_level.py
+--- _orig/build_level.py	2026-11-01 20:17:59.615024900 -0800
++++ ./build_level.py	2026-11-01 22:01:02.778533400 -0800
+@@ -10,6 +10,7 @@
+   ANYSCENE_ONLY    comma list of asset names to (re)import (testing)
+   ANYSCENE_NANITE_TRIS  Nanite on for meshes above this triangle count (default 2000; glass meshes never)
+   ANYSCENE_EXPOSURE_OFFSET  extra EV added to the computed manual exposure (calibration)
++  ANYSCENE_HERO_CAM camera whose transform becomes the PlayerStart (perf runs), default cam_street
+ 
+ Assets that already exist are reused (delete the folder to force a reimport). The level is rebuilt from scratch.
+ """
+@@ -224,11 +225,13 @@
+ 
+ # ------------------------------------------------------------------ materials
+ 
+-def master_baked():
+-    path = f"{DEST}/Materials/M_AnyBaked"
++def master_baked(masked=False):
++    """M_AnyBaked (opaque) or M_AnyBakedMasked: same graph, opacity mask = ORM.R (baked Principled Alpha)."""
++    name = "M_AnyBakedMasked" if masked else "M_AnyBaked"
++    path = f"{DEST}/Materials/{name}"
+     if EAL.does_asset_exist(path):
+         return EAL.load_asset(path)
+-    m = AT.create_asset("M_AnyBaked", f"{DEST}/Materials", unreal.Material, unreal.MaterialFactoryNew())
++    m = AT.create_asset(name, f"{DEST}/Materials", unreal.Material, unreal.MaterialFactoryNew())
+     def tex(name, x, y, default, stype):
+         n = MEL.create_material_expression(m, unreal.MaterialExpressionTextureSampleParameter2D, x, y)
+         n.set_editor_property("parameter_name", name)
+@@ -257,6 +260,11 @@
+     MEL.connect_material_property(nrm, "RGB", unreal.MaterialProperty.MP_NORMAL)
+     MEL.connect_material_property(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+     m.set_editor_property("two_sided", True)  # generated props and single planes (signs, facades) are often open
++    if masked:
++        m.set_editor_property("blend_mode", unreal.BlendMode.BLEND_MASKED)
++        # (MaterialExpressionDitherTemporalAA is not exposed to Python in 5.8: plain clip.)
++        m.set_editor_property("opacity_mask_clip_value", 0.33)
++        MEL.connect_material_property(orm, "R", unreal.MaterialProperty.MP_OPACITY_MASK)
+     MEL.recompile_material(m)
+     EAL.save_loaded_asset(m, False)
+     return m
+@@ -340,11 +348,13 @@
+ def stage_materials():
+     t = time.time()
+     baked, glass = master_baked(), master_glass()
++    masked = master_baked(masked=True) if any(a.get("alpha") for a in ASSETS) else None
+     for a in ASSETS:
+         sm = find_mesh(a)
+         if sm is None:
+             continue
+-        m = mi("MI_" + a["asset"], baked)
++        m = mi("MI_" + a["asset"], masked if a.get("alpha") else baked)
++        MEL.set_material_instance_parent(m, masked if a.get("alpha") else baked)  # existing MI: reparent
+         for ch, pname in (("base", "BaseColor"), ("orm", "ORM"), ("normal", "Normal"), ("emit", "Emissive")):
+             rel = a.get("tex", {}).get(ch)
+             if rel:
+@@ -363,6 +373,9 @@
+             EAL.save_loaded_asset(gm, False)
+             mats.append(gm)
+         n = sm.get_num_sections(0)
++        if n < len(mats) and not a.get("tex"):
++            # All-glass mesh: glTF drops the unused BAKED slot 0, so section 0 is the first glass slot.
++            mats = mats[1:]
+         for i in range(n):
+             sm.set_material(i, mats[min(i, len(mats) - 1)])
+         if n != len(mats):
+@@ -585,7 +598,8 @@
+     ppv.settings = s
+     REPORT["exposure_bias"] = bias
+     # Player start at the first hero camera for standalone perf runs.
+-    hero = next((c for c in scene["cameras"] if c["name"] == "cam_street"), scene["cameras"][0] if scene["cameras"] else None)
++    hero_name = os.environ.get("ANYSCENE_HERO_CAM", "cam_street")
++    hero = next((c for c in scene["cameras"] if c["name"] == hero_name), scene["cameras"][0] if scene["cameras"] else None)
+     if hero:
+         ps = eas.spawn_actor_from_class(unreal.PlayerStart, V(hero["loc"]), rot_fu(hero["forward"], [0, 0, 1]))
+         ps.set_actor_label("PlayerStart_" + hero["name"])
+diff -ru -x _orig -x '*.md' -x __pycache__ -x '*.patch' _orig/export.sh ./export.sh
+--- _orig/export.sh	2026-11-01 20:17:59.662970100 -0800
++++ ./export.sh	2026-11-01 20:20:23.734833000 -0800
+@@ -3,7 +3,7 @@
+ # (EXCEPTION_ACCESS_VIOLATION in OpenImageIO ustring::operator= under ccl::create_mesh, ~1 per 250 bakes, a different
+ # asset each time); the exporter skips assets whose GLB/texture already exist, so a rerun resumes where it died.
+ #   bash unreal/export.sh <copy.blend> <out_dir> [export_blend.py args...]     (log: <out_dir>/export.log)
+-#   EXPORT_TRIES=6 EXPORT_PRE="scenes/<id>/scripts/gpu_prefs.py"
++#   EXPORT_TRIES=6 EXPORT_PRE="scenes/<id>/scripts/gpu_prefs.py" EXPORT_NOQUEUE=1 (CPU bake: skip pipeline/gpu_run.sh)
+ A="$(cd "$(dirname "$0")/.." && pwd)"
+ . "$A/pipeline/env.sh"
+ blend="$1"; out="$2"; shift 2
+@@ -12,7 +12,9 @@
+ pre=()
+ [ -n "$EXPORT_PRE" ] && pre=(--python "$EXPORT_PRE")
+ for i in $(seq 1 "${EXPORT_TRIES:-6}"); do
+-  bash "$A/pipeline/gpu_run.sh" "$BLENDER" -b "$blend" "${pre[@]}" --python "$A/unreal/export_blend.py" -- --out "$out" "$@" \
++  q=(bash "$A/pipeline/gpu_run.sh"); [ -n "$EXPORT_NOQUEUE" ] && q=()
++  # The exporter next to this script (not $A/unreal/): per-scene copies of unreal/ then run their own exporter.
++  "${q[@]}" "$BLENDER" -b "$blend" "${pre[@]}" --python "$(cd "$(dirname "$0")" && pwd -W 2>/dev/null || pwd)/export_blend.py" -- --out "$out" "$@" \
+     >> "$out/export.log" 2>&1
+   rc=$?
+   if grep -q "^EXPORT wrote" "$out/export.log"; then echo "export: done after $i run(s)"; exit 0; fi
+diff -ru -x _orig -x '*.md' -x __pycache__ -x '*.patch' _orig/export_blend.py ./export_blend.py
+--- _orig/export_blend.py	2026-11-01 20:17:59.626496800 -0800
++++ ./export_blend.py	2026-11-01 22:01:02.786020400 -0800
+@@ -176,6 +176,12 @@
+     return (s.is_linked or s.default_value > 0) and (c.is_linked or any(v > 0 for v in c.default_value[:3]))
+ 
+ 
++def cuts_out(m):
++    """Principled Alpha linked or below 1 (decals keyed from luminance, stickers): baked into ORM.R, masked in UE."""
++    p = find_principled(m)
++    return bool(p and (p.inputs["Alpha"].is_linked or p.inputs["Alpha"].default_value < 0.999))
++
++
+ def perturbs_normal(m):
+     p = find_principled(m)
+     return bool(p and p.inputs["Normal"].is_linked)
+@@ -355,10 +361,14 @@
+             else:
+                 col.default_value = (0.5, 0.5, 0.5, 1)
+         elif channel == "orm":
+-            # R=1 (no separate AO), G=roughness, B=metallic
++            # R=alpha (1 unless the material cuts out: decals, stickers; no separate AO), G=roughness, B=metallic
+             cmb = nt.nodes.new("ShaderNodeCombineColor")
+             self.added.append(cmb)
+             cmb.inputs[0].default_value = 1.0
++            if p is not None and p.inputs["Alpha"].is_linked:
++                nt.links.new(_src(p.inputs["Alpha"]), cmb.inputs[0])
++            elif p is not None:
++                cmb.inputs[0].default_value = p.inputs["Alpha"].default_value
+             for i, k, dv in ((1, "Roughness", 0.5), (2, "Metallic", 0.0)):
+                 if p is not None and p.inputs[k].is_linked:
+                     nt.links.new(_src(p.inputs[k]), cmb.inputs[i])
+@@ -495,9 +505,14 @@
+         me.uv_layers.active = ar
+         return ar.name, True, 1.0, max(uv_stats(me, ar.name)[1], 0.05)
+     ar = render_uv(me)
++    ar_name = ar.name if ar is not None else None
+     uvl = me.uv_layers.new(name="bake")
+-    if ar is not None:
+-        ar.active_render = True  # keep materials reading their original UVs
++    if ar_name is not None:
++        # Keep materials reading their original UVs. Look the layer up again: uv_layers.new() reallocates the
++        # collection, and setting active_render through the old reference left NO render UV, so every image node
++        # with an implicit UV sampled one texel (posters, flyers, calendars, decals baked to a flat colour).
++        me.uv_layers[ar_name].active_render = True
++    uvl = me.uv_layers["bake"]
+     me.uv_layers.active = uvl
+     vl = bpy.context.view_layer
+     for x in vl.objects:
+@@ -596,6 +611,13 @@
+ 
+ # ------------------------------------------------------------------ volumes
+ 
++def sample_bounds(o):
++    corners = [o.matrix_world @ Vector(c) for c in o.bound_box]
++    lo = Vector([min(c[i] for c in corners) for i in range(3)])
++    hi = Vector([max(c[i] for c in corners) for i in range(3)])
++    return {"center": ue_vec((lo + hi) / 2), "extent": [(hi.x - lo.x) * 50, (hi.y - lo.y) * 50, (hi.z - lo.z) * 50]}
++
++
+ def sample_volume(o, n=24, levels=(0.08, 0.3, 0.55, 0.8)):
+     """Bake density / emission of a procedural volume on horizontal slices that share the box's object space and
+     texture space (so Generated/Object coordinates match). Returns per-level mean density and emission."""
+@@ -893,6 +915,16 @@
+         elif o.type == "MESH":
+             mats = [s.material for s in o.material_slots]
+             if mats and all(is_volume_only(m) for m in mats if m):
++                fl = next((md for md in o.modifiers if md.type == "FLUID" and md.fluid_type == "DOMAIN"), None)
++                if fl is not None:
++                    # Mantaflow smoke: the slice bake cannot see the cache grids, so it reads the shader's constant
++                    # density multiplier (8.0 on the ramen steam) and would become an opaque fog box. Niagara gap.
++                    d = fl.domain_settings
++                    report["fx"].append({"name": o.name, "kind": "mantaflow_" + d.domain_type.lower(),
++                                         "cache": bpy.path.abspath(d.cache_directory), "resolution": d.resolution_max,
++                                         "bounds_ue": sample_bounds(o)})
++                    log("volume", o.name, "is a Mantaflow domain: exported as an fx note, not a fog volume")
++                    continue
+                 v = sample_volume(o)
+                 if v:
+                     report["volumes"][o.name] = v
+@@ -957,6 +989,7 @@
+                 finally:
+                     bake_scene().collection.objects.unlink(rep)
+         e["normal"] = os.path.exists(p["normal"])
++        e["alpha"] = any(m and cuts_out(m) for m in bake_mats)
+         e["emissive"] = os.path.exists(p["emit"])
+         if e["emissive"]:
+             e["emissive_scale"] = json.load(open(p["emit"] + ".json"))["scale"]
+diff -ru -x _orig -x '*.md' -x __pycache__ -x '*.patch' _orig/perf.ps1 ./perf.ps1
+--- _orig/perf.ps1	2026-11-01 20:17:59.655055300 -0800
++++ ./perf.ps1	2026-11-01 20:21:31.029539300 -0800
+@@ -14,11 +14,11 @@
+ $before = Get-ChildItem $csvDir -Filter *.csv -ErrorAction SilentlyContinue | ForEach-Object FullName
+ $mem0 = [int](& nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
+ # The bare cvar names print their current values to the log (proof that Lumen / Nanite / volumetric fog are on).
+-$cmds = "r.DynamicGlobalIlluminationMethod,r.ReflectionMethod,r.Nanite,r.VolumetricFog,r.Lumen.HardwareRayTracing,r.RayTracing,r.Shadow.Virtual.Enable,t.MaxFPS 0,r.VSync 0,r.GPUCsvStatsEnabled 1,csvprofile frames=$Frames"
++$cmds = "r.setres ${ResX}x${ResY}w,r.DynamicGlobalIlluminationMethod,r.ReflectionMethod,r.Nanite,r.VolumetricFog,r.Lumen.HardwareRayTracing,r.RayTracing,r.Shadow.Virtual.Enable,t.MaxFPS 0,r.VSync 0,r.GPUCsvStatsEnabled 1,csvprofile frames=$Frames"
+ if ($Extra) { $cmds = "$Extra,$cmds" }
+ $args = @($Project, $Map, "-game", "-RenderOffscreen", "-windowed", "-resx=$ResX", "-resy=$ResY", "-unattended", "-nosplash",
+           "-nop4", "-nosound", "-log=$Tag.log", "`"-ExecCmds=$cmds`"",
+-          "-dpcvars=Editor.AsyncAssetCompilation=0")  # async compilation leaves props invisible (render_shots.py); PS 5.1 Start-Process does not quote array items
++          "-dpcvars=Editor.AsyncAssetCompilation=0,Editor.AsyncTextureCompilation=0,Editor.AsyncStaticMeshCompilation=0,fx.Niagara.ForceWaitForCompilationOnActivate=1")  # async compilation leaves props invisible (render_shots.py); PS 5.1 Start-Process does not quote array items
+ $proc = Start-Process -FilePath $ue -ArgumentList $args -PassThru
+ $peak = $mem0
+ $sw = [Diagnostics.Stopwatch]::StartNew()
+diff -ru -x _orig -x '*.md' -x __pycache__ -x '*.patch' _orig/render_mrq.ps1 ./render_mrq.ps1
+--- _orig/render_mrq.ps1	2026-11-01 20:17:59.656571000 -0800
++++ ./render_mrq.ps1	2026-11-01 20:21:24.957021100 -0800
+@@ -11,7 +11,7 @@
+   $t = Measure-Command {
+     & $ue $Project "$Dest/$Level" -game "-LevelSequence=$Dest/Sequences/SEQ_$c.SEQ_$c" "-MoviePipelineConfig=$Dest/MRQ/$Config.$Config" `
+       -RenderOffscreen -windowed -resx=1920 -resy=804 -unattended -nosplash -nop4 -nosound -notexturestreaming "-log=mrq_$c.log" `
+-      "-dpcvars=Editor.AsyncAssetCompilation=0" | Out-Null
++      "-dpcvars=Editor.AsyncAssetCompilation=0,Editor.AsyncTextureCompilation=0,Editor.AsyncStaticMeshCompilation=0,fx.Niagara.ForceWaitForCompilationOnActivate=1" | Out-Null
+   }
+   "$c $Config {0:N1}s" -f $t.TotalSeconds
+ }
+Only in .: waveletNoiseTile.bin

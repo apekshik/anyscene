@@ -62,3 +62,7 @@ builder_out/
 # Generation records (refs/**/*.json) hold local output paths; refs/ above already excludes them, this is explicit
 refs/**/*.json
 *.tsbuildinfo
+
+# Unreal build logs
+*.out
+unreal_fx/work/
