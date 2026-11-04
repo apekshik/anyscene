@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(_HERE), "endpoint"))
 import planner  # noqa: E402  (the critic's Claude client; bundled by value)
 import scene_builder  # noqa: E402
 import gallery  # noqa: E402  (the shared builds gallery: /builds, /build_events)
+import sources  # noqa: E402  (what each scene route starts from: images, text, video, a kit, an earlier build)
 import schema  # noqa: E402,F401
 
 if os.name == "nt":
@@ -142,9 +143,8 @@ class BuildShots(BaseModel):
     dials: dict[str, float | str] = Field(default_factory=dict, description="Changes for these shots only.")
 
 
-class BuildRequest(BaseModel):
-    reference_image_urls: list[str] = Field(description="1-4 reference images: the look to build.")
-    prompt: str = Field("", description="Anything the images can't show.")
+class SceneOptions(BaseModel):
+    """What every scene route shares; each route adds its own source (images, text, video, a kit, a scene)."""
     floor_plan_url: str | None = Field(None, description="Optional floor plan: a sketch, photo or drawing of the layout.")
     fresh: bool = Field(False, description="Build again from scratch even if an identical request already has a build.")
     effort: str = Field("medium", description="Claude effort for the builder: low, medium, high, xhigh, max.")
@@ -161,8 +161,49 @@ class BuildRequest(BaseModel):
         "an identical request from someone else attaches to the same build."))
 
 
+class BuildRequest(SceneOptions):
+    """/ref2scene: any mix of sources. With no image, video, kit or scene, the prompt alone is the brief."""
+    reference_image_urls: list[str] = Field(default_factory=list, description="0-4 reference images: the look to build.")
+    prompt: str = Field("", description="Anything the references can't show; with no other source, the whole brief.")
+    video_url: str | None = Field(None, description="A video of the place (footage or a generated clip): its frames "
+                                                    "become references.")
+    kit_id: str | None = Field(None, description="An AnyKit kit (k_...) on this fal account: the set is dressed with its "
+                                                 "props.")
+    source_build_id: str | None = Field(None, description="A finished build (b_...) to change instead of starting "
+                                                          "over: the prompt and dials say what to change.")
+
+
+class ImageToSceneRequest(SceneOptions):
+    reference_image_urls: list[str] = Field(description="1-4 reference images: the look to build.")
+    prompt: str = Field("", description="Anything the images can't show.")
+
+
+class TextToSceneRequest(SceneOptions):
+    prompt: str = Field(description="The place, in words. A reference image is generated from it first.")
+
+
+class VideoToSceneRequest(SceneOptions):
+    video_url: str = Field(description="A video of the place: real footage or a generated clip.")
+    prompt: str = Field("", description="Anything the video can't show.")
+
+
+class KitToSceneRequest(SceneOptions):
+    kit_id: str = Field(description="An AnyKit kit (k_...) on this fal account: the set is dressed with its props.")
+    reference_image_urls: list[str] = Field(default_factory=list, description=(
+        "0-4 reference images for the place. Without any, the kit's own style references are used."))
+    prompt: str = Field("", description="The place the kit goes in, e.g. 'a cramped 1970s control room'.")
+
+
+class SceneToSceneRequest(SceneOptions):
+    source_build_id: str = Field(description="A finished build (b_...) to change.")
+    prompt: str = Field(description="What to change, in words, e.g. 'it's 1 AM and raining; make the room twice as "
+                                    "deep'. Everything not mentioned stays as built.")
+
+
 class BuildResponse(BaseModel):
     build_id: str
+    reference_urls: list[str] = Field(default_factory=list, description=(
+        "The references the build worked from, including any generated from text or taken from the video."))
     stills: list[str]
     scene_blend_url: str | None
     scene_glb_url: str | None
@@ -230,7 +271,7 @@ class SceneBuilderApp(fal.App):
     machine_type = ["GPU-RTX5090", "GPU-RTXPRO6000"]
     image = ContainerImage.from_dockerfile_str(DOCKERFILE)
     requirements = ["pydantic", "anthropic", "pillow", "fal==1.84.0", "fal-client", "claude-agent-sdk==0.2.176"]
-    local_python_modules = ["scene_builder", "planner", "schema", "gallery"]
+    local_python_modules = ["scene_builder", "planner", "schema", "gallery", "sources"]
     min_concurrency = 0
     max_concurrency = 10
     request_timeout = 7200  # fal's cap; longer builds resume in a second request
@@ -265,6 +306,32 @@ class SceneBuilderApp(fal.App):
     @fal.endpoint("/build")
     async def build(self, req: BuildRequest) -> BuildResponse:
         return await self._build_and_shoot(req)
+
+    # Single-source routes: each is /ref2scene with one kind of input, so they share its build, retry index and gallery.
+    @fal.endpoint("/image2scene")
+    async def image2scene(self, req: ImageToSceneRequest) -> BuildResponse:
+        """Reference images -> a production-ready 3D set."""
+        return await self._build_and_shoot(BuildRequest(**req.model_dump()))
+
+    @fal.endpoint("/text2scene")
+    async def text2scene(self, req: TextToSceneRequest) -> BuildResponse:
+        """A description -> a generated reference -> a production-ready 3D set."""
+        return await self._build_and_shoot(BuildRequest(**req.model_dump()))
+
+    @fal.endpoint("/video2scene")
+    async def video2scene(self, req: VideoToSceneRequest) -> BuildResponse:
+        """A video of a place -> the set it shows, built from frames across the whole clip."""
+        return await self._build_and_shoot(BuildRequest(**req.model_dump()))
+
+    @fal.endpoint("/kit2scene")
+    async def kit2scene(self, req: KitToSceneRequest) -> BuildResponse:
+        """An AnyKit kit (+ a place) -> a set dressed with the kit's props."""
+        return await self._build_and_shoot(BuildRequest(**req.model_dump()))
+
+    @fal.endpoint("/scene2scene")
+    async def scene2scene(self, req: SceneToSceneRequest) -> BuildResponse:
+        """A finished build + changes in words or dials -> the same set, changed; the rest stays as built."""
+        return await self._build_and_shoot(BuildRequest(**req.model_dump()))
 
     async def _build_and_shoot(self, req: BuildRequest) -> BuildResponse:
         import time
@@ -336,9 +403,17 @@ class SceneBuilderApp(fal.App):
         # Retry-safe: fal's queue re-runs a request that times out or loses its worker. Each identical request maps
         # to one build; a repeat returns the finished result, waits for a live attempt, or resumes a dead one in the
         # same workspace, where nothing already generated is paid for again (generate/fal.mjs skips and resumes).
-        fp = hashlib.sha256(json.dumps({"refs": req.reference_image_urls, "prompt": req.prompt, "dials": req.dials,
-                                        "floor_plan": req.floor_plan_url, "scene": req.scene, "effort": req.effort},
-                                       sort_keys=True).encode()).hexdigest()[:20]
+        try:
+            sources.check(req)
+        except ValueError as e:  # a bad source is the caller's mistake: 422, not a 500
+            from fastapi import HTTPException
+            raise HTTPException(status_code=422, detail=str(e)) from None
+        key = {"refs": req.reference_image_urls, "prompt": req.prompt, "dials": req.dials,
+               "floor_plan": req.floor_plan_url, "scene": req.scene, "effort": req.effort}
+        # only when set, so builds from before these sources existed keep their fingerprints
+        key.update({k: v for k, v in (("video", req.video_url), ("kit", req.kit_id),
+                                      ("source", req.source_build_id)) if v})
+        fp = hashlib.sha256(json.dumps(key, sort_keys=True).encode()).hexdigest()[:20]
         index = os.path.join(BUILDS_DIR, "_index", fp + ".json")
         os.makedirs(os.path.dirname(index), exist_ok=True)
         resume = False
@@ -385,26 +460,22 @@ class SceneBuilderApp(fal.App):
 
         os.makedirs(os.path.join(work, "input"), exist_ok=True)
         upload = lambda p: File.from_path(p).url
-        refs = []
         if resume:  # the workspace is there: refresh the shared tools, keep the scene's own scripts and assets
             for rel, text in TOOLKIT.items():
                 path = os.path.join(work, rel)
                 os.makedirs(os.path.dirname(path), exist_ok=True)
                 with open(path, "w", encoding="utf-8", newline="\n") as f:
                     f.write(text)
-        for i, url in enumerate([] if resume else req.reference_image_urls[:4]):
-            path = os.path.join(work, "input", f"src_{i + 1}")
-            urllib.request.urlretrieve(url, path)
-            refs.append(path)
-        # references as PNG whatever came in
+        ask = None
+        if not resume:  # images, text, video, a kit or an earlier build -> reference PNGs, brief, dials (sources.py)
+            import asyncio
+            pngs, prompt, dials, ask = await asyncio.to_thread(sources.prepare, req, work)
+            scene_builder.make_workspace(work, pngs, prompt, req.scene, TOOLKIT, dials)
+        else:
+            subdirs = [d for d in os.listdir(os.path.join(work, "scenes")) if os.path.isdir(os.path.join(work, "scenes", d))]
+            if len(subdirs) == 1:  # scene2scene may have taken the earlier build's scene folder
+                req.scene = subdirs[0]
         from PIL import Image
-        pngs = []
-        for i, p in enumerate(refs):
-            out = os.path.join(work, f"ref_{i + 1}.png")
-            Image.open(p).convert("RGB").save(out)
-            pngs.append(out)
-        if not resume:
-            scene_builder.make_workspace(work, pngs, req.prompt, req.scene, TOOLKIT, req.dials)
         if req.floor_plan_url and not resume:  # the agent reads it as input/floor_plan.png
             fp = os.path.join(work, "input", "floor_plan_src")
             urllib.request.urlretrieve(req.floor_plan_url, fp)
@@ -419,9 +490,12 @@ class SceneBuilderApp(fal.App):
                      "generated is on disk, and generate/fal.mjs skips finished outputs and picks up jobs that were in "
                      "flight, so re-running your batch scripts costs nothing for done items. Don't start over: continue "
                      "from the current state to the deliverables.")
+        elif ask:
+            b.ASK = ask
         b.emit("received", "running", f"{'resuming' if resume else 'build'} {build_id}: {len(refs)} reference image(s)",
                reference_urls=req.reference_image_urls, prompt=req.prompt, dials=req.dials, effort=req.effort,
-               floor_plan_url=req.floor_plan_url, owner=req.owner)
+               floor_plan_url=req.floor_plan_url, owner=req.owner, video_url=req.video_url, kit_id=req.kit_id,
+               source_build_id=req.source_build_id)
         result = None
         try:
             result = await b.run(scene_builder.agent_env())
@@ -452,7 +526,7 @@ class SceneBuilderApp(fal.App):
                     if n.endswith((".py", ".json", ".md", ".sh")):
                         z.write(os.path.join(root, n), os.path.relpath(os.path.join(root, n), work))
         res = BuildResponse(
-            build_id=build_id, stills=stills, scene_blend_url=url_if(os.path.join(out, "scene.blend")),
+            build_id=build_id, reference_urls=[upload(p) for p in refs], stills=stills, scene_blend_url=url_if(os.path.join(out, "scene.blend")),
             scene_glb_url=url_if(os.path.join(out, "scene.glb")), panorama_urls=panos, previews=previews, package_url=upload(pkg),
             critiques=[{k: c[k] for k in ("round", "scores", "passed", "summary", "fixes")} for c in b.critiques],
             dials=json.load(open(os.path.join(out, "dials.json"))) if os.path.exists(os.path.join(out, "dials.json")) else {},
